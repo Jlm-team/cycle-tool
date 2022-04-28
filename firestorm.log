@@ -1,0 +1,8 @@
+INFO main guru.nidi.graphviz.engine.GraphvizCmdLineEngine - input  file:///F:/Other/Windows/Temp/GraphvizJava/DotEngine13120009059733716231/dotfile.dot
+INFO main guru.nidi.graphviz.service.CommandLineExecutor - executing command [cmd, /C, dot.exe -Kdot -Tsvg  F:\Other\Windows\Temp\GraphvizJava\DotEngine13120009059733716231\dotfile.dot -ooutfile.svg]
+DEBUG main guru.nidi.graphviz.service.CommandLineExecutor - workdir: F:\Other\Windows\Temp\GraphvizJava\DotEngine13120009059733716231
+INFO main guru.nidi.graphviz.engine.GraphvizCmdLineEngine - output file:///F:/Other/Windows/Temp/GraphvizJava/DotEngine13120009059733716231/outfile.svg
+INFO main guru.nidi.graphviz.engine.GraphvizCmdLineEngine - input  file:///F:/Other/Windows/Temp/GraphvizJava/DotEngine8138455046316893054/dotfile.dot
+INFO main guru.nidi.graphviz.service.CommandLineExecutor - executing command [cmd, /C, dot.exe -Kdot -Tsvg  F:\Other\Windows\Temp\GraphvizJava\DotEngine8138455046316893054\dotfile.dot -ooutfile.svg]
+DEBUG main guru.nidi.graphviz.service.CommandLineExecutor - workdir: F:\Other\Windows\Temp\GraphvizJava\DotEngine8138455046316893054
+INFO main guru.nidi.graphviz.engine.GraphvizCmdLineEngine - output file:///F:/Other/Windows/Temp/GraphvizJava/DotEngine8138455046316893054/outfile.svg
