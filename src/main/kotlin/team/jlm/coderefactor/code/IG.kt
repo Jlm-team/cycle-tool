@@ -4,12 +4,16 @@ import com.intellij.packageDependencies.ForwardDependenciesBuilder
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiJavaFile
+import com.xyzboom.algorithm.graph.GEdge
+import com.xyzboom.algorithm.graph.GNode
 import com.xyzboom.algorithm.graph.Graph
 import guru.nidi.graphviz.attribute.Style
 import guru.nidi.graphviz.model.Factory
 import guru.nidi.graphviz.model.Factory.graph
 import guru.nidi.graphviz.model.Factory.node
 import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 import guru.nidi.graphviz.model.Graph as VizGraph
 
 /**
@@ -17,7 +21,6 @@ import guru.nidi.graphviz.model.Graph as VizGraph
  */
 open class IG(private var classes: List<PsiClass>) : Graph<String>() {
     private val classWhoseParentsAdded = HashSet<String>()
-    private var vizGraph: VizGraph = graph().directed()
 
     init {
         for (clazz in classes) {
@@ -35,17 +38,17 @@ open class IG(private var classes: List<PsiClass>) : Graph<String>() {
 //        vizNodes[from.data]?.let {
 //            vizGraph = vizGraph.with(it.link(vizNodes[to.data]))
 //        }
-        vizGraph = vizGraph.with(node(from).link(node(to)))
+//        vizGraph = vizGraph.with(node(from).link(node(to)))
         super.addEdge(from, to, 1)
     }
 
     private fun addDependencyEdge(from: String, to: String) {
-        vizGraph = vizGraph.with(
-            node(from).link(
-                Factory.to(node(to)).with(Style.DASHED)
-            )
-        )
-        super.addEdge(from, to, 1)
+//        vizGraph = vizGraph.with(
+//            node(from).link(
+//                Factory.to(node(to)).with(Style.DASHED)
+//            )
+//        )
+        super.addEdge(from, to, 2)
     }
 
     private fun addClassAndParents(clazz: PsiClass) {
@@ -95,6 +98,18 @@ open class IG(private var classes: List<PsiClass>) : Graph<String>() {
     }
 
     fun toGraphvizGraph(): VizGraph {
-        return vizGraph
+        var viz = graph().directed()
+        for (pair in adjList) {
+            for (edgeOut in pair.value.edgeOut) {
+                viz = if (edgeOut.length == 1) {
+                    viz.with(node(pair.key.data).link(node(edgeOut.nodeTo.data)))
+                } else {
+                    viz.with(node(pair.key.data).link(
+                        Factory.to(node(edgeOut.nodeTo.data)).with(Style.DASHED)
+                    ))
+                }
+            }
+        }
+        return viz
     }
 }

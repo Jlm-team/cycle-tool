@@ -39,5 +39,11 @@ public class TestGraph {
             System.out.println(stringGNode.getData());
             return null;
         });
+        graph.delNode("B");
+        System.out.println();
+        graph.dfsVisit(stringGNode -> {
+            System.out.println(stringGNode.getData());
+            return null;
+        });
     }
 }

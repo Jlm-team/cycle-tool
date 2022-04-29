@@ -74,6 +74,17 @@ open class Graph<T> {
         return result
     }
 
+    open fun delNode(data: T) {
+        val node = getNode(data)
+        for (edge in adjList[node]!!.edgeOut) {
+            adjList[edge.nodeTo]!!.edgeIn.remove(edge)
+        }
+        for (edge in adjList[node]!!.edgeIn) {
+            adjList[edge.nodeFrom]!!.edgeOut.remove(edge)
+        }
+        adjList.remove(node)
+    }
+
     /**
      * 根据指定的节点将提供的边加入图中
      * @param from 边到来的节点
