@@ -14,6 +14,7 @@ import org.eclipse.jgit.storage.file.FileRepositoryBuilder
 import org.eclipse.jgit.treewalk.AbstractTreeIterator
 import org.eclipse.jgit.treewalk.CanonicalTreeParser
 import org.eclipse.jgit.treewalk.TreeWalk
+import team.jlm.coderefactor.util.getActiveProject
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileNotFoundException
