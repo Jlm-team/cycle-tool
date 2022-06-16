@@ -19,7 +19,7 @@ intellij {
     plugins.set(
         listOf(
             "com.intellij.java",
-//            "guru.nidi:graphviz-java:0.18.1"
+            "Git4Idea"
         )
     )
 }
@@ -31,6 +31,7 @@ dependencies {
         exclude("org.slf4j", "slf4j-api")
     }
     implementation("org.eclipse.jgit:org.eclipse.jgit:6.1.0.202203080745-r")
+//    implementation("com.github.adedayo.intellij.sdk:git4idea:142.1")
 
 }
 
