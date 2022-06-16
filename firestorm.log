@@ -1,8 +1,466 @@
-INFO main guru.nidi.graphviz.engine.GraphvizCmdLineEngine - input  file:///F:/Other/Windows/Temp/GraphvizJava/DotEngine13120009059733716231/dotfile.dot
-INFO main guru.nidi.graphviz.service.CommandLineExecutor - executing command [cmd, /C, dot.exe -Kdot -Tsvg  F:\Other\Windows\Temp\GraphvizJava\DotEngine13120009059733716231\dotfile.dot -ooutfile.svg]
-DEBUG main guru.nidi.graphviz.service.CommandLineExecutor - workdir: F:\Other\Windows\Temp\GraphvizJava\DotEngine13120009059733716231
-INFO main guru.nidi.graphviz.engine.GraphvizCmdLineEngine - output file:///F:/Other/Windows/Temp/GraphvizJava/DotEngine13120009059733716231/outfile.svg
-INFO main guru.nidi.graphviz.engine.GraphvizCmdLineEngine - input  file:///F:/Other/Windows/Temp/GraphvizJava/DotEngine8138455046316893054/dotfile.dot
-INFO main guru.nidi.graphviz.service.CommandLineExecutor - executing command [cmd, /C, dot.exe -Kdot -Tsvg  F:\Other\Windows\Temp\GraphvizJava\DotEngine8138455046316893054\dotfile.dot -ooutfile.svg]
-DEBUG main guru.nidi.graphviz.service.CommandLineExecutor - workdir: F:\Other\Windows\Temp\GraphvizJava\DotEngine8138455046316893054
-INFO main guru.nidi.graphviz.engine.GraphvizCmdLineEngine - output file:///F:/Other/Windows/Temp/GraphvizJava/DotEngine8138455046316893054/outfile.svg
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, isRacyClean=false, read=2022-06-16 22:49:28.490425200, lastModified=2022-06-15 15:30:15.528759000, delta=112752961666200 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\objects\pack, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=C:\Users\NicoAlex\.config\jgit\config, isRacyClean=false, read=2022-06-16 22:49:28.213134800, lastModified=2022-06-16 16:14:10.070008000, delta=23718143126800 ns, racy<=2500000000 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=C:\Users\NicoAlex\.config\jgit\config, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=D:\Program Files\Git\etc\gitconfig, isRacyClean=false, read=2022-06-16 22:49:28.321132800, lastModified=2021-11-20 16:00:53.564240000, delta=17995714756892800 ns, racy<=2500000000 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=D:\Program Files\Git\etc\gitconfig, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=C:\Users\NicoAlex\.gitconfig, isRacyClean=false, read=2022-06-16 22:49:28.325141300, lastModified=2022-03-12 19:59:55.917940000, delta=8304572407201300 ns, racy<=2500000000 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=C:\Users\NicoAlex\.gitconfig, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\config, isRacyClean=false, read=2022-06-16 22:49:28.325141300, lastModified=2022-06-15 15:30:15.528759000, delta=112752796382300 ns, racy<=2500000000 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\config, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=C:\Users\NicoAlex\.config\jgit\config, isRacyClean=false, read=2022-06-16 22:49:28.213134800, lastModified=2022-06-16 16:14:10.070008000, delta=23718143126800 ns, racy<=2500000000 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=C:\Users\NicoAlex\.config\jgit\config, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=D:\Program Files\Git\etc\gitconfig, isRacyClean=false, read=2022-06-16 22:49:28.321132800, lastModified=2021-11-20 16:00:53.564240000, delta=17995714756892800 ns, racy<=2500000000 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=D:\Program Files\Git\etc\gitconfig, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=C:\Users\NicoAlex\.gitconfig, isRacyClean=false, read=2022-06-16 22:49:28.325141300, lastModified=2022-03-12 19:59:55.917940000, delta=8304572407201300 ns, racy<=2500000000 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=C:\Users\NicoAlex\.gitconfig, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\config, isRacyClean=false, read=2022-06-16 22:49:28.325141300, lastModified=2022-06-15 15:30:15.528759000, delta=112752796382300 ns, racy<=2500000000 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\config, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\packed-refs, isRacyClean=false, read=2022-06-16 22:49:28.422425800, lastModified=2022-06-15 15:30:15.521374000, delta=112752901051800 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\packed-refs, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\HEAD, isRacyClean=false, read=2022-06-16 22:49:28.434426100, lastModified=2022-06-15 15:30:15.523510000, delta=112752910916100 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\HEAD, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\refs\heads\trunk, isRacyClean=false, read=2022-06-16 22:49:28.438426700, lastModified=2022-06-15 15:30:15.527564000, delta=112752910862700 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\refs\heads\trunk, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=C:\Users\NicoAlex\.config\jgit\config, isRacyClean=false, read=2022-06-16 22:49:28.213134800, lastModified=2022-06-16 16:14:10.070008000, delta=23718143126800 ns, racy<=2500000000 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=C:\Users\NicoAlex\.config\jgit\config, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=D:\Program Files\Git\etc\gitconfig, isRacyClean=false, read=2022-06-16 22:49:28.321132800, lastModified=2021-11-20 16:00:53.564240000, delta=17995714756892800 ns, racy<=2500000000 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=D:\Program Files\Git\etc\gitconfig, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=C:\Users\NicoAlex\.gitconfig, isRacyClean=false, read=2022-06-16 22:49:28.325141300, lastModified=2022-03-12 19:59:55.917940000, delta=8304572407201300 ns, racy<=2500000000 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=C:\Users\NicoAlex\.gitconfig, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\config, isRacyClean=false, read=2022-06-16 22:49:28.325141300, lastModified=2022-06-15 15:30:15.528759000, delta=112752796382300 ns, racy<=2500000000 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\config, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\packed-refs, isRacyClean=false, read=2022-06-16 22:49:28.422425800, lastModified=2022-06-15 15:30:15.521374000, delta=112752901051800 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\packed-refs, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\refs\heads\trunk, create new FileSnapshot: lastRead=2022-06-16 22:52:41.555752400, lastModified=2022-06-15 15:30:15.527564000, size=41, fileKey=java.lang.Object@478190fc
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=C:\Users\NicoAlex\.config\jgit\config, isRacyClean=false, read=2022-06-16 22:49:28.213134800, lastModified=2022-06-16 16:14:10.070008000, delta=23718143126800 ns, racy<=2500000000 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=C:\Users\NicoAlex\.config\jgit\config, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=D:\Program Files\Git\etc\gitconfig, isRacyClean=false, read=2022-06-16 22:49:28.321132800, lastModified=2021-11-20 16:00:53.564240000, delta=17995714756892800 ns, racy<=2500000000 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=D:\Program Files\Git\etc\gitconfig, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=C:\Users\NicoAlex\.gitconfig, isRacyClean=false, read=2022-06-16 22:49:28.325141300, lastModified=2022-03-12 19:59:55.917940000, delta=8304572407201300 ns, racy<=2500000000 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=C:\Users\NicoAlex\.gitconfig, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\config, isRacyClean=false, read=2022-06-16 22:49:28.325141300, lastModified=2022-06-15 15:30:15.528759000, delta=112752796382300 ns, racy<=2500000000 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\config, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=C:\Users\NicoAlex\.config\jgit\config, isRacyClean=false, read=2022-06-16 22:49:28.213134800, lastModified=2022-06-16 16:14:10.070008000, delta=23718143126800 ns, racy<=2500000000 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=C:\Users\NicoAlex\.config\jgit\config, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=D:\Program Files\Git\etc\gitconfig, isRacyClean=false, read=2022-06-16 22:49:28.321132800, lastModified=2021-11-20 16:00:53.564240000, delta=17995714756892800 ns, racy<=2500000000 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=D:\Program Files\Git\etc\gitconfig, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=C:\Users\NicoAlex\.gitconfig, isRacyClean=false, read=2022-06-16 22:49:28.325141300, lastModified=2022-03-12 19:59:55.917940000, delta=8304572407201300 ns, racy<=2500000000 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=C:\Users\NicoAlex\.gitconfig, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\config, isRacyClean=false, read=2022-06-16 22:49:28.325141300, lastModified=2022-06-15 15:30:15.528759000, delta=112752796382300 ns, racy<=2500000000 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\config, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\packed-refs, isRacyClean=false, read=2022-06-16 22:49:28.422425800, lastModified=2022-06-15 15:30:15.521374000, delta=112752901051800 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\packed-refs, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\HEAD, isRacyClean=false, read=2022-06-16 22:49:28.434426100, lastModified=2022-06-15 15:30:15.523510000, delta=112752910916100 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\HEAD, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\refs\heads\trunk, isRacyClean=false, read=2022-06-16 22:49:28.438426700, lastModified=2022-06-15 15:30:15.527564000, delta=112752910862700 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\refs\heads\trunk, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=C:\Users\NicoAlex\.config\jgit\config, isRacyClean=false, read=2022-06-16 22:49:28.213134800, lastModified=2022-06-16 16:14:10.070008000, delta=23718143126800 ns, racy<=2500000000 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=C:\Users\NicoAlex\.config\jgit\config, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=D:\Program Files\Git\etc\gitconfig, isRacyClean=false, read=2022-06-16 22:49:28.321132800, lastModified=2021-11-20 16:00:53.564240000, delta=17995714756892800 ns, racy<=2500000000 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=D:\Program Files\Git\etc\gitconfig, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=C:\Users\NicoAlex\.gitconfig, isRacyClean=false, read=2022-06-16 22:49:28.325141300, lastModified=2022-03-12 19:59:55.917940000, delta=8304572407201300 ns, racy<=2500000000 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=C:\Users\NicoAlex\.gitconfig, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\config, isRacyClean=false, read=2022-06-16 22:49:28.325141300, lastModified=2022-06-15 15:30:15.528759000, delta=112752796382300 ns, racy<=2500000000 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\config, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\packed-refs, isRacyClean=false, read=2022-06-16 22:49:28.422425800, lastModified=2022-06-15 15:30:15.521374000, delta=112752901051800 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\packed-refs, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\refs\heads\trunk, isRacyClean=false, read=2022-06-16 22:52:41.555752400, lastModified=2022-06-15 15:30:15.527564000, delta=112946028188400 ns, racy<=2542500 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=E:\code\Cassandra\.git\refs\heads\trunk, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=C:\Users\NicoAlex\.config\jgit\config, isRacyClean=false, read=2022-06-16 22:49:28.213134800, lastModified=2022-06-16 16:14:10.070008000, delta=23718143126800 ns, racy<=2500000000 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=C:\Users\NicoAlex\.config\jgit\config, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=D:\Program Files\Git\etc\gitconfig, isRacyClean=false, read=2022-06-16 22:49:28.321132800, lastModified=2021-11-20 16:00:53.564240000, delta=17995714756892800 ns, racy<=2500000000 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=D:\Program Files\Git\etc\gitconfig, is unmodified
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=C:\Users\NicoAlex\.gitconfig, isRacyClean=false, read=2022-06-16 22:49:28.325141300, lastModified=2022-03-12 19:59:55.917940000, delta=8304572407201300 ns, racy<=2500000000 ns
+DEBUG main org.eclipse.jgit.internal.storage.file.FileSnapshot - file=C:\Users\NicoAlex\.gitconfig, is unmodified
