@@ -1,8 +1,5 @@
-package team.jlm.coderefactor.util.Git
+package team.jlm.coderefactor.util.git
 
-import com.intellij.psi.PsiFileFactory
-import com.intellij.psi.PsiManager
-import com.intellij.psi.impl.PsiFileFactoryImpl
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.diff.DiffEntry
 import org.eclipse.jgit.diff.DiffFormatter

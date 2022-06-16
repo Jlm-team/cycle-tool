@@ -1,4 +1,6 @@
-package team.jlm.coderefactor.util.Git.Entity
+package team.jlm.coderefactor.util.git.entity
+
+import team.jlm.coderefactor.util.git.entity.MethodInfo
 
 data class DiffInfo(
     val classFile: String,

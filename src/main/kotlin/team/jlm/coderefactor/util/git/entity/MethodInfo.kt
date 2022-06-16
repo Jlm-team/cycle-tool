@@ -1,4 +1,4 @@
-package team.jlm.coderefactor.util.Git.Entity
+package team.jlm.coderefactor.util.git.entity
 
 data class MethodInfo(
     val md5: String,
