@@ -1,6 +1,6 @@
 package Git
 
-import team.jlm.coderefactor.util.Git.GitUtils
+import team.jlm.coderefactor.util.git.GitUtils
 
 fun main(){
    val  gittools: GitUtils = GitUtils("E:\\code\\Cassandra")

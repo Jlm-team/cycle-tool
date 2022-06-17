@@ -1,13 +1,10 @@
-package team.jlm.coderefactor.util
+package team.jlm.utils
 
-import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectFileIndex
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiJavaFile
 import com.intellij.psi.PsiManager
-import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.psi.search.SearchScope
 import java.util.*
 import java.util.stream.Collectors
 

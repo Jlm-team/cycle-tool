@@ -1,4 +1,4 @@
-package team.jlm.coderefactor.util
+package team.jlm.utils
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
