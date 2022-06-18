@@ -79,11 +79,11 @@ class GitUtils(rpoDir: String) {
         return treeParser
     }
 
-    fun getDiffBetweenCommit(newCommitId: ObjectId, oldCommitId: ObjectId, project: Project) {
+    fun getDiffBetweenCommit(newCommitId: ObjectId, oldCommitId: ObjectId, project: Project, threadNum: Int) {
         val olddTree = prepareTreeParser(oldCommitId)
         val newTree = prepareTreeParser(newCommitId)
         val res = git.diff().setNewTree(newTree).setOldTree(olddTree).call()
-        getDiffBetweenFiles(res, project)
+        batchDiffBetweenFiles(res, project, threadNum)
     }
 
     private fun getFileContent(path: String, tree: RevTree, walk: RevWalk): String {
@@ -146,11 +146,16 @@ class GitUtils(rpoDir: String) {
             val taskList = ArrayList<ArrayList<DiffEntry>>()
             val executorService = Executors.newFixedThreadPool(threadNum)
             val tasks = ArrayList<Callable<ArrayList<DiffInfo>>>()
-            for (i in 0..taskNum) {
-                if (i < taskNum - 1)
-                    taskList.add(commitDiff.subList(i * taskNum, i * taskNum + threadNum) as ArrayList<DiffEntry>)
+            for (i in 0..threadNum-1) {
+                val fromIndex = i * taskNum;
+                var toIndex = 0
+
+                if ((i + 1) * taskNum < commitDiff.size)
+                    toIndex = (i + 1) * taskNum
                 else
-                    taskList.add(commitDiff.subList(i * taskNum, commitDiff.size) as ArrayList<DiffEntry>)
+                    toIndex = commitDiff.size
+
+                taskList.add(ArrayList(commitDiff.subList(fromIndex, toIndex)))
             }
             for (i in taskList) {
                 val task =

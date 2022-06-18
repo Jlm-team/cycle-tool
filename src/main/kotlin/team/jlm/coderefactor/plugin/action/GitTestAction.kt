@@ -9,6 +9,6 @@ class GitTestAction: AnAction() {
         val project = e.project
         val git = GitUtils("E:\\code\\Cassandra")
         val commit = git.getCommits()
-        project?.let { git.getDiffBetweenCommit(commit[1],commit[2], it) }
+        project?.let { git.getDiffBetweenCommit(commit[1],commit[2], it,4) }
     }
 }
