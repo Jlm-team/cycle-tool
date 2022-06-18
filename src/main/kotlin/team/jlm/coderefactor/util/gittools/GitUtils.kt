@@ -1,12 +1,9 @@
 package team.jlm.coderefactor.util.gittools
 
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiClass
-import com.intellij.psi.PsiMethod
 import com.jetbrains.rd.util.Callable
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.diff.DiffEntry
-import org.eclipse.jgit.diff.DiffFormatter
 import org.eclipse.jgit.lib.ObjectId
 import org.eclipse.jgit.lib.Repository
 import org.eclipse.jgit.revwalk.RevTree
@@ -15,10 +12,9 @@ import org.eclipse.jgit.storage.file.FileRepositoryBuilder
 import org.eclipse.jgit.treewalk.AbstractTreeIterator
 import org.eclipse.jgit.treewalk.CanonicalTreeParser
 import org.eclipse.jgit.treewalk.TreeWalk
-import team.jlm.coderefactor.util.gittools.tools.getJavaClassMethods
-import team.jlm.coderefactor.util.gittools.tools.getPsiClass
-import team.jlm.coderefactor.util.gittools.tools.isSameMethods
-import java.io.ByteArrayOutputStream
+import team.jlm.coderefactor.util.gittools.entity.DiffInfo
+import team.jlm.coderefactor.util.gittools.tools.getDiffInfo
+import team.jlm.coderefactor.util.gittools.tools.getPsiJavaFile
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.IOException
@@ -111,14 +107,12 @@ class GitUtils(rpoDir: String) {
     private fun getDiffBetweenFiles(
         commitDiff: List<DiffEntry>,
         project: Project
-    ): ArrayList<HashMap<String, HashMap<PsiClass, ArrayList<PsiMethod>>>> {
-        var FilePath = ""
-        val res = hashMapOf<PsiClass, ArrayList<PsiMethod>>()
-        val returnRes = ArrayList<HashMap<String, HashMap<PsiClass, ArrayList<PsiMethod>>>>()
+    ): ArrayList<DiffInfo> {
+
+        var res = ArrayList<DiffInfo>()
         try {
             for (diff in commitDiff) {
                 val newfilePath = diff.newPath
-                FilePath = newfilePath
                 val oldfilePath = diff.oldPath
 
                 if (newfilePath.contains("/src/test/java/"))//测试文件，跳过
@@ -129,47 +123,29 @@ class GitUtils(rpoDir: String) {
                     continue
                 val newClassContent = getBranchSpecificFileContext(newfilePath)
                 val oldClassContent = getBranchSpecificFileContext(oldfilePath)
-                val newMethods = getJavaClassMethods(getPsiClass(project, newClassContent))
-                val oldMethods = getJavaClassMethods(getPsiClass(project, oldClassContent))
-                for ((k, v) in newMethods) {
-                    if (oldMethods.contains(k)) { //判断新提交中的类是否为新增
-                        val newMethod = ArrayList<PsiMethod>()
-                        for (m in v) { //若不是，则遍历方法
-
-                            for (oldm in oldMethods.get(k)!!) {
-                                if (isSameMethods(m, oldm)) //找到相同的函数，说明未改变
-                                    break
-                            }
-                            //未找到，说明新增
-                            newMethod.add(m)
-                        }
-                        res.put(k, newMethod)
-                    } else { //旧版本不存在，为新增类
-                        res.put(k, v)
-                    }
-
-                }
-                returnRes.add(hashMapOf(Pair(FilePath, res)))
+                val newPsiJavaFile = getPsiJavaFile(project, newClassContent)
+                val oldPsiJavaFile = getPsiJavaFile(project, oldClassContent)
+                res = getDiffInfo(newPsiJavaFile, oldPsiJavaFile, newfilePath)
             }
         } catch (e: IOException) {
             throw e
         }
-        return returnRes
+        return res
     }
 
     private fun batchDiffBetweenFiles(
         commitDiff: List<DiffEntry>,
         project: Project,
         threadNum: Int
-    ):  ArrayList<HashMap<String, HashMap<PsiClass, ArrayList<PsiMethod>>>>{
+    ): ArrayList<DiffInfo> {
         if (commitDiff.size <= threadNum)
             return getDiffBetweenFiles(commitDiff, project)
         else {
-            val res =  ArrayList<HashMap<String, HashMap<PsiClass, ArrayList<PsiMethod>>>>()
+            val res = ArrayList<DiffInfo>()
             val taskNum: Int = (commitDiff.size / threadNum) + 1
             val taskList = ArrayList<ArrayList<DiffEntry>>()
             val executorService = Executors.newFixedThreadPool(threadNum)
-            val tasks = ArrayList<Callable<ArrayList<HashMap<String, HashMap<PsiClass, ArrayList<PsiMethod>>>>>>()
+            val tasks = ArrayList<Callable<ArrayList<DiffInfo>>>()
             for (i in 0..taskNum) {
                 if (i < taskNum - 1)
                     taskList.add(commitDiff.subList(i * taskNum, i * taskNum + threadNum) as ArrayList<DiffEntry>)
@@ -178,7 +154,7 @@ class GitUtils(rpoDir: String) {
             }
             for (i in taskList) {
                 val task =
-                    Callable< ArrayList<HashMap<String, HashMap<PsiClass, ArrayList<PsiMethod>>>>>(fun(): ArrayList<HashMap<String, HashMap<PsiClass, ArrayList<PsiMethod>>>> {
+                    Callable<ArrayList<DiffInfo>>(fun(): ArrayList<DiffInfo> {
                         return getDiffBetweenFiles(
                             i,
                             project
@@ -186,14 +162,14 @@ class GitUtils(rpoDir: String) {
                     })
                 tasks.add(task)
             }
-            try{
+            try {
                 val resFuture = executorService.invokeAll(tasks)
-                for(i in resFuture){
-                    res.add(i.get() as HashMap<String, HashMap<PsiClass, ArrayList<PsiMethod>>> )
+                for (i in resFuture) {
+                    res.addAll(i.get())
                 }
-            }catch (e:Exception){
+            } catch (e: Exception) {
                 throw e
-            }finally {
+            } finally {
                 executorService.shutdown()
             }
             return res

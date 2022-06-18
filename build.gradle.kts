@@ -1,14 +1,33 @@
 plugins {
     id("java")
-    id("org.jetbrains.kotlin.jvm") version "1.5.10"
-    id("org.jetbrains.intellij") version "1.4.0"
+    id("org.jetbrains.kotlin.jvm") version "1.7.0"
+    id("org.jetbrains.intellij") version "1.6.0"
+    id ("org.jetbrains.kotlin.plugin.noarg") version "1.7.0"
 }
 
 group = "team.jlm"
 version = "1.0-SNAPSHOT"
 
 repositories {
+    mavenLocal()
     mavenCentral()
+    maven {
+        setUrl ("https://plugins.gradle.org/m2/")
+    }
+    maven {
+        setUrl ("https://maven.aliyun.com/nexus/content/repositories/google")
+    }
+    maven {
+        setUrl ("https://maven.aliyun.com/nexus/content/groups/public")
+    }
+    maven {
+        setUrl("https://maven.aliyun.com/nexus/content/repositories/jcenter")
+    }
+
+}
+noArg{
+    annotation("team.jlm.annotation.NoArg")
+    invokeInitializers = true
 }
 
 // Configure Gradle IntelliJ Plugin - read more: https://github.com/JetBrains/gradle-intellij-plugin
@@ -19,7 +38,7 @@ intellij {
     plugins.set(
         listOf(
             "com.intellij.java",
-            "Git4Idea"
+            "Git4Idea",
         )
     )
 }
@@ -42,6 +61,8 @@ sourceSets {
     getByName("main").java.srcDirs("src/main/kotlin")
     getByName("test").java.srcDirs("src/test/kotlin")
 }
+
+
 
 tasks {
     // Set the JVM compatibility versions
