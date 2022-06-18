@@ -32,9 +32,5 @@ class CommitsAnalyseAction : AnAction() {
                 showClassesInProject(project, commit.id.asString() + ".png")
             }
         }).run { }
-
-
     }
-
-
 }

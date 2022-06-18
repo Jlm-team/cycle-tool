@@ -11,7 +11,7 @@ class Tarjan<T>(private var graph: Graph<T>) {
     private val low = Array(graph.adjList.size) { 0 }
     private val s = Stack<Int>()
     private val visited = Array(graph.adjList.size) { false }
-    private val nodesArray : ArrayList<GNode<T>> = ArrayList(graph.adjList.keys)
+    private val nodesArray: ArrayList<GNode<T>> = ArrayList(graph.adjList.keys)
 
     init {
         for (i in 0 until graph.adjList.size) {
@@ -48,4 +48,8 @@ class Tarjan<T>(private var graph: Graph<T>) {
         }
         return result
     }
+}
+
+fun <T : Graph<*>> T.save(path: String, fileName: String) {
+
 }
