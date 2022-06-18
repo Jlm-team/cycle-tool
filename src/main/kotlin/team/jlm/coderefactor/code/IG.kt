@@ -4,23 +4,24 @@ import com.intellij.packageDependencies.ForwardDependenciesBuilder
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiJavaFile
+import com.intellij.psi.impl.source.tree.JavaElementType.*
+import com.intellij.psi.impl.source.tree.TreeElement
+import com.intellij.psi.util.elementType
 import com.xyzboom.algorithm.graph.GEdge
-import com.xyzboom.algorithm.graph.GNode
 import com.xyzboom.algorithm.graph.Graph
 import guru.nidi.graphviz.attribute.Style
 import guru.nidi.graphviz.model.Factory
 import guru.nidi.graphviz.model.Factory.graph
 import guru.nidi.graphviz.model.Factory.node
-import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 import guru.nidi.graphviz.model.Graph as VizGraph
+
 
 /**
  * 继承与依赖图 ----- TODO 待完善
  */
 open class IG(private var classes: List<PsiClass>) : Graph<String>() {
     private val classWhoseParentsAdded = HashSet<String>()
+    private val dependencyMap = HashMap<GEdge<String>, DependencyType>()
 
     init {
         for (clazz in classes) {
@@ -34,21 +35,26 @@ open class IG(private var classes: List<PsiClass>) : Graph<String>() {
 //        }
     }
 
-    private fun addEdge(from: String, to: String) {
+    private fun addEdge(from: String, to: String, dependency: DependencyType = DependencyType.DEPEND) {
 //        vizNodes[from.data]?.let {
 //            vizGraph = vizGraph.with(it.link(vizNodes[to.data]))
 //        }
 //        vizGraph = vizGraph.with(node(from).link(node(to)))
-        super.addEdge(from, to, 1)
+        val edge = super.addEdge(from, to, 1)
+        dependencyMap[edge] = dependency
     }
 
-    private fun addDependencyEdge(from: String, to: String) {
-//        vizGraph = vizGraph.with(
-//            node(from).link(
-//                Factory.to(node(to)).with(Style.DASHED)
-//            )
-//        )
-        super.addEdge(from, to, 2)
+    override fun delNode(data: String) {
+        val node = getNode(data)
+        for (edge in adjList[node]!!.edgeOut) {
+            dependencyMap.remove(edge)
+            adjList[edge.nodeTo]!!.edgeIn.remove(edge)
+        }
+        for (edge in adjList[node]!!.edgeIn) {
+            dependencyMap.remove(edge)
+            adjList[edge.nodeFrom]!!.edgeOut.remove(edge)
+        }
+        adjList.remove(node)
     }
 
     private fun addClassAndParents(clazz: PsiClass) {
@@ -79,15 +85,24 @@ open class IG(private var classes: List<PsiClass>) : Graph<String>() {
 
                 clazz.name?.let {
                     parent.name?.let { it1 ->
-                        addEdge(it, it1)
+                        addEdge(it, it1, DependencyType.EXTENDS)
                     }
                 }
             }
         }
-        ForwardDependenciesBuilder.analyzeFileDependencies((clazz.containingFile as PsiJavaFile))
-        { _: PsiElement, psiElement1: PsiElement ->
-            if (psiElement1 is PsiClass) {
-                psiElement1.name?.let { it1 -> clazz.name?.let { addDependencyEdge(it, it1) } }
+        ForwardDependenciesBuilder.analyzeFileDependencies(clazz.containingFile as PsiJavaFile)
+        { dependElement: PsiElement, selfElement: PsiElement ->
+            run {
+                if (selfElement is PsiClass) {
+                    println(dependElement.elementType)
+                    var dependency: DependencyType = DependencyType.DEPEND
+                    if (dependElement is TreeElement) {
+                        dependency = dependElement.dependType
+                    } else {
+                        println("not java code")
+                    }
+                    selfElement.name?.let { it1 -> clazz.name?.let { addEdge(it, it1, dependency) } }
+                }
             }
         }
 //        for (dependency in dependencies) {
@@ -101,12 +116,14 @@ open class IG(private var classes: List<PsiClass>) : Graph<String>() {
         var viz = graph().directed()
         for (pair in adjList) {
             for (edgeOut in pair.value.edgeOut) {
-                viz = if (edgeOut.length == 1) {
+                viz = if (dependencyMap[edgeOut] == DependencyType.EXTENDS) {
                     viz.with(node(pair.key.data).link(node(edgeOut.nodeTo.data)))
                 } else {
-                    viz.with(node(pair.key.data).link(
-                        Factory.to(node(edgeOut.nodeTo.data)).with(Style.DASHED)
-                    ))
+                    viz.with(
+                        node(pair.key.data).link(
+                            Factory.to(node(edgeOut.nodeTo.data)).with(Style.DASHED)
+                        )
+                    )
                 }
             }
         }
