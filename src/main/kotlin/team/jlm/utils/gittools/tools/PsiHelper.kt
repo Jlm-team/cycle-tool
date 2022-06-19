@@ -7,30 +7,12 @@ import com.intellij.psi.PsiJavaFile
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.impl.PsiFileFactoryImpl
 import com.intellij.util.Base64
-import team.jlm.utils.gittools.entity.DiffInfo
-import team.jlm.utils.getAllClassesInJavaFile
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 
-fun getPsiJavaFile(project: Project, text: String): PsiJavaFile {
-    val projectPsiFile = PsiFileFactoryImpl(project)
-    val psiFile = projectPsiFile.createFileFromText(JavaLanguage.INSTANCE, text) as PsiJavaFile
-    return psiFile
-}
 
-fun getJavaClassMethods(classes: List<PsiClass>): Map<PsiClass, ArrayList<PsiMethod>> {
-    val res = hashMapOf<PsiClass, ArrayList<PsiMethod>>()
-    for (i in classes) {
 
-        val methodList = ArrayList<PsiMethod>()
-        for (j in i.allMethods) {
-            methodList.add(j)
-        }
-        res.put(i, methodList)
-    }
-    return res
-}
 
 //fun getDiffInfo(newFile: PsiJavaFile, oldFile: PsiJavaFile, newPath: String): ArrayList<DiffInfo> {
 //    val res = ArrayList<DiffInfo>()
@@ -86,74 +68,3 @@ fun getJavaClassMethods(classes: List<PsiClass>): Map<PsiClass, ArrayList<PsiMet
 //    }
 //    return res
 //}
-
-fun getContainsinMap(map: Map<PsiClass, ArrayList<PsiMethod>>, k: PsiClass): ArrayList<PsiMethod>? {
-    for (i in map.keys) {
-        if (i.name == k.name)
-            return map.get(i)
-    }
-    return null
-}
-
-/**
- * @Description: 在同一文件中，只要类名相同，就说明此类并非新加入的类
- * @param c PsiClass
- * @param cl Set<PsiClass>
- * @return Boolean
- */
-fun isContainsClassinSameFile(c: PsiClass, cl: Set<PsiClass>): Boolean {
-    for (i in cl) {
-        if (i.name == c.name)
-            return true
-    }
-    return false
-}
-
-fun md5Encoder(str: String): String {
-    val md5str = replaceBlank(str)
-    return Base64.encode(md5str.toByteArray())
-}
-
-fun isSameMethods(m1: PsiMethod, m2: PsiMethod): Boolean {
-    if (m1.name != m2.name) { //函数名不同，不同
-        return false
-    }
-    if (m1.returnType.toString() != m2.returnType.toString()) //返回值不同，不同
-        return false
-
-    if (m1.parameterList.parameters.isEmpty() && m2.parameterList.parameters.isEmpty())
-        return true
-
-    if (m1.modifierList.text == m2.modifierList.text)
-        return true
-
-    val parame = m2.parameterList.parameters //参数不同，不同
-    for (i in m1.parameterList.parameters) {
-        for (j in parame) {
-            if (i.name == j.name && i.type.toString() == j.type.toString()) {
-                return true
-            }
-        }
-    }
-
-    return false
-}
-
-fun replaceBlank(str: String): String {
-    var dest = ""
-    val p: Pattern = Pattern.compile("\\s*|\t|\r|\n")
-    val m: Matcher = p.matcher(str)
-    dest = m.replaceAll("")
-    return dest
-}
-
-fun isEqualMethods(m1: PsiMethod, m2: PsiMethod): Boolean {
-    if (m1.body == null || m2.body == null) {
-        if (m1.body == null && m2.body == null)
-            return true
-        return false
-    }
-    if (md5Encoder(m1.body!!.text) == md5Encoder(m2.body!!.text))
-        return true
-    return false
-}

@@ -1,6 +1,6 @@
 package team.jlm.utils.gittools.entity
 
-enum class JavaClassSingleDiffType {
+enum class JavaClassInnerDiffType {
     METHOD_MODIFY,
     METHOD_ADD,
     METHOD_DELETE,

@@ -1,18 +1,9 @@
 package team.jlm.coderefactor.plugin.action
 
-import com.intellij.diff.contents.FileDocumentContentImpl
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.diff.SimpleDiffRequest
-import com.intellij.openapi.progress.ProgressIndicator
-import com.intellij.openapi.progress.Task.Backgroundable
 import com.intellij.util.SlowOperations
 import com.intellij.util.ThrowableRunnable
-import git4idea.GitBranch
-import git4idea.branch.GitBrancher
-import git4idea.changes.GitChangeUtils
-import git4idea.history.GitHistoryUtils
-import git4idea.repo.GitRepositoryManager
 import team.jlm.utils.*
 
 class CommitsAnalyseAction : AnAction() {
