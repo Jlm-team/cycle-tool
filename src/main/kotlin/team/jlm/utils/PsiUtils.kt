@@ -2,9 +2,11 @@ package team.jlm.utils
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectFileIndex
-import com.intellij.psi.PsiClass
-import com.intellij.psi.PsiJavaFile
-import com.intellij.psi.PsiManager
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.*
+import com.intellij.psi.impl.source.resolve.FileContextUtil
+import com.intellij.testFramework.LightVirtualFile
+import com.intellij.util.indexing.IndexingDataKeys
 import java.util.*
 import java.util.stream.Collectors
 
@@ -38,4 +40,24 @@ fun getAllClassesInProject(project: Project): List<PsiClass> {
     return files.stream().flatMap {
         getAllClassesInJavaFile(it).stream()
     }.collect(Collectors.toList())
+}
+
+fun toVirtualFile(file: PsiFile): VirtualFile? {
+    var vfile = file.virtualFile
+    if (vfile == null) {
+        vfile = file.originalFile.virtualFile
+        if (vfile == null) {
+            vfile = file.viewProvider.virtualFile
+        }
+    } else if (vfile is LightVirtualFile) {
+        val containingFile = file.containingFile
+        if (containingFile != null && containingFile !== file) {
+            val originalFile: PsiFile = containingFile.originalFile
+            val owningFile = originalFile.getUserData(FileContextUtil.INJECTED_IN_ELEMENT)
+            if (owningFile != null) {
+                vfile = owningFile.virtualFile
+            }
+        }
+    }
+    return vfile
 }
