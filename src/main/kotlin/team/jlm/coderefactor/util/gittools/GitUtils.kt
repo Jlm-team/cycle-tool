@@ -83,7 +83,7 @@ class GitUtils(rpoDir: String) {
         val olddTree = prepareTreeParser(oldCommitId)
         val newTree = prepareTreeParser(newCommitId)
         val res = git.diff().setNewTree(newTree).setOldTree(olddTree).call()
-        batchDiffBetweenFiles(res, project, threadNum)
+        batchDiffBetweenFiles(res, project, threadNum,newCommitId, oldCommitId)
     }
 
     private fun getFileContent(path: String, tree: RevTree, walk: RevWalk): String {
@@ -95,18 +95,19 @@ class GitUtils(rpoDir: String) {
         return String(bytes)
     }
 
-    private fun getBranchSpecificFileContext(path: String): String {
-        val branchRef = rep.exactRef("/refs/heads/" + rep.branch)
-        val obid = branchRef.objectId
+    private fun getBranchSpecificFileContext(path: String,commitId:String): String {
         val walk = RevWalk(rep)
-        val tree = walk.parseTree(obid)
+        val revCommit = walk.parseCommit(rep.resolve(commitId))
+        val tree = walk.parseTree(revCommit.tree.id)
         return getFileContent(path, tree, walk)
     }
 
 
     private fun getDiffBetweenFiles(
         commitDiff: List<DiffEntry>,
-        project: Project
+        project: Project,
+        newCommitId: ObjectId,
+        oldCommitId: ObjectId
     ): ArrayList<DiffInfo> {
 
         var res = ArrayList<DiffInfo>()
@@ -121,8 +122,8 @@ class GitUtils(rpoDir: String) {
                     continue
                 if (diff.changeType == DiffEntry.ChangeType.ADD || diff.changeType == DiffEntry.ChangeType.RENAME) //添加文件或者重命名，跳过
                     continue
-                val newClassContent = getBranchSpecificFileContext(newfilePath)
-                val oldClassContent = getBranchSpecificFileContext(oldfilePath)
+                val newClassContent = getBranchSpecificFileContext(newfilePath,newCommitId.name)
+                val oldClassContent = getBranchSpecificFileContext(oldfilePath,oldCommitId.name)
                 val newPsiJavaFile = getPsiJavaFile(project, newClassContent)
                 val oldPsiJavaFile = getPsiJavaFile(project, oldClassContent)
                 res = getDiffInfo(newPsiJavaFile, oldPsiJavaFile, newfilePath)
@@ -136,10 +137,12 @@ class GitUtils(rpoDir: String) {
     private fun batchDiffBetweenFiles(
         commitDiff: List<DiffEntry>,
         project: Project,
-        threadNum: Int
+        threadNum: Int,
+        newCommitId: ObjectId,
+        oldCommitId: ObjectId,
     ): ArrayList<DiffInfo> {
         if (commitDiff.size <= threadNum)
-            return getDiffBetweenFiles(commitDiff, project)
+            return getDiffBetweenFiles(commitDiff, project,newCommitId, oldCommitId)
         else {
             val res = ArrayList<DiffInfo>()
             val taskNum: Int = (commitDiff.size / threadNum) + 1
@@ -162,7 +165,7 @@ class GitUtils(rpoDir: String) {
                     Callable<ArrayList<DiffInfo>>(fun(): ArrayList<DiffInfo> {
                         return getDiffBetweenFiles(
                             i,
-                            project
+                            project,newCommitId, oldCommitId
                         )
                     })
                 tasks.add(task)

@@ -42,7 +42,11 @@ fun getDiffInfo(newFile: PsiJavaFile, oldFile: PsiJavaFile, newPath: String): Ar
             val newMethod = ArrayList<PsiMethod>()
             for (m in v) { //若不是，则遍历方法
                 var nextMethodFlag = false
-                for (oldm in getContainsinMap(oldMethods, k)!!) {
+                var findMethod = false
+                val oldMethodsList = getContainsinMap(oldMethods, k)!!
+                val listIndex = oldMethodsList.size
+                for (i in 0..listIndex - 1) {
+                    val oldm = oldMethodsList[i]
                     if (isSameMethods(m, oldm)) //函数名称，参数列表相同
                     {
                         if (isEqualMethods(m, oldm)) //函数MD5摘要相同，未改变 若源经过混淆，无法比较
@@ -50,13 +54,29 @@ fun getDiffInfo(newFile: PsiJavaFile, oldFile: PsiJavaFile, newPath: String): Ar
                             nextMethodFlag = true
                             break
                         } else //到此，说明函数内部改变
-                            newMethod.add(m)
+                        {
+                            for (j in i + 1..listIndex - 1) //继续遍历剩下的元素
+                            {
+                                val oldm_ = oldMethodsList[j]
+                                if (isSameMethods(m, oldm_)) {
+                                    if (isEqualMethods(m, oldm_)) {
+                                        nextMethodFlag = true //如果依然找到了相同的，则说明if语句找到的为同一文件同名函数的不同实现
+                                        break
+                                    }
+                                }
+                            }
+                            if (!nextMethodFlag) {
+                                findMethod = true
+                                newMethod.add(m)
+                            }
+                        }
+
                     }
                 }
                 //未找到，说明新增/修改
                 if (nextMethodFlag)
                     continue
-                else
+                if(!findMethod) //若在旧版本中没有找到
                     newMethod.add(m)
             }
             res.add(DiffInfo(newPath, k.name.toString(), classPackage, newMethod))
@@ -98,19 +118,19 @@ fun isSameMethods(m1: PsiMethod, m2: PsiMethod): Boolean {
     if (m1.name != m2.name) { //函数名不同，不同
         return false
     }
-    if(m1.returnType.toString() !=m2.returnType.toString()) //返回值不同，不同
+    if (m1.returnType.toString() != m2.returnType.toString()) //返回值不同，不同
         return false
 
-    if(m1.parameterList.parameters.isEmpty() && m2.parameterList.parameters.isEmpty())
+    if (m1.parameterList.parameters.isEmpty() && m2.parameterList.parameters.isEmpty())
         return true
 
-    if(m1.modifierList.text == m2.modifierList.text)
+    if (m1.modifierList.text == m2.modifierList.text)
         return true
 
     val parame = m2.parameterList.parameters //参数不同，不同
     for (i in m1.parameterList.parameters) {
-        for(j in parame){
-            if(i.name==j.name && i.type.toString() ==j.type.toString()){
+        for (j in parame) {
+            if (i.name == j.name && i.type.toString() == j.type.toString()) {
                 return true
             }
         }
@@ -128,8 +148,8 @@ fun replaceBlank(str: String): String {
 }
 
 fun isEqualMethods(m1: PsiMethod, m2: PsiMethod): Boolean {
-    if (m1.body==null || m2.body==null) {
-        if (m1.body==null && m2.body==null)
+    if (m1.body == null || m2.body == null) {
+        if (m1.body == null && m2.body == null)
             return true
         return false
     }

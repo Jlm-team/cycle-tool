@@ -7,8 +7,8 @@ import team.jlm.coderefactor.util.gittools.GitUtils
 class GitTestAction: AnAction() {
     override fun actionPerformed(e: AnActionEvent) {
         val project = e.project
-        val git = GitUtils("E:\\code\\Cassandra")
+        val git = GitUtils("E:\\code\\TestJgit")
         val commit = git.getCommits()
-        project?.let { git.getDiffBetweenCommit(commit[1],commit[2], it,4) }
+        project?.let { git.getDiffBetweenCommit(commit[0],commit[1], it,4) }
     }
 }
