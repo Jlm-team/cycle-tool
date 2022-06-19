@@ -1,9 +1,17 @@
 package team.jlm.coderefactor.plugin.action
 
+import com.github.difflib.DiffUtils
+import com.intellij.diff.util.DiffUtil
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.psi.impl.PsiFileFactoryImpl
+import com.intellij.psi.search.searches.ReferenceSearcher
+import com.intellij.psi.search.searches.ReferencesSearch
+import com.intellij.psi.util.CachedValue
 import com.intellij.util.SlowOperations
 import com.intellij.util.ThrowableRunnable
+import org.jetbrains.uast.UElement
+import org.jetbrains.uast.test.env.findUElementByTextFromPsi
 import team.jlm.utils.*
 
 class CommitsAnalyseAction : AnAction() {
@@ -20,19 +28,38 @@ class CommitsAnalyseAction : AnAction() {
         val changes = filterOnlyJavaSrc(repo.diff(commits[1], commits[0]))
         for (change in changes) {
             println(change)
-            val diffs = change.getDiffRequests(project)
-            if (diffs != null) {
-                for (diff in diffs) {
-                    println(diff)
+            val beforeRevision = change.beforeRevision
+            val afterRevision = change.afterRevision
+            if (beforeRevision == null || afterRevision == null) {
+                continue
+            }
+            val beforeContent = beforeRevision.content
+            val afterContent = afterRevision.content
+            if (beforeContent == null || afterContent == null) {
+                return
+            }
+            val results = DiffUtils.diffInline(beforeContent, afterContent).deltas
+            val beforeJavaPsi = getPsiJavaFile(project, beforeContent)
+            val afterJavaPsi = getPsiJavaFile(project, afterContent)
+            for (result in results) {
+                for (beforeEle in result.source.lines) {
+                    val beforePsi = beforeJavaPsi.findElementAt(beforeContent.indexOf(beforeEle.trim()))
+                    println(beforePsi)
                 }
+                for (afterEle in result.target.lines) {
+                    val afterPsi = afterJavaPsi.findElementAt(afterContent.indexOf(afterEle.trim()))
+                    println(afterPsi)
+                }
+                println("${result.source}, ${result.target}")
             }
         }
-        SlowOperations.allowSlowOperations(ThrowableRunnable {
-            for (commit in commits) {
-                println(commit)
-                checkout(repo, commit.id.asString(), null, true, false)
-                showClassesInProject(project, commit.id.asString() + ".png")
-            }
-        }).run { }
+
+//        SlowOperations.allowSlowOperations(ThrowableRunnable {
+//            for (commit in commits) {
+//                println(commit)
+//                checkout(repo, commit.id.asString(), null, true, false)
+//                showClassesInProject(project, commit.id.asString() + ".png")
+//            }
+//        }).run { }
     }
 }

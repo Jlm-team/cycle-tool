@@ -48,8 +48,6 @@ dependencies {
         //这个依赖已经在idea的jbr里面存在了
         exclude("org.slf4j", "slf4j-api")
     }
-    implementation("io.github.java-diff-utils:java-diff-utils:4.11")
-
 //    implementation("org.eclipse.jgit:org.eclipse.jgit:6.1.0.202203080745-r"){
 //        //这个依赖已经在idea的jbr里面存在了
 //        exclude("org.slf4j", "slf4j-api")
