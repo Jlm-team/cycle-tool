@@ -13,34 +13,26 @@ import git4idea.branch.GitBrancher
 import git4idea.changes.GitChangeUtils
 import git4idea.history.GitHistoryUtils
 import git4idea.repo.GitRepositoryManager
-import team.jlm.utils.checkout
-import team.jlm.utils.getDiffRequests
+import team.jlm.utils.*
 
 class CommitsAnalyseAction : AnAction() {
     override fun actionPerformed(e: AnActionEvent) {
-        val project = e.project
-        val grManager = project?.let { GitRepositoryManager.getInstance(it) }
-        val gitRepos = grManager?.repositories ?: return
+        val project = e.project ?: return
+        val gitRepos = project.gitRepositories
         for (repo in gitRepos) {
             println(repo)
         }
         val repo = gitRepos[0]
-        val repoRoot = repo.root
-        val commits = GitHistoryUtils.history(project, repoRoot)
-        commits.sortBy { -it.commitTime }
+        val commits = repo.commits
+        commits.sortedBy { -it.commitTime }
         commits.forEach { println(it) }
-        val changes = GitChangeUtils.getDiff(
-            repo, commits[0].id.asString(), commits[1].id.asString(),
-            false
-        )
-        if (changes != null) {
-            for (change in changes) {
-                println(change)
-                val diffs = change.getDiffRequests(project)
-                if (diffs != null) {
-                    for (diff in diffs) {
-                        println(diff)
-                    }
+        val changes = filterOnlyJavaSrc(repo.diff(commits[1], commits[0]))
+        for (change in changes) {
+            println(change)
+            val diffs = change.getDiffRequests(project)
+            if (diffs != null) {
+                for (diff in diffs) {
+                    println(diff)
                 }
             }
         }
