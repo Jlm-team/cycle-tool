@@ -10,6 +10,7 @@ import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.psi.util.CachedValue
 import com.intellij.util.SlowOperations
 import com.intellij.util.ThrowableRunnable
+import git4idea.GitCommit
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.test.env.findUElementByTextFromPsi
 import team.jlm.utils.*
@@ -22,38 +23,38 @@ class CommitsAnalyseAction : AnAction() {
             println(repo)
         }
         val repo = gitRepos[0]
-        val commits = repo.commits
-        commits.sortedBy { -it.commitTime }
-        commits.forEach { println(it) }
-        val changes = filterOnlyJavaSrc(repo.diff(commits[1], commits[0]))
-        for (change in changes) {
-            println(change)
-            val beforeRevision = change.beforeRevision
-            val afterRevision = change.afterRevision
-            if (beforeRevision == null || afterRevision == null) {
-                continue
-            }
-            val beforeContent = beforeRevision.content
-            val afterContent = afterRevision.content
-            if (beforeContent == null || afterContent == null) {
-                return
-            }
-            val results = DiffUtils.diffInline(beforeContent, afterContent).deltas
-            val beforeJavaPsi = getPsiJavaFile(project, beforeContent)
-            val afterJavaPsi = getPsiJavaFile(project, afterContent)
-            for (result in results) {
-                for (beforeEle in result.source.lines) {
-                    val beforePsi = beforeJavaPsi.findElementAt(beforeContent.indexOf(beforeEle.trim()))
-                    println(beforePsi)
+        SlowOperations.allowSlowOperations(ThrowableRunnable {
+            val commits = repo.commits
+//            commits.forEach { println(it) }
+            val changes = filterOnlyJavaSrc(repo.diff(commits[1], commits[0]))
+            for (change in changes) {
+                println(change)
+                val beforeRevision = change.beforeRevision
+                val afterRevision = change.afterRevision
+                if (beforeRevision == null || afterRevision == null) {
+                    continue
                 }
-                for (afterEle in result.target.lines) {
-                    val afterPsi = afterJavaPsi.findElementAt(afterContent.indexOf(afterEle.trim()))
-                    println(afterPsi)
+                val beforeContent = beforeRevision.content
+                val afterContent = afterRevision.content
+                if (beforeContent == null || afterContent == null) {
+                    return@ThrowableRunnable
                 }
-                println("${result.source}, ${result.target}")
+                val results = DiffUtils.diffInline(beforeContent, afterContent).deltas
+                val beforeJavaPsi = getPsiJavaFile(project, beforeContent)
+                val afterJavaPsi = getPsiJavaFile(project, afterContent)
+                for (result in results) {
+                    for (beforeEle in result.source.lines) {
+                        val beforePsi = beforeJavaPsi.findElementAt(beforeContent.indexOf(beforeEle.trim()))
+                        println(beforePsi)
+                    }
+                    for (afterEle in result.target.lines) {
+                        val afterPsi = afterJavaPsi.findElementAt(afterContent.indexOf(afterEle.trim()))
+                        println(afterPsi)
+                    }
+                    println("${result.source}, ${result.target}")
+                }
             }
-        }
-
+        }).run { }
 //        SlowOperations.allowSlowOperations(ThrowableRunnable {
 //            for (commit in commits) {
 //                println(commit)
