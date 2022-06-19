@@ -1,4 +1,4 @@
-package team.jlm.coderefactor.util.gittools
+package team.jlm.utils.gittools
 
 import com.intellij.openapi.project.Project
 import com.jetbrains.rd.util.Callable
@@ -12,9 +12,9 @@ import org.eclipse.jgit.storage.file.FileRepositoryBuilder
 import org.eclipse.jgit.treewalk.AbstractTreeIterator
 import org.eclipse.jgit.treewalk.CanonicalTreeParser
 import org.eclipse.jgit.treewalk.TreeWalk
-import team.jlm.coderefactor.util.gittools.entity.DiffInfo
-import team.jlm.coderefactor.util.gittools.tools.getDiffInfo
-import team.jlm.coderefactor.util.gittools.tools.getPsiJavaFile
+import team.jlm.utils.gittools.entity.DiffInfo
+import team.jlm.utils.gittools.tools.getDiffInfo
+import team.jlm.utils.gittools.tools.getPsiJavaFile
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.IOException

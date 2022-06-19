@@ -1,4 +1,4 @@
-package team.jlm.coderefactor.util.gittools.tools
+package team.jlm.utils.gittools.tools
 
 import com.intellij.lang.java.JavaLanguage
 import com.intellij.openapi.project.Project
@@ -7,7 +7,7 @@ import com.intellij.psi.PsiJavaFile
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.impl.PsiFileFactoryImpl
 import com.intellij.util.Base64
-import team.jlm.coderefactor.util.gittools.entity.DiffInfo
+import team.jlm.utils.gittools.entity.DiffInfo
 import team.jlm.utils.getAllClassesInJavaFile
 import java.util.regex.Matcher
 import java.util.regex.Pattern

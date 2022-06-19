@@ -1,6 +1,4 @@
-package team.jlm.coderefactor.code.diff
-
-import com.intellij.psi.PsiClass
+package team.jlm.utils.gittools.entity
 
 /**
  * 这个类代表类的变化的细节部分

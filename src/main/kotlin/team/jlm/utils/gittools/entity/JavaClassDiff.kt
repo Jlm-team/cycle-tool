@@ -1,4 +1,4 @@
-package team.jlm.coderefactor.code.diff
+package team.jlm.utils.gittools.entity
 
 class JavaClassDiff(
     val classDiffType: JavaClassDiffType,
