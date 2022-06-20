@@ -3,15 +3,10 @@ package team.jlm.utils.gittools.tools
 
 import com.intellij.psi.PsiMethod
 import com.intellij.util.Base64
-import org.apache.commons.lang.StringUtils
+
 
 fun getMethodDiff(oldMethod: PsiMethod, newMethod: PsiMethod) {
 
-}
-
-fun md5Encoder(str: String): String {
-    val md5str = replaceNote(str)
-    return Base64.encode(md5str.toByteArray())
 }
 
 fun isSameMethods(m1: PsiMethod, m2: PsiMethod): Boolean {
@@ -40,61 +35,6 @@ fun isSameMethods(m1: PsiMethod, m2: PsiMethod): Boolean {
     return false
 }
 
-fun isEqualMethods(m1: PsiMethod, m2: PsiMethod): Boolean {
-    if (m1.body == null || m2.body == null) {
-        if (m1.body == null && m2.body == null)
-            return true
-        return false
-    }
-    if (md5Encoder(m1.body!!.text) == md5Encoder(m2.body!!.text))
-        return true
-    return false
-}
 
-fun splitString(str: String): List<String> {
-    val lines = str.split("\\R")
-    return lines
-}
 
-fun replaceNote(text: String): String {
-    val sb = StringBuilder()
-    val lines = splitString(text)
-    for (line in lines) {
-        if (line.trim().matches(Regex("\\s*"))) {
-            // 空行
-            continue;
-        }
-        if (line.matches(Regex(".*//.*"))) {
-            if (StringUtils.isEmpty(line.substring(0, line.indexOf("//")).trim())) {
-                // 属于直接注释
-                continue;
-            }
-            // 包含双斜杠注释
-            if (line.matches(Regex(".*\".*//(?! ).*"))) {
-                // 反斜杠在字符串里面如: String url = "http://www.baidu.com"
-                sb.append(line).append("\n");
-            } else if (line.indexOf(";") > 0 || line.indexOf("(") > 0 || line.indexOf("{") > 0) {
-                // 内容后面如：int status = 0; // 状态
-                sb.append(line.substring(0, line.indexOf("//"))).append("\n");
-            }
-        } else {
-            // 不包含 双斜杠注释
-            sb.append(line).append("\n");
-        }
-    }
-    val str = sb.toString();
 
-    // 过滤到有提示注释
-    val regex = "/\\*{1,2}[\\s\\S]*?\\*/";
-    val newStr = str.replace(Regex(regex), "")
-    // replaceAll过滤之后会产生空行 -> 在清理一次空行
-    val sb2 = StringBuffer();
-    val lines2 = newStr.split("\\n");
-    for (line in lines2) {
-        if (line.trim().matches(Regex("\\s*"))) {
-            continue;
-        }
-        sb2.append(line).append("\n");
-    }
-    return sb2.toString();
-}

@@ -4,7 +4,6 @@ import com.github.difflib.DiffUtils
 import com.intellij.diff.util.DiffUtil
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.vcs.changes.Change
 import com.intellij.psi.impl.PsiFileFactoryImpl
 import com.intellij.psi.search.searches.ReferenceSearcher
 import com.intellij.psi.search.searches.ReferencesSearch
@@ -30,9 +29,6 @@ class CommitsAnalyseAction : AnAction() {
             val changes = filterOnlyJavaSrc(repo.diff(commits[1], commits[0]))
             for (change in changes) {
                 println(change)
-                if (change.type != Change.Type.MODIFICATION) {
-                    continue
-                }
                 val beforeRevision = change.beforeRevision
                 val afterRevision = change.afterRevision
                 if (beforeRevision == null || afterRevision == null) {
@@ -43,36 +39,29 @@ class CommitsAnalyseAction : AnAction() {
                 if (beforeContent == null || afterContent == null) {
                     return@ThrowableRunnable
                 }
-                val results = DiffUtils.diff(beforeContent.toList(), afterContent.toList()).deltas
+                val results = DiffUtils.diffInline(beforeContent, afterContent).deltas
                 val beforeJavaPsi = getPsiJavaFile(project, beforeContent)
                 val afterJavaPsi = getPsiJavaFile(project, afterContent)
                 for (result in results) {
-                    val beforeEle = String(result.source.lines.toCharArray())
-                    val beforeEleTrim = beforeEle.trim()
-                    if (beforeEleTrim.isNotEmpty()) {
+                    for (beforeEle in result.source.lines) {
+                        val beforeEleTrim = beforeEle.trim()
                         var beforePsi = beforeJavaPsi.findElementAt(beforeContent.indexOf(beforeEleTrim))
-                        if (beforePsi != null) {
-                            while (beforePsi != null && !beforePsi.textMatches(beforeEleTrim)) {
-                                if (beforePsi.textLength > beforeEleTrim.length) {
-                                    break
-                                }
-                                beforePsi = beforePsi.parent
+                        while (beforePsi?.text != beforeEleTrim) {
+                            beforePsi = beforePsi?.parent
+                            if (beforePsi == null || beforePsi.text.length > beforeEleTrim.length) {
+                                break
                             }
-                            println(beforePsi)
                         }
+                        println(beforePsi)
                     }
-                    val afterEle = String(result.target.lines.toCharArray())
-                    val afterEleTrim = afterEle.trim()
-                    if (afterEleTrim.isNotEmpty()) {
+                    for (afterEle in result.target.lines) {
+                        val afterEleTrim = afterEle.trim()
                         var afterPsi = afterJavaPsi.findElementAt(afterContent.indexOf(afterEleTrim))
-                        if (afterPsi != null) {
-                            while (afterPsi != null && !afterPsi.textMatches(afterEleTrim)) {
-                                if (afterPsi.textLength > afterEleTrim.length) {
-                                    break
-                                }
-                                afterPsi = afterPsi.parent
+                        while (afterPsi?.text != afterEleTrim) {
+                            afterPsi = afterPsi?.parent
+                            if (afterPsi == null || afterPsi.text.length > afterEleTrim.length) {
+                                break
                             }
-                            println(afterPsi)
                         }
                         println(afterPsi)
                     }
