@@ -44,11 +44,25 @@ class CommitsAnalyseAction : AnAction() {
                 val afterJavaPsi = getPsiJavaFile(project, afterContent)
                 for (result in results) {
                     for (beforeEle in result.source.lines) {
-                        val beforePsi = beforeJavaPsi.findElementAt(beforeContent.indexOf(beforeEle.trim()))
+                        val beforeEleTrim = beforeEle.trim()
+                        var beforePsi = beforeJavaPsi.findElementAt(beforeContent.indexOf(beforeEleTrim))
+                        while (beforePsi?.text != beforeEleTrim) {
+                            beforePsi = beforePsi?.parent
+                            if (beforePsi == null || beforePsi.text.length > beforeEleTrim.length) {
+                                break
+                            }
+                        }
                         println(beforePsi)
                     }
                     for (afterEle in result.target.lines) {
-                        val afterPsi = afterJavaPsi.findElementAt(afterContent.indexOf(afterEle.trim()))
+                        val afterEleTrim = afterEle.trim()
+                        var afterPsi = afterJavaPsi.findElementAt(afterContent.indexOf(afterEleTrim))
+                        while (afterPsi?.text != afterEleTrim) {
+                            afterPsi = afterPsi?.parent
+                            if (afterPsi == null || afterPsi.text.length > afterEleTrim.length) {
+                                break
+                            }
+                        }
                         println(afterPsi)
                     }
                     println("${result.source}, ${result.target}")
