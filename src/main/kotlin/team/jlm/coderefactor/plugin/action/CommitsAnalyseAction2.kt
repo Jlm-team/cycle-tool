@@ -29,13 +29,13 @@ class CommitsAnalyseAction2 : AnAction() {
                     val beforeDependencyList = getDependencyList(content.first, project)
                     val afterDependencyList = getDependencyList(content.second, project)
                     println("$beforeDependencyList, $afterDependencyList")
-                    val diffs = analyseJavaFile(project, change)
-                    for (diff in diffs) {
-                        println(diff.classDiffType)
-                        for (inner in diff.classSingleDiff) {
-                            println("\t${inner.classSingleDiffType}")
-                        }
-                    }
+//                    val diffs = analyseJavaFile(project, change)
+//                    for (diff in diffs) {
+//                        println(diff.classDiffType)
+//                        for (inner in diff.classSingleDiff) {
+//                            println("\t${inner.classSingleDiffType}")
+//                        }
+//                    }
 //                    analyseChange(change, project)
                 }
             }

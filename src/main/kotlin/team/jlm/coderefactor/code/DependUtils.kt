@@ -8,6 +8,9 @@ import com.intellij.psi.PsiJavaFile
 import com.intellij.psi.impl.source.tree.JavaElementType.*
 import com.intellij.psi.impl.source.tree.TreeElement
 import com.intellij.psi.util.elementType
+import org.jetbrains.uast.findAnyContaining
+import org.jetbrains.uast.findContaining
+import org.jetbrains.uast.test.env.findUElementByTextFromPsi
 import team.jlm.utils.getPsiJavaFile
 
 fun getDependencyList(fileString: String, project: Project): List<Dependency> {
@@ -30,7 +33,7 @@ fun getDependencyList(fileString: String, project: Project): List<Dependency> {
 val PsiElement.dependencyType: DependencyType
     get() {
         if (this !is TreeElement) return DependencyType.DEPEND
-        println("$this, ${this.treeParent.elementType}, ${this.treeParent.treeParent.elementType}")
+//        println("$this, ${this.treeParent.elementType}, ${this.treeParent.treeParent.elementType}")
         val dependencyType = when (this.elementType) {
             JAVA_CODE_REFERENCE ->
                 when (this.treeParent.elementType) {
