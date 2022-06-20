@@ -22,8 +22,9 @@ fun analyseMethodsModified(
                 for (i in 0 until diff.source.size()) {
                     val innerDiff = JavaClassInnerDiff(
                         METHOD_MODIFY,
-                        diff.source.lines[i].text,
-                        diff.target.lines[i].text,
+//                        diff.source.lines[i].text,
+                        "",""
+//                        diff.target.lines[i].text,
                     )
                     result.add(innerDiff)
                 }
@@ -32,7 +33,8 @@ fun analyseMethodsModified(
                 for (i in 0 until diff.source.size()) {
                     val innerDiff = JavaClassInnerDiff(
                         METHOD_DELETE,
-                        diff.source.lines[i].text,
+//                        diff.source.lines[i].text,
+                        "",
                         "",
                     )
                     result.add(innerDiff)
@@ -42,8 +44,8 @@ fun analyseMethodsModified(
                 for (i in 0 until diff.target.size()) {
                     val innerDiff = JavaClassInnerDiff(
                         METHOD_ADD,
-                        "",
-                        diff.target.lines[i].text,
+                        "",""
+//                        diff.target.lines[i].text,
                     )
                     result.add(innerDiff)
                 }

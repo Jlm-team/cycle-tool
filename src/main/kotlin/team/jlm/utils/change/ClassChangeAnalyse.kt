@@ -1,6 +1,7 @@
 package team.jlm.utils.change
 
 import com.github.difflib.DiffUtils
+import com.intellij.openapi.application.Application
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiClass
 import team.jlm.utils.gittools.entity.JavaClassDiff
@@ -17,6 +18,7 @@ internal fun analyseClassesModified(
         val afterMethods = afterClass.methods
         val methodsDiffResult = analyseMethodsModified(project, beforeMethods.toList(), afterMethods.toList())
         thisClassDiff.classSingleDiff.addAll(methodsDiffResult)
+        result.add(thisClassDiff)
     }
     return result
 }

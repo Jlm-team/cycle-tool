@@ -3,6 +3,7 @@ package team.jlm.coderefactor.plugin.action
 import com.github.difflib.DiffUtils
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vcs.changes.Change
 import team.jlm.utils.*
@@ -16,17 +17,22 @@ class CommitsAnalyseAction2 : AnAction() {
             println(repo)
         }
         val repo = gitRepos[0]
-        computeWithModalProgress(project, "Analysing...") {
+        runReadAction {
             val commits = repo.commits
 //            commits.forEach { println(it) }
             for (i in 0 until commits.size - 1) {
                 val changes = filterOnlyJavaSrc(repo.diff(commits[i + 1], commits[i]))
                 for (change in changes) {
                     println(change)
-                    analyseJavaFile(project, change)
+                    val diffs = analyseJavaFile(project, change)
+                    for (diff in diffs) {
+                        println(diff.classDiffType)
+                        for (inner in diff.classSingleDiff) {
+                            println("\t${inner.classSingleDiffType}")
+                        }
+                    }
 //                    analyseChange(change, project)
                 }
-                it?.fraction = 1.0 * i / commits.size
             }
         }.run { }
     }
