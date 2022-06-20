@@ -4,7 +4,6 @@ import com.intellij.packageDependencies.ForwardDependenciesBuilder
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiJavaFile
-import com.intellij.psi.impl.source.tree.JavaElementType.*
 import com.intellij.psi.impl.source.tree.TreeElement
 import com.intellij.psi.util.elementType
 import com.xyzboom.algorithm.graph.GEdge
@@ -95,12 +94,7 @@ open class IG(private var classes: List<PsiClass>) : Graph<String>() {
             run {
                 if (selfElement is PsiClass) {
                     println(dependElement.elementType)
-                    var dependency: DependencyType = DependencyType.DEPEND
-                    if (dependElement is TreeElement) {
-                        dependency = dependElement.dependType
-                    } else {
-                        println("not java code")
-                    }
+                    val dependency = dependElement.dependencyType
                     selfElement.name?.let { it1 -> clazz.name?.let { addEdge(it, it1, dependency) } }
                 }
             }

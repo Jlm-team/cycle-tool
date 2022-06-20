@@ -14,6 +14,9 @@ import git4idea.repo.GitRepository
 import git4idea.repo.GitRepositoryManager
 import java.util.*
 
+val Change.content: Pair<String, String>
+    get() = Pair(beforeRevision?.content ?: "", afterRevision?.content ?: "")
+
 val Project.gitRepositories: List<GitRepository>
     get() {
         val gitManager = GitRepositoryManager.getInstance(this)
@@ -36,7 +39,7 @@ val GitRepository.commits: List<TimedVcsCommit>
 fun GitRepository.diff(
     old: TimedVcsCommit,
     new: TimedVcsCommit,
-    detectRenames: Boolean = false
+    detectRenames: Boolean = false,
 ): MutableCollection<Change> {
     return GitChangeUtils.getDiff(
         this, old.id.asString(), new.id.asString(), detectRenames
@@ -57,7 +60,7 @@ fun checkout(
     reference: String,
     newBranch: String?,
     force: Boolean,
-    detach: Boolean
+    detach: Boolean,
 ): Boolean {
     val result = Git.getInstance().checkout(repository, reference, newBranch, force, detach)
     if (result.success()) {

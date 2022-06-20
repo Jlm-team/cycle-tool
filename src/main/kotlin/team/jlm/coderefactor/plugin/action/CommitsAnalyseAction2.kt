@@ -6,6 +6,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vcs.changes.Change
+import team.jlm.coderefactor.code.getDependencyList
 import team.jlm.utils.*
 import team.jlm.utils.change.analyseJavaFile
 
@@ -24,6 +25,10 @@ class CommitsAnalyseAction2 : AnAction() {
                 val changes = filterOnlyJavaSrc(repo.diff(commits[i + 1], commits[i]))
                 for (change in changes) {
                     println(change)
+                    val content = change.content
+                    val beforeDependencyList = getDependencyList(content.first, project)
+                    val afterDependencyList = getDependencyList(content.second, project)
+                    println("$beforeDependencyList, $afterDependencyList")
                     val diffs = analyseJavaFile(project, change)
                     for (diff in diffs) {
                         println(diff.classDiffType)
