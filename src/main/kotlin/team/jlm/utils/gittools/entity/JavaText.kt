@@ -9,7 +9,8 @@ import team.jlm.utils.getPsiJavaFile
 
 class JavaText(
     val Lines: ArrayList<String>,
-    val project: Project
+    val project: Project,
+    //val fileName:String,
 ) {
     private var filePsi: PsiJavaFile
     private val text: String
@@ -45,8 +46,8 @@ class JavaText(
         return this.filePsi.findElementAt(text.indexOf(str))
     }
 
-    fun sloveElement(line:String,type: DeltaType){
-        this.elements.add(TextElement(getRowElement(line)!!,type))
+    fun sloveElement(line: String, type: DeltaType) {
+        this.elements.add(TextElement(getRowElement(line)!!, type))
     }
 
 }
