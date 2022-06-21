@@ -1,7 +1,10 @@
 package team.jlm.coderefactor.code
 
 import com.intellij.openapi.project.Project
+import com.intellij.packageDependencies.DependenciesBuilder
+import com.intellij.packageDependencies.DependencyVisitorFactory
 import com.intellij.packageDependencies.ForwardDependenciesBuilder
+import com.intellij.packageDependencies.JavaDependencyVisitorFactory
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiJavaFile
@@ -16,17 +19,32 @@ import team.jlm.utils.getPsiJavaFile
 fun getDependencyList(fileString: String, project: Project): List<Dependency> {
     val psiClass = getPsiJavaFile(project, fileString)
     val result = ArrayList<Dependency>(psiClass.textLength / 380)//估算类中大约有多少个依赖项
-    ForwardDependenciesBuilder.analyzeFileDependencies(psiClass.containingFile as PsiJavaFile)
-    { dependElement: PsiElement, selfElement: PsiElement ->
-        run {
-            if (selfElement !is PsiClass) return@run
-            val dependencyType = dependElement.dependencyType
-            val dependencyRange = dependElement.textRange
-            val dependencyStr: String =
-                fileString.subSequence(dependencyRange.startOffset, dependencyRange.endOffset).toString()
-            result.add(Dependency(dependencyType, dependencyStr))
-        }
-    }
+    psiClass.containingFile.accept(
+        DependVisitor(
+            { dependElementInThisFile: PsiElement, dependElement: PsiElement ->
+                run {
+                    if (dependElement !is PsiClass) return@run
+//                    val dependencyType = dependElementInThisFile.dependencyType
+                    val dependencyType = DependencyType.DEPEND
+                    val dependencyRange = dependElementInThisFile.textRange
+                    val dependencyStr: String =
+                        fileString.subSequence(dependencyRange.startOffset, dependencyRange.endOffset).toString()
+                    result.add(Dependency(dependencyType, dependencyStr, dependElement.qualifiedName))
+                }
+            }, DependencyVisitorFactory.VisitorOptions.fromSettings(project)
+        )
+    )
+//    ForwardDependenciesBuilder.analyzeFileDependencies(psiClass.containingFile as PsiJavaFile)
+//    { dependElementInThisFile: PsiElement, dependElement: PsiElement ->
+//        run {
+//            if (dependElement !is PsiClass) return@run
+//            val dependencyType = dependElementInThisFile.dependencyType
+//            val dependencyRange = dependElementInThisFile.textRange
+//            val dependencyStr: String =
+//                fileString.subSequence(dependencyRange.startOffset, dependencyRange.endOffset).toString()
+//            result.add(Dependency(dependencyType, dependencyStr, dependElement.qualifiedName))
+//        }
+//    }
     return result
 }
 

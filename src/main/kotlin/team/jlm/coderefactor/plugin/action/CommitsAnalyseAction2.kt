@@ -6,9 +6,12 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vcs.changes.Change
-import team.jlm.coderefactor.code.getDependencyList
+import com.intellij.psi.PsiField
+import com.intellij.psi.PsiStatement
+import com.intellij.psi.util.PsiUtil
+import com.intellij.psi.util.nextLeaf
+import team.jlm.coderefactor.code.PsiGroup
 import team.jlm.utils.*
-import team.jlm.utils.change.analyseJavaFile
 
 class CommitsAnalyseAction2 : AnAction() {
     override fun actionPerformed(e: AnActionEvent) {
@@ -21,14 +24,18 @@ class CommitsAnalyseAction2 : AnAction() {
         runReadAction {
             val commits = repo.commits
 //            commits.forEach { println(it) }
-            for (i in 0 until commits.size - 1) {
+            for (i in 0 until 1) {
+                println("${commits[i + 1]}, ${commits[i]}")
                 val changes = filterOnlyJavaSrc(repo.diff(commits[i + 1], commits[i]))
                 for (change in changes) {
-                    println(change)
-                    val content = change.content
-                    val beforeDependencyList = getDependencyList(content.first, project)
-                    val afterDependencyList = getDependencyList(content.second, project)
-                    println("$beforeDependencyList, $afterDependencyList")
+//                    println(change)
+//                    val content = change.content
+//                    val beforeDependencyList = getDependencyList(content.first, project)
+//                    val afterDependencyList = getDependencyList(content.second, project)
+//                    println("$beforeDependencyList, $afterDependencyList")
+//                    val diffResults = DiffUtils.diff(beforeDependencyList, afterDependencyList).deltas
+//                    println(diffResults)
+                    analyseChange(change, project)
 //                    val diffs = analyseJavaFile(project, change)
 //                    for (diff in diffs) {
 //                        println(diff.classDiffType)
@@ -73,13 +80,18 @@ fun analyseChange(change: Change, project: Project) {
         if (beforeEleTrim.isNotEmpty()) {
             var beforePsi = beforeJavaPsi.findElementAt(beforeContent.indexOf(beforeEleTrim))
             if (beforePsi != null) {
-                while (beforePsi != null && !beforePsi.textMatches(beforeEleTrim)) {
-                    if (beforePsi.textLength > beforeEleTrim.length) {
+                val group = PsiGroup(beforePsi)
+                while (beforePsi != null && !group.textMatches(beforeEleTrim)) {
+                    if (group.textLength > beforeEleTrim.length) {
                         break
                     }
-                    beforePsi = beforePsi.parent
+                    beforePsi = group.nextLeaf
+                    beforePsi?.let { group.add(beforePsi) }
                 }
-                println(beforePsi)
+//                println(beforePsi)
+                val dependencies = group.dependencyList
+                dependencies.forEach { print("$it, ") }
+                println(dependencies.size)
             }
         }
         val afterEle = String(result.target.lines.toCharArray())
@@ -87,16 +99,20 @@ fun analyseChange(change: Change, project: Project) {
         if (afterEleTrim.isNotEmpty()) {
             var afterPsi = afterJavaPsi.findElementAt(afterContent.indexOf(afterEleTrim))
             if (afterPsi != null) {
-                while (afterPsi != null && !afterPsi.textMatches(afterEleTrim)) {
-                    if (afterPsi.textLength > afterEleTrim.length) {
+                val group = PsiGroup(afterPsi)
+                while (afterPsi != null && !group.textMatches(afterEleTrim)) {
+                    if (group.textLength > afterEleTrim.length) {
                         break
                     }
-                    afterPsi = afterPsi.parent
+                    afterPsi = group.nextLeaf
+                    afterPsi?.let { group.add(afterPsi) }
                 }
-                println(afterPsi)
+//                println(beforePsi)
+                val dependencies = group.dependencyList
+                dependencies.forEach { print("$it, ") }
+                println(dependencies.size)
             }
-            println(afterPsi)
         }
-        println("${result.source}, ${result.target}")
+//        println("${result.source}, ${result.target}")
     }
 }
