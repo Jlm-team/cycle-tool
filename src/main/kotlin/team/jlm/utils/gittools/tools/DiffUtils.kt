@@ -35,22 +35,14 @@ fun getDiffBetweenCommit(
             for (diffPart in diffBetweenText.deltas) {
                 when (diffPart.type!!) {
                     CHANGE -> {
-                        for (d in diffPart.source.lines) {
-                            filteredOldText.sloveElement(d, CHANGE)
-                        }
-                        for (t in diffPart.target.lines) {
-                            filteredNewText.sloveElement(t, CHANGE)
-                        }
+                        filteredOldText.sloveElement(getTextBlock(diffPart.source.lines),CHANGE)
+                        filteredNewText.sloveElement(getTextBlock(diffPart.target.lines),CHANGE)
                     }
                     DELETE -> {
-                        for (d in diffPart.source.lines) {
-                            filteredOldText.sloveElement(d, DELETE)
-                        }
+                        filteredOldText.sloveElement(getTextBlock(diffPart.source.lines),DELETE)
                     }
                     INSERT -> {
-                        for (t in diffPart.target.lines) {
-                            filteredNewText.sloveElement(t, INSERT)
-                        }
+                        filteredNewText.sloveElement(getTextBlock(diffPart.target.lines),INSERT)
                     }
                     EQUAL -> {
                         continue

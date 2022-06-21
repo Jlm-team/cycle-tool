@@ -24,7 +24,7 @@ class JavaText(
 
 
     data class TextElement(
-        val element: PsiElement,
+        val element: String,
         val type: DeltaType
     )
 
@@ -47,7 +47,7 @@ class JavaText(
     }
 
     fun sloveElement(line: String, type: DeltaType) {
-        this.elements.add(TextElement(getRowElement(line)!!, type))
+        this.elements.add(TextElement(line, type))
     }
 
 }

@@ -63,3 +63,15 @@ fun replaceNote(text: String?): ArrayList<String> {
     }
     return res
 }
+
+fun getTextBlock(lines:MutableList<String>):String{
+    val sb = StringBuilder()
+    val len = lines.size
+    for(i in 0..len-1){
+        if(i==len-1)
+            sb.append(lines[i])
+        else
+            sb.append(lines[i]).append("\n")
+    }
+    return sb.toString()
+}
