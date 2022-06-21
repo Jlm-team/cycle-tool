@@ -1,4 +1,4 @@
-package team.jlm.utils.gittools.entity
+package team.jlm.utils.modify
 
 /**
  * 这个类代表类的变化的细节部分
@@ -6,7 +6,7 @@ package team.jlm.utils.gittools.entity
 class JavaClassInnerDiff(
     val classSingleDiffType: JavaClassInnerDiffType,
     val before: String,
-    val after: String
+    val afte: String
 ) {
 
 }

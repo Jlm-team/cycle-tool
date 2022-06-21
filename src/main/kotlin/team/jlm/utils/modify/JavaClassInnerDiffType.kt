@@ -1,4 +1,4 @@
-package team.jlm.utils.gittools.entity
+package team.jlm.utils.modify
 
 enum class JavaClassInnerDiffType {
     METHOD_MODIFY,

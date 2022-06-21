@@ -40,16 +40,6 @@
                 description="分析Git提交">
             <add-to-group group-id="CodeMenu" anchor="last"/>
         </action>
-        <action id="team.jlm.coderefactor.plugin.action.CommitsAnalyseAction2"
-                class="team.jlm.coderefactor.plugin.action.CommitsAnalyseAction2" text="分析Git提交2"
-                description="分析Git提交2">
-            <add-to-group group-id="CodeMenu" anchor="last"/>
-        </action>
-        <action id="team.jlm.coderefactor.plugin.action.GitTestAction"
-                class="team.jlm.coderefactor.plugin.action.GitTestAction" text="测试Git"
-                description="测试Git">
-            <add-to-group group-id="CodeMenu" anchor="last"/>
-        </action>
     </actions>
     <extensions defaultExtensionNs="com.intellij">
         <toolWindow id="image" secondary="true" icon="AllIcons.General.Modified" anchor="right"

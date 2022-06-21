@@ -6,7 +6,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vcs.changes.Change
 import team.jlm.utils.getAllClassesInJavaFile
 import team.jlm.utils.getPsiJavaFile
-import team.jlm.utils.gittools.entity.JavaClassDiff
+import team.jlm.utils.modify.JavaClassDiff
 import java.lang.Integer.max
 
 fun analyseJavaFile(project: Project, change: Change): List<JavaClassDiff> {

@@ -1,4 +1,4 @@
-package team.jlm.utils.gittools.entity
+package team.jlm.utils.modify
 
 class JavaClassDiff() {
     constructor(classDiffType: JavaClassDiffType, classSingleDiff: java.util.ArrayList<JavaClassInnerDiff>) : this() {
