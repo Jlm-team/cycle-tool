@@ -4,7 +4,7 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.runReadAction
 import team.jlm.utils.*
-import team.jlm.utils.change.analyseChange
+import team.jlm.utils.change.analyseChanges
 
 class CommitsAnalyseAction : AnAction() {
     override fun actionPerformed(e: AnActionEvent) {
@@ -19,7 +19,7 @@ class CommitsAnalyseAction : AnAction() {
             for (i in 0 until 1) {
                 println("${commits[i + 1]}, ${commits[i]}")
                 val changes = filterOnlyJavaSrc(repo.diff(commits[i + 1], commits[i]))
-                analyseChange(changes, project)
+                analyseChanges(changes, project)
             }
         }.run { }
     }

@@ -11,7 +11,7 @@ import team.jlm.utils.getPsiJavaFile
  * @param changes MutableCollection<Change>
  * @param project Project
  */
-fun analyseChange(changes: MutableCollection<Change>, project: Project) {
+fun analyseChanges(changes: MutableCollection<Change>, project: Project) {
 
     for (change in changes) {
         if (change.type != Change.Type.MODIFICATION) {
@@ -27,60 +27,52 @@ fun analyseChange(changes: MutableCollection<Change>, project: Project) {
         if (beforeContent == null || afterContent == null) {
             continue
         }
-        getChange(beforeContent, afterContent, project)
-
+        analyseChange(beforeContent, afterContent, project)
     }
 }
 
-/**
- *
- * @param beforeContent String
- * @param afterContent String
- * @param project Project
- * @return Pair<PsiGroup, PsiGroup>
- */
-fun getChange(beforeContent: String, afterContent: String, project: Project): Pair<PsiGroup, PsiGroup> {
-
-    val results = DiffUtils.diff(beforeContent.toList(), afterContent.toList()).deltas
-    val beforeJavaPsi = getPsiJavaFile(project, beforeContent)
-    val afterJavaPsi = getPsiJavaFile(project, afterContent)
-    var beforeGroup = PsiGroup()
-    var afterGroup = PsiGroup()
-
-    for (result in results) {
-        val beforeEle = String(result.source.lines.toCharArray())
-        val beforeEleTrim = beforeEle.trim()
-        if (beforeEleTrim.isNotEmpty()) {
-            var beforePsi = beforeJavaPsi.findElementAt(beforeContent.indexOf(beforeEleTrim))
-            if (beforePsi != null) {
-                beforeGroup = PsiGroup(beforePsi)
-                while (beforePsi != null && !beforeGroup.textMatches(beforeEleTrim)) {
-                    if (beforeGroup.textLength > beforeEleTrim.length) {
-                        break
-                    }
-                    beforePsi = beforeGroup.nextLeaf
-                    beforePsi?.let { beforeGroup.add(beforePsi) }
-                }
-            }
-        }
-        val afterEle = String(result.target.lines.toCharArray())
-        val afterEleTrim = afterEle.trim()
-        if (afterEleTrim.isNotEmpty()) {
-            var afterPsi = afterJavaPsi.findElementAt(afterContent.indexOf(afterEleTrim))
-            if (afterPsi != null) {
-                afterGroup = PsiGroup(afterPsi)
-                while (afterPsi != null && !afterGroup.textMatches(afterEleTrim)) {
-                    if (afterGroup.textLength > afterEleTrim.length) {
-                        break
-                    }
-                    afterPsi = afterGroup.nextLeaf
-                    afterPsi?.let { afterGroup.add(afterPsi) }
-                }
-
-            }
-        }
-
+fun analyseChange(
+    beforeContent: String, afterContent: String, project: Project,
+): Pair<ArrayList<String>, ArrayList<String>> {
+    val diffResults = DiffUtils.diff(beforeContent.toList(), afterContent.toList()).deltas
+    val beforeList = ArrayList<String>()
+    val afterList = ArrayList<String>()
+    for (diffResult in diffResults) {
+        beforeList.addAll(
+            dependListFromChangeInfo(String(diffResult.source.lines.toCharArray()), project, beforeContent)
+        )
+        afterList.addAll(
+            dependListFromChangeInfo(String(diffResult.target.lines.toCharArray()), project, beforeContent)
+        )
     }
-    return Pair(beforeGroup, afterGroup)
+    return Pair(beforeList, afterList)
+}
+
+/**
+ * 从文本差异中分析到的依赖项
+ */
+private fun dependListFromChangeInfo(
+    changeStr: String,
+    project: Project,
+    content: String,
+): ArrayList<String> {
+    val result = ArrayList<String>()
+    val psiJavaFile = getPsiJavaFile(project, content)
+    val eleTrim = changeStr.trim()
+    if (eleTrim.isNotEmpty()) {
+        var psiElement = psiJavaFile.findElementAt(content.indexOf(eleTrim))
+        if (psiElement != null) {
+            val psiGroup = PsiGroup(psiElement)
+            while (psiElement != null && !psiGroup.textMatches(eleTrim)) {
+                if (psiGroup.textLength > eleTrim.length) {
+                    break
+                }
+                psiElement = psiGroup.nextLeaf
+                psiElement?.let { psiGroup.add(psiElement) }
+                result.addAll(psiGroup.dependencyList)
+            }
+        }
+    }
+    return result
 }
 
