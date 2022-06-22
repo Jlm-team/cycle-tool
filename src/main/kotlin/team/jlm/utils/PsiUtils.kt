@@ -28,12 +28,14 @@ fun getAllJavaFilesInProject(project: Project): List<PsiJavaFile> {
     return files
 }
 
-fun getAllClassesInJavaFile(file: PsiJavaFile): List<PsiClass> {
+fun getAllClassesInJavaFile(file: PsiJavaFile, containsInnerClasses: Boolean = true): List<PsiClass> {
     val allClasses = ArrayList<PsiClass>()
     val psiClasses: Array<PsiClass> = file.classes
     for (psiClass in psiClasses) {
         allClasses.add(psiClass)
-        allClasses.addAll(listOf(*psiClass.innerClasses))
+        if (containsInnerClasses) {
+            allClasses.addAll(listOf(*psiClass.innerClasses))
+        }
     }
     return allClasses
 }

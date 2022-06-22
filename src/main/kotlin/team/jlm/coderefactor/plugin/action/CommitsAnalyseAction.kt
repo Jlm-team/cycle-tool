@@ -19,7 +19,8 @@ class CommitsAnalyseAction : AnAction() {
             for (i in 0 until 1) {
                 println("${commits[i + 1]}, ${commits[i]}")
                 val changes = filterOnlyJavaSrc(repo.diff(commits[i + 1], commits[i]))
-                analyseChanges(changes, project)
+                val dg = analyseChanges(changes, project)
+                println(dg)
             }
         }.run { }
     }

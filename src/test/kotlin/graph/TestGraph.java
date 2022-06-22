@@ -44,5 +44,10 @@ public class TestGraph {
             System.out.println(stringGNode.getData());
             return null;
         });
+        graph.plusAssign(graph);
+        graph.dfsVisit(stringGNode -> {
+            System.out.println(stringGNode.getData());
+            return null;
+        });
     }
 }

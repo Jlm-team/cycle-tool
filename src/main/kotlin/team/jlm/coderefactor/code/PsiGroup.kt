@@ -1,55 +1,49 @@
 package team.jlm.coderefactor.code
 
+import com.intellij.openapi.util.TextRange
 import com.intellij.packageDependencies.DependencyVisitorFactory
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
-import com.intellij.psi.util.PsiUtil
 import com.intellij.psi.util.nextLeaf
+import com.xyzboom.algorithm.graph.Graph
 
-class PsiGroup() {
+class PsiGroup(
+    private val shouldBeRange: TextRange,
+    private val classNameAndTextRange: Map<String, TextRange>,
+) {
     private val elements: ArrayList<PsiElement> = ArrayList(4)
 
-    constructor(element: PsiElement) : this() {
+    constructor(
+        element: PsiElement, range: TextRange,
+        classNameAndTextRange: Map<String, TextRange>,
+    ) : this(range, classNameAndTextRange) {
         elements.add(element)
-    }
-
-    val nextLeaf: PsiElement?
-        get() =
-            elements[elements.size - 1].nextLeaf()
-
-    constructor(elements: List<PsiElement>) : this() {
-        this.elements.addAll(elements)
-    }
-
-    val textLength: Int
-        get() = elements.sumOf { it.textLength }
-
-    private fun switchToParent() {
-        val nextSibling = elements[elements.size - 1].nextSibling
-        if (nextSibling == null) {
-            elements[elements.size - 1].parent?.let {
-                elements.clear()
-                elements.add(it)
+        var now = element
+        while (now.textRange.endOffset < range.endOffset) {
+            val tryGetNextLeaf = now.nextLeaf()
+            if (tryGetNextLeaf != null) {
+                now = tryGetNextLeaf
+                elements.add(now)
             }
         }
     }
 
-    fun textMatches(text: CharSequence): Boolean {
-        if (text.length != textLength) return false
-        var index: Int = 0
-        for (element in elements) {
-            val subText = text.subSequence(index, index + element.textLength)
-            if (!element.textMatches(subText)) return false
-            index += element.textLength
-        }
-        return true
-    }
-
     fun add(element: PsiElement) = elements.add(element)
 
-    val dependencyList: ArrayList<String>
+    private fun getRangeInClassName(range: TextRange): String {
+        classNameAndTextRange.forEach { (className, textRange) ->
+            run {
+                if (textRange.contains(range)) {
+                    return className
+                }
+            }
+        }
+        return "team.jlm.UnknownClass"
+    }
+
+    val dependencyGraph: Graph<String>
         get() {
-            val result = ArrayList<String>(4)
+            val result = Graph<String>()
             var commonParentPsi: PsiElement
             if (elements.size > 1) {
                 commonParentPsi = elements[0]
@@ -61,10 +55,14 @@ class PsiGroup() {
             }
             commonParentPsi.accept(
                 DependVisitor(
-                    { dependElementInThisFile: PsiElement, dependElement: PsiElement ->
+                    { placeElement: PsiElement, dependElement: PsiElement ->
                         run {
                             if (dependElement !is PsiClass) return@run
-                            dependElement.qualifiedName?.let { result.add(it) }
+                            //提取的公共父节点中可能包含不在改变文本中的节点，因此用文本偏移进行排除
+                            if (!shouldBeRange.contains(placeElement.textRange)) return@run
+                            dependElement.qualifiedName?.let {
+                                result.addEdge(getRangeInClassName(placeElement.textRange), it)
+                            }
                         }
                     }, DependencyVisitorFactory.VisitorOptions.INCLUDE_IMPORTS
                 )

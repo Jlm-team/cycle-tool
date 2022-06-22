@@ -30,6 +30,10 @@ class GEdge<T>(val nodeFrom: GNode<T>, val nodeTo: GNode<T>, val length: Int = 1
         result = 31 * result + length
         return result
     }
+
+    override fun toString(): String {
+        return "GEdge(nodeFrom=$nodeFrom, nodeTo=$nodeTo, length=$length)"
+    }
 }
 
 /**
@@ -52,6 +56,10 @@ class GNode<T>(val data: T) {
     override fun hashCode(): Int {
         return data?.hashCode() ?: 0
     }
+
+    override fun toString(): String {
+        return "GNode(data=$data)"
+    }
 }
 
 /**
@@ -70,6 +78,9 @@ open class Graph<T> {
      */
     open fun addNode(data: T): GNode<T> {
         val result = GNode(data)
+        if (adjList.contains(result)) {
+            return result
+        }
         adjList[result] = EdgePair(ArrayList(), ArrayList())
         return result
     }
@@ -276,4 +287,34 @@ open class Graph<T> {
         m.add(start)
         dfsVisit(q, visitor, m)
     }
+
+    operator fun plusAssign(other: Graph<T>) {
+        other.adjList.forEach { (gNode, edgePair) ->
+            run {
+                if (!adjList.containsKey(gNode)) {
+                    adjList[gNode] = edgePair
+                } else {
+                    adjList[gNode]!!.edgeIn.addAll(edgePair.edgeIn)
+                    adjList[gNode]!!.edgeOut.addAll(edgePair.edgeOut)
+                }
+            }
+        }
+    }
+
+    override fun toString(): String {
+        val result = StringBuilder()
+        adjList.forEach { (gNode, edgePair) ->
+            run {
+                if (edgePair.edgeOut.isEmpty()) return@run
+                result.append(gNode.data.toString())
+                result.append(": \n\t")
+                edgePair.edgeOut.forEach {
+                    result.append("${it.nodeTo.data.toString()}, ")
+                }
+                result.append("\n")
+            }
+        }
+        return result.toString()
+    }
+
 }
