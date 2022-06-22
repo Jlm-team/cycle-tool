@@ -5,14 +5,16 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vcs.changes.Change
 import team.jlm.coderefactor.code.PsiGroup
 import team.jlm.utils.getPsiJavaFile
+import team.jlm.utils.modify.JavaDependenceChange
 
 /**
  * @description 获取文件变化
  * @param changes MutableCollection<Change>
  * @param project Project
  */
-fun analyseChanges(changes: MutableCollection<Change>, project: Project) {
+fun analyseChanges(changes: MutableCollection<Change>, project: Project):ArrayList<JavaDependenceChange> {
 
+    val res = ArrayList<JavaDependenceChange>(64)
     for (change in changes) {
         if (change.type != Change.Type.MODIFICATION) {
             continue
@@ -27,13 +29,19 @@ fun analyseChanges(changes: MutableCollection<Change>, project: Project) {
         if (beforeContent == null || afterContent == null) {
             continue
         }
-        analyseChange(beforeContent, afterContent, project)
+        val path = change.virtualFile!!.path.replace(project.basePath!!,"")
+        val analyseRes = analyseChange(beforeContent, afterContent, project, path)
+        if(analyseRes == null)
+            continue
+        else
+            res.add(analyseRes)
     }
+    return res
 }
 
 fun analyseChange(
-    beforeContent: String, afterContent: String, project: Project,
-): Pair<ArrayList<String>, ArrayList<String>> {
+    beforeContent: String, afterContent: String, project: Project,path:String
+): JavaDependenceChange?{
     val diffResults = DiffUtils.diff(beforeContent.toList(), afterContent.toList()).deltas
     val beforeList = ArrayList<String>()
     val afterList = ArrayList<String>()
@@ -45,7 +53,9 @@ fun analyseChange(
             dependListFromChangeInfo(String(diffResult.target.lines.toCharArray()), project, beforeContent)
         )
     }
-    return Pair(beforeList, afterList)
+    if(beforeList.isEmpty() and afterList.isEmpty())
+        return null
+    return JavaDependenceChange(beforeList,afterList,path)
 }
 
 /**
@@ -55,8 +65,8 @@ private fun dependListFromChangeInfo(
     changeStr: String,
     project: Project,
     content: String,
-): ArrayList<String> {
-    val result = ArrayList<String>()
+): HashSet<String> {
+    val result = HashSet<String>()
     val psiJavaFile = getPsiJavaFile(project, content)
     val eleTrim = changeStr.trim()
     if (eleTrim.isNotEmpty()) {
