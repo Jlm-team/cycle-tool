@@ -61,7 +61,9 @@ class PsiGroup(
                             //提取的公共父节点中可能包含不在改变文本中的节点，因此用文本偏移进行排除
                             if (!shouldBeRange.contains(placeElement.textRange)) return@run
                             dependElement.qualifiedName?.let {
-                                result.addEdge(getRangeInClassName(placeElement.textRange), it)
+                                val selfClassName = getRangeInClassName(placeElement.textRange)
+                                println("add dependency: $selfClassName --> $it")
+                                result.addEdge(selfClassName, it)
                             }
                         }
                     }, DependencyVisitorFactory.VisitorOptions.INCLUDE_IMPORTS

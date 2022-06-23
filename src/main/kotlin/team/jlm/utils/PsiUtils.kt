@@ -72,3 +72,27 @@ fun toVirtualFile(file: PsiFile): VirtualFile? {
     }
     return vfile
 }
+
+private val psiMap = HashMap<String, HashMap<String, PsiJavaFile>>()
+fun createOrGetJavaPsiFile(
+    project: Project, text: String, commitId: String, path: String,
+): PsiJavaFile {
+    var commitMap = psiMap[commitId]
+    if (commitMap == null) {
+        commitMap = HashMap()
+        psiMap[commitId] = commitMap
+    }
+    var wanted = commitMap[path]
+    if (wanted != null) {
+        return wanted
+    }
+    wanted = getPsiJavaFile(project, text)
+    commitMap[path] = wanted
+    return wanted
+}
+
+fun clearPsiMapAccordingToCommit(commitId: String) {
+    psiMap.remove(commitId)
+}
+
+

@@ -16,11 +16,14 @@ class CommitsAnalyseAction : AnAction() {
         val repo = gitRepos[0]
         runReadAction {
             val commits = repo.commits
-            for (i in 0 until 1) {
+            for (i in 0 until commits.size - 1) {
                 println("${commits[i + 1]}, ${commits[i]}")
                 val changes = filterOnlyJavaSrc(repo.diff(commits[i + 1], commits[i]))
-                val dg = analyseChanges(changes, project)
+                val dg = analyseChanges(
+                    changes, project, commits[i + 1].id.asString(), commits[i].id.asString()
+                )
                 println(dg)
+                clearPsiMapAccordingToCommit(commits[i].id.asString())
             }
         }.run { }
     }
