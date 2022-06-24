@@ -41,7 +41,7 @@
             <add-to-group group-id="CodeMenu" anchor="last"/>
         </action>
         <action id="UML.Show"
-                class="team.jlm.coderefactor.plugin.action.ShowUML" text="UML测试"
+                class="team.jlm.coderefactor.plugin.action.TestUML" text="UML测试"
                 description="UML Test">
             <add-to-group group-id="CodeMenu" anchor="last"/>
         </action>

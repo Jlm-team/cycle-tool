@@ -12,13 +12,10 @@ import javax.swing.JPanel
 
 class UMLDialog(project: Project?) : DialogWrapper(project) {
 
-    var umlGraph: UMLGraphXAdapter? = null
-
     init {
         title = "依赖图"
         init()
     }
-
 
     override fun createCenterPanel(): JComponent {
         if (umlGraph == null) {
@@ -28,10 +25,16 @@ class UMLDialog(project: Project?) : DialogWrapper(project) {
             label.icon = AllIcons.General.Error
             dialogPanel.add(label, BorderLayout.CENTER)
             return dialogPanel
-        }
-        else{
+        } else {
+//            umlGraph!!.layout(this.size.width,this.size.height)
+
             return umlGraph!!
         }
     }
+
+    companion object{
+        var umlGraph: UMLGraphXAdapter? = null
+    }
+
 
 }
