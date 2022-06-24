@@ -2,7 +2,7 @@ plugins {
     id("java")
     id("org.jetbrains.kotlin.jvm") version "1.7.0"
     id("org.jetbrains.intellij") version "1.6.0"
-    id ("org.jetbrains.kotlin.plugin.noarg") version "1.7.0"
+    id("org.jetbrains.kotlin.plugin.noarg") version "1.7.0"
 }
 
 group = "team.jlm"
@@ -12,20 +12,20 @@ repositories {
     mavenLocal()
     mavenCentral()
     maven {
-        setUrl ("https://plugins.gradle.org/m2/")
+        setUrl("https://plugins.gradle.org/m2/")
     }
     maven {
-        setUrl ("https://maven.aliyun.com/nexus/content/repositories/google")
+        setUrl("https://maven.aliyun.com/nexus/content/repositories/google")
     }
     maven {
-        setUrl ("https://maven.aliyun.com/nexus/content/groups/public")
+        setUrl("https://maven.aliyun.com/nexus/content/groups/public")
     }
     maven {
         setUrl("https://maven.aliyun.com/nexus/content/repositories/jcenter")
     }
 
 }
-noArg{
+noArg {
     annotation("team.jlm.annotation.NoArg")
     invokeInitializers = true
 }
@@ -49,6 +49,13 @@ dependencies {
         exclude("org.slf4j", "slf4j-api")
     }
     implementation("com.google.code.gson:gson:2.9.0")
+    // https://mvnrepository.com/artifact/org.jgrapht/jgrapht-core
+    implementation("org.jgrapht:jgrapht-core:1.5.1")
+// https://mvnrepository.com/artifact/org.jgrapht/jgrapht-ext
+    implementation("org.jgrapht:jgrapht-ext:1.5.1")
+// https://mvnrepository.com/artifact/com.github.vlsi.mxgraph/jgraphx
+    implementation("com.github.vlsi.mxgraph:jgraphx:4.2.2")
+
 //    implementation("org.eclipse.jgit:org.eclipse.jgit:6.1.0.202203080745-r"){
 //        //这个依赖已经在idea的jbr里面存在了
 //        exclude("org.slf4j", "slf4j-api")
