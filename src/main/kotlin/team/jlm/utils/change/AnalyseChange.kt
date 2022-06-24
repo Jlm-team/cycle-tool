@@ -6,9 +6,14 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.vcs.changes.Change
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.util.SlowOperations
+import com.intellij.util.ThrowableRunnable
 import com.xyzboom.algorithm.graph.Graph
+import com.xyzboom.algorithm.graph.saveAsDependencyGraph
+import kotlinx.serialization.json.Json
 import team.jlm.coderefactor.code.PsiGroup
 import team.jlm.utils.createOrGetJavaPsiFile
+import team.jlm.utils.file.getFileSeparator
 import team.jlm.utils.getAllClassesInJavaFile
 import team.jlm.utils.getPsiJavaFile
 import team.jlm.utils.modify.JavaDependenceChange
@@ -24,28 +29,46 @@ fun analyseChanges(
 ): Graph<String> {
     val res = Graph<String>()
     for (change in changes) {
-        if (change.type != Change.Type.MODIFICATION) {
-            continue
-        }
-        val beforeRevision = change.beforeRevision
-        val afterRevision = change.afterRevision
-        if (beforeRevision == null || afterRevision == null) {
-            continue
-        }
-        val beforeContent = beforeRevision.content
-        val afterContent = afterRevision.content
-        if (beforeContent == null || afterContent == null) {
-            continue
-        }
-        val path = change.virtualFile?.path ?: "unknown path"
-        val analyseRes = analyseChange(
-            beforeContent, afterContent, project, beforeCommitId, afterCommitId, path
+        SlowOperations.allowSlowOperations(
+            ThrowableRunnable {
+                prepareAnalyseChange(change, project, beforeCommitId, afterCommitId)
+//                println("end of change $change")
+            }
         )
-        if (analyseRes.adjList.isNotEmpty()) {
-            res += analyseRes
-        }
     }
     return res
+}
+
+private fun prepareAnalyseChange(
+    change: Change,
+    project: Project,
+    beforeCommitId: String,
+    afterCommitId: String,
+) {
+    if (change.type != Change.Type.MODIFICATION) {
+        return
+    }
+    val beforeRevision = change.beforeRevision
+    val afterRevision = change.afterRevision
+    if (beforeRevision == null || afterRevision == null) {
+        return
+    }
+    val beforeContent = beforeRevision.content
+    val afterContent = afterRevision.content
+    if (beforeContent == null || afterContent == null) {
+        return
+    }
+    val path = change.virtualFile?.path ?: "unknown path"
+    val analyseRes = analyseChange(
+        beforeContent, afterContent, project, beforeCommitId, afterCommitId, path
+    )
+    if (analyseRes.adjList.isNotEmpty()) {
+//            res += analyseRes
+        analyseRes.saveAsDependencyGraph(
+            "${project.name}${getFileSeparator()}" +
+                    "${beforeCommitId.subSequence(0, 6)}__${afterCommitId.subSequence(0, 6)}"
+        )
+    }
 }
 
 fun analyseChange(

@@ -1,5 +1,8 @@
 package com.xyzboom.algorithm.graph
 
+import com.google.gson.Gson
+import team.jlm.utils.file.getSavePath
+import java.io.File
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.math.min
@@ -50,6 +53,38 @@ class Tarjan<T>(private var graph: Graph<T>) {
     }
 }
 
-fun <T : Graph<*>> T.save(path: String, fileName: String) {
+fun Graph<String>.saveAsDependencyGraph(pathSuffix: String) {
+    for ((node, edgePair) in adjList) {
+        val saveFile = File(getSavePath(node.data, pathSuffix))
+        val saveParent = saveFile.parentFile
+        if (!saveParent.exists()) {
+            saveParent.mkdirs()
+        }
+        if (!saveFile.exists()) {
+            saveFile.createNewFile()
+        }
+        val str = saveFile.readText()
+        var edgePairInFile = Gson().fromJson(str, edgePair.javaClass)
+        if (edgePairInFile != null) {
+            edgePairInFile += edgePair
+        } else {
+            edgePairInFile = edgePair
+        }
+        saveFile.outputStream().use{
+            it.write(Gson().toJson(edgePairInFile).toByteArray())
+        }
+    }
+}
 
+private operator fun <T> Graph.EdgePair<T>.plusAssign(other: Graph.EdgePair<T>) {
+    other.edgeOut.forEach {
+        if (!edgeOut.contains(it)){
+            edgeOut.add(it)
+        }
+    }
+    other.edgeIn.forEach {
+        if (!edgeIn.contains(it)){
+            edgeIn.add(it)
+        }
+    }
 }
