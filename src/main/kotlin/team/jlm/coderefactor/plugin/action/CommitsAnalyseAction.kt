@@ -22,7 +22,7 @@ class CommitsAnalyseAction : AnAction() {
                 val dg = analyseChanges(
                     changes, project, commits[i + 1].id.asString(), commits[i].id.asString()
                 )
-                println(dg)
+                print(dg)
                 clearPsiMapAccordingToCommit(commits[i].id.asString())
             }
         }.run { }
