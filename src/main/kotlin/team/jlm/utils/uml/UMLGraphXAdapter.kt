@@ -2,50 +2,59 @@ package team.jlm.utils.uml
 
 import com.mxgraph.layout.mxCircleLayout
 import com.mxgraph.model.mxCell
-import com.mxgraph.swing.handler.mxKeyboardHandler
-import com.mxgraph.swing.handler.mxRubberband
 import com.mxgraph.swing.mxGraphComponent
 import com.mxgraph.swing.mxGraphOutline
 import com.mxgraph.util.mxConstants
+import com.mxgraph.view.mxGraph
 import org.jgrapht.ext.JGraphXAdapter
 import org.jgrapht.graph.AbstractBaseGraph
 import org.jgrapht.graph.DefaultEdge
 import org.jgrapht.graph.DefaultListenableGraph
-import java.awt.BorderLayout
+import java.awt.Color
 import java.awt.Dimension
 import java.awt.Toolkit
-import java.awt.event.MouseAdapter
-import java.awt.event.MouseEvent
-import java.awt.event.MouseWheelEvent
-import java.awt.event.MouseWheelListener
 import javax.swing.JPanel
 
 
 class UMLGraphXAdapter() : JPanel() {
 
-    lateinit var jgxAdapter: JGraphXAdapter<String, DefaultEdge>
+    lateinit var jgxAdapter: mxGraph
     lateinit var graph: AbstractBaseGraph<String, DefaultEdge>
     lateinit var graphComponent: mxGraphComponent
     lateinit var graphOutline: mxGraphOutline
 
 
-    fun init() {
+    fun init(isUnderDarcula: Boolean) {
         val xgrapgh = DefaultListenableGraph(graph)
         jgxAdapter = JGraphXAdapter(xgrapgh)
         jgxAdapter.gridSize = 25
         graphComponent = mxGraphComponent(jgxAdapter)
         graphOutline = mxGraphOutline(graphComponent)
 
-
-
-        reSizeCell(25.0,50.0)
         val edgeStyle = jgxAdapter.stylesheet.styles["defaultEdge"]
         val vertexStyle = jgxAdapter.stylesheet.styles["defaultVertex"]
-        edgeStyle!!.put(mxConstants.STYLE_STROKECOLOR,"#2f65ca")
-        edgeStyle.put(mxConstants.STYLE_FONTCOLOR,"#ffffff")
-        vertexStyle!!.put(mxConstants.STYLE_FONTCOLOR,"#ffffff")
-        vertexStyle.put(mxConstants.STYLE_FILLCOLOR,"#4c5052")
-        vertexStyle.put(mxConstants.STYLE_STROKECOLOR,"#ababab")
+        if (isUnderDarcula) {
+            graphComponent.gridColor = Color(171, 171, 171)
+            edgeStyle!!.put(mxConstants.STYLE_STROKECOLOR, "#2f65ca")
+            edgeStyle.put(mxConstants.STYLE_FONTCOLOR, "#ffffff")
+            edgeStyle.put(mxConstants.STYLE_MOVABLE, 0)
+            vertexStyle!!.put(mxConstants.STYLE_FONTCOLOR, "#ffffff")
+            vertexStyle.put(mxConstants.STYLE_FILLCOLOR, "#4c5052")
+            vertexStyle.put(mxConstants.STYLE_STROKECOLOR, "#ababab")
+            vertexStyle.put(mxConstants.STYLE_FONTSTYLE, 1)
+        } else {
+            graphComponent.gridColor = Color(230, 230, 230)
+            vertexStyle!!.put(mxConstants.STYLE_FILLCOLOR, "#c9c9c9")
+            vertexStyle.put(mxConstants.STYLE_FONTCOLOR, "#3c3f41")
+            vertexStyle.put(mxConstants.STYLE_STROKECOLOR, "#acacac")
+            vertexStyle.put(mxConstants.STYLE_FONTSTYLE, 1)
+            edgeStyle!!.put(mxConstants.STYLE_MOVABLE, 0)
+            edgeStyle.put(mxConstants.STYLE_FONTCOLOR, "#3c3f41")
+            edgeStyle.put(mxConstants.STYLE_STROKECOLOR, "#479345")
+        }
+
+
+        reSizeCell(25.0, 50.0)
 
 
         val screen = Toolkit.getDefaultToolkit().screenSize
@@ -57,10 +66,7 @@ class UMLGraphXAdapter() : JPanel() {
         graphComponent.isGridVisible = true
         graphComponent.gridStyle = 2
         graphComponent.isAutoExtend = true
-        graphComponent.graph.isCellsMovable = true
-        graphComponent.graph.isCellsLocked = false
         graphComponent.graph.isAutoSizeCells = true
-        graphComponent.isConnectable = false
         graphComponent.graph.isAllowDanglingEdges = false
         val layout = mxCircleLayout(jgxAdapter, 300.0)
 //        val radius = 300
@@ -69,7 +75,7 @@ class UMLGraphXAdapter() : JPanel() {
 //        layout.radius = radius.toDouble()
 //        layout.isMoveCircle = true
         layout.execute(jgxAdapter.defaultParent)
-        add(graphComponent, BorderLayout.CENTER)
+        add(graphComponent)
         preferredSize = DEFAULT_SIZE
         size = DEFAULT_SIZE
 
@@ -92,16 +98,6 @@ class UMLGraphXAdapter() : JPanel() {
             }
         }
     }
-//    fun graphStye(isDarcula :Boolean){
-//        val style =jgxAdapter.stylesheet
-//        val edgeStyle = style.defaultEdgeStyle
-//        val vertexStyle = style.defaultVertexStyle
-//        if(isDarcula){
-//
-//        }
-//        else{
-//
-//        }
-//    }
+
 
 }

@@ -34,11 +34,12 @@ class TestUML : AnAction() {
 
         val umlAdapter = UMLGraphXAdapter()
         umlAdapter.graph = buildGraph(graph, myGraphType.DirectedMultigraph)
-        umlAdapter.init()
-        val editorWindow = e.getData(EditorWindow.DATA_KEY)
-        StartupUiUtil.isUnderDarcula()
+        umlAdapter.init(StartupUiUtil.isUnderDarcula())
+        showDialog(graph,myGraphType.DirectedMultigraph,project!!)
+//        val editorWindow = e.getData(EditorWindow.DATA_KEY)
 
-        editorWindow!!.manager.addTopComponent(editorWindow.editors[0].editors[0], umlAdapter)
+//
+//        editorWindow!!.manager.addTopComponent(editorWindow.editors[0].editors[0], umlAdapter)
 
     }
 
