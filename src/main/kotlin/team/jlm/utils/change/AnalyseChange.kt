@@ -2,6 +2,7 @@ package team.jlm.utils.change
 
 import com.github.difflib.DiffUtils
 import com.github.difflib.patch.Chunk
+import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.vcs.changes.Change
@@ -17,6 +18,7 @@ import team.jlm.utils.file.getFileSeparator
 import team.jlm.utils.getAllClassesInJavaFile
 import team.jlm.utils.getPsiJavaFile
 import team.jlm.utils.modify.JavaDependenceChange
+import java.util.concurrent.CompletableFuture
 
 /**
  * @description 获取文件变化
@@ -28,14 +30,24 @@ fun analyseChanges(
     beforeCommitId: String, afterCommitId: String,
 ): Graph<String> {
     val res = Graph<String>()
-    for (change in changes) {
-        SlowOperations.allowSlowOperations(
-            ThrowableRunnable {
-                prepareAnalyseChange(change, project, beforeCommitId, afterCommitId)
-//                println("end of change $change")
+    val futures = arrayOfNulls<CompletableFuture<*>>(changes.size)
+    for ((index, change) in changes.withIndex()) {
+        val task: () -> Unit =
+            {
+                runReadAction {
+                    prepareAnalyseChange(change, project, beforeCommitId, afterCommitId)
+//                    println("end of change $change")
+                }
             }
-        )
+
+//        SlowOperations.allowSlowOperations(
+//            ThrowableRunnable {
+        futures[index] = CompletableFuture.runAsync(task)
+
+//            }
+//        )
     }
+    CompletableFuture.allOf(*futures)
     return res
 }
 

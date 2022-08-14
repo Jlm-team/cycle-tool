@@ -25,7 +25,7 @@ val Project.gitRepositories: List<GitRepository>
 
 @Suppress("UnstableApiUsage")
 @get:kotlin.jvm.Throws(VcsException::class)
-val GitRepository.commits: List<TimedVcsCommit>
+val GitRepository.timedVcsCommits: List<TimedVcsCommit>
     get() {
         val commits: MutableList<TimedVcsCommit> = ArrayList(1024)
         GitHistoryUtils.loadTimedCommits(
@@ -35,6 +35,14 @@ val GitRepository.commits: List<TimedVcsCommit>
         return commits
     }
 
+val GitRepository.commits: MutableList<GitCommit>
+    get() {
+        return GitHistoryUtils.history(
+            project, root,
+            "--no-merges",//跳过合并
+            "--pretty",//简化输出
+        )
+    }
 
 fun GitRepository.diff(
     old: TimedVcsCommit,

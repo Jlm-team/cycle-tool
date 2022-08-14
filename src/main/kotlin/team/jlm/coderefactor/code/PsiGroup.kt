@@ -62,7 +62,7 @@ class PsiGroup(
                             if (!shouldBeRange.contains(placeElement.textRange)) return@run
                             dependElement.qualifiedName?.let {
                                 val selfClassName = getRangeInClassName(placeElement.textRange)
-                                println("add dependency: $selfClassName --> $it")
+//                                println("add dependency: $selfClassName --> $it")
                                 result.addEdge(selfClassName, it)
                             }
                         }
