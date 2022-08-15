@@ -43,7 +43,7 @@ class CommitsAnalyseAction : AnAction() {
                         )
                     )
                     val dg = analyseChanges(
-                        changes, project, afterCommitId, beforeCommitId
+                        changes, e, afterCommitId, beforeCommitId
                     )
                     println(dg)
                     clearPsiMapAccordingToCommit(beforeCommitId)

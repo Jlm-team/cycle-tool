@@ -2,22 +2,17 @@ package team.jlm.utils.change
 
 import com.github.difflib.DiffUtils
 import com.github.difflib.patch.Chunk
+import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.vcs.changes.Change
-import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.util.SlowOperations
-import com.intellij.util.ThrowableRunnable
 import com.xyzboom.algorithm.graph.Graph
 import com.xyzboom.algorithm.graph.saveAsDependencyGraph
-import kotlinx.serialization.json.Json
 import team.jlm.coderefactor.code.PsiGroup
 import team.jlm.utils.createOrGetJavaPsiFile
 import team.jlm.utils.file.getFileSeparator
 import team.jlm.utils.getAllClassesInJavaFile
-import team.jlm.utils.getPsiJavaFile
-import team.jlm.utils.modify.JavaDependenceChange
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -26,7 +21,7 @@ import java.util.concurrent.CompletableFuture
  * @param project Project
  */
 fun analyseChanges(
-    changes: MutableCollection<Change>, project: Project,
+    changes: MutableCollection<Change>, event: AnActionEvent,
     beforeCommitId: String, afterCommitId: String,
 ): Graph<String> {
     val res = Graph<String>()
@@ -35,7 +30,7 @@ fun analyseChanges(
         val task: () -> Unit =
             {
                 runReadAction {
-                    prepareAnalyseChange(change, project, beforeCommitId, afterCommitId)
+                    prepareAnalyseChange(change, event, beforeCommitId, afterCommitId)
 //                    println("end of change $change")
                 }
             }
@@ -53,10 +48,11 @@ fun analyseChanges(
 
 private fun prepareAnalyseChange(
     change: Change,
-    project: Project,
+    event: AnActionEvent,
     beforeCommitId: String,
     afterCommitId: String,
 ) {
+    val project = event.project ?: return
     if (change.type != Change.Type.MODIFICATION) {
         return
     }
@@ -71,16 +67,21 @@ private fun prepareAnalyseChange(
         return
     }
     val path = change.virtualFile?.path ?: "unknown path"
-    val analyseRes = analyseChange(
-        beforeContent, afterContent, project, beforeCommitId, afterCommitId, path
-    )
-    if (analyseRes.adjList.isNotEmpty()) {
-//            res += analyseRes
-        analyseRes.saveAsDependencyGraph(
-            "${project.name}${getFileSeparator()}" +
-                    "${beforeCommitId.subSequence(0, 6)}__${afterCommitId.subSequence(0, 6)}"
+    val analyseRes = project.let {
+        analyseChange(
+            beforeContent, afterContent, it, beforeCommitId, afterCommitId, path
         )
     }
+    if (analyseRes.adjList.isNotEmpty()) {
+//            res += analyseRes
+            project.basePath?.let {
+                analyseRes.saveAsDependencyGraph(
+                    "${project.name}${getFileSeparator()}" +
+                            "${beforeCommitId.subSequence(0, 6)}__${afterCommitId.subSequence(0, 6)}",
+                    project.basePath!!,event
+                )
+            }
+        }
 }
 
 fun analyseChange(

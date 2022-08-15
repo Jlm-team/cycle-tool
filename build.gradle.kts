@@ -15,6 +15,9 @@ repositories {
         setUrl("https://plugins.gradle.org/m2/")
     }
     maven {
+        setUrl("https://maven.pkg.jetbrains.space/public/p/kotlinx-html/maven")
+    }
+    maven {
         setUrl("https://maven.aliyun.com/nexus/content/repositories/google")
     }
     maven {
@@ -49,18 +52,13 @@ dependencies {
         exclude("org.slf4j", "slf4j-api")
     }
     implementation("com.google.code.gson:gson:2.9.0")
-    // https://mvnrepository.com/artifact/org.jgrapht/jgrapht-core
-    implementation("org.jgrapht:jgrapht-core:1.5.1")
-// https://mvnrepository.com/artifact/org.jgrapht/jgrapht-ext
-    implementation("org.jgrapht:jgrapht-ext:1.5.1")
-// https://mvnrepository.com/artifact/com.github.vlsi.mxgraph/jgraphx
-    implementation("com.github.vlsi.mxgraph:jgraphx:4.2.2")
 
 //    implementation("org.eclipse.jgit:org.eclipse.jgit:6.1.0.202203080745-r"){
 //        //这个依赖已经在idea的jbr里面存在了
 //        exclude("org.slf4j", "slf4j-api")
 //    }
 //    implementation("com.github.adedayo.intellij.sdk:git4idea:142.1")
+    implementation(kotlin("script-runtime"))
 
 }
 
