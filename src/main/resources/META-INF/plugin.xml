@@ -40,11 +40,6 @@
                 description="Analyse git commits">
             <add-to-group group-id="CodeMenu" anchor="last"/>
         </action>
-        <action id="UML.Show"
-                class="team.jlm.coderefactor.plugin.action.TestUML" text="UML测试"
-                description="UML Test">
-            <add-to-group group-id="CodeMenu" anchor="last"/>
-        </action>
 
     </actions>
     <extensions defaultExtensionNs="com.intellij">
