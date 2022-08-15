@@ -70,7 +70,7 @@ fun Graph<String>.saveAsDependencyGraph(pathSuffix: String) {
         } else {
             edgePairInFile = edgePair
         }
-        saveFile.outputStream().use{
+        saveFile.outputStream().use {
             it.write(Gson().toJson(edgePairInFile).toByteArray())
         }
     }
@@ -78,12 +78,12 @@ fun Graph<String>.saveAsDependencyGraph(pathSuffix: String) {
 
 private operator fun <T> Graph.EdgePair<T>.plusAssign(other: Graph.EdgePair<T>) {
     other.edgeOut.forEach {
-        if (!edgeOut.contains(it)){
+        if (!edgeOut.contains(it)) {
             edgeOut.add(it)
         }
     }
     other.edgeIn.forEach {
-        if (!edgeIn.contains(it)){
+        if (!edgeIn.contains(it)) {
             edgeIn.add(it)
         }
     }

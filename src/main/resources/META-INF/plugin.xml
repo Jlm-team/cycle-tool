@@ -32,12 +32,12 @@
     </extensions>
     <actions>
         <action id="team.jlm.coderefactor.plugin.action.ShowClassesAction" class="team.jlm.coderefactor.plugin.action.ShowClassesAction" text="查看所有类"
-                description="查看所有类">
+                description="Show all java class">
             <add-to-group group-id="CodeMenu" anchor="last"/>
         </action>
         <action id="team.jlm.coderefactor.plugin.action.CommitsAnalyseAction"
                 class="team.jlm.coderefactor.plugin.action.CommitsAnalyseAction" text="分析Git提交"
-                description="分析Git提交">
+                description="Analyse git commits">
             <add-to-group group-id="CodeMenu" anchor="last"/>
         </action>
         <action id="UML.Show"
@@ -50,5 +50,6 @@
     <extensions defaultExtensionNs="com.intellij">
         <toolWindow id="image" secondary="true" icon="AllIcons.General.Modified" anchor="right"
                     factoryClass="team.jlm.coderefactor.plugin.ImageWindowFactory"/>
+        <projectService serviceImplementation="team.jlm.coderefactor.plugin.service.AnalyseCacheService"/>
     </extensions>
 </idea-plugin>

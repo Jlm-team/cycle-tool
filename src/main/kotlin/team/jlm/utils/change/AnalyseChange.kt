@@ -1,53 +1,126 @@
 package team.jlm.utils.change
 
 import com.github.difflib.DiffUtils
+import com.github.difflib.patch.AbstractDelta
 import com.github.difflib.patch.Chunk
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.vcs.changes.Change
-import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.util.SlowOperations
-import com.intellij.util.ThrowableRunnable
+import com.intellij.psi.PsiJavaFile
+import com.intellij.refactoring.suggested.endOffset
+import com.intellij.refactoring.suggested.startOffset
 import com.xyzboom.algorithm.graph.Graph
 import com.xyzboom.algorithm.graph.saveAsDependencyGraph
-import kotlinx.serialization.json.Json
+import kotlinx.coroutines.runBlocking
 import team.jlm.coderefactor.code.PsiGroup
 import team.jlm.utils.createOrGetJavaPsiFile
 import team.jlm.utils.file.getFileSeparator
 import team.jlm.utils.getAllClassesInJavaFile
-import team.jlm.utils.getPsiJavaFile
-import team.jlm.utils.modify.JavaDependenceChange
+import team.jlm.utils.psi.PsiCompareHelper
+import team.jlm.utils.psi.createPsiHelpersFromFile
 import java.util.concurrent.CompletableFuture
+import kotlin.concurrent.thread
 
 /**
  * @description 获取文件变化
  * @param changes MutableCollection<Change>
  * @param project Project
  */
-fun analyseChanges(
+fun analyseChangesCompletableFuture(
     changes: MutableCollection<Change>, project: Project,
     beforeCommitId: String, afterCommitId: String,
 ): Graph<String> {
     val res = Graph<String>()
-    val futures = arrayOfNulls<CompletableFuture<*>>(changes.size)
-    for ((index, change) in changes.withIndex()) {
+    val threadNum = 16
+    if (changes.size < threadNum)
+        return analyseChanges(changes, project, beforeCommitId, afterCommitId)
+    val futures = arrayOfNulls<CompletableFuture<*>>(threadNum)
+    val changeList = ArrayList(changes)
+    val size = changes.size
+    val chunkSize = size / threadNum
+    var nowFinished = 0f
+    for (i in 0 until threadNum) {
         val task: () -> Unit =
             {
                 runReadAction {
-                    prepareAnalyseChange(change, project, beforeCommitId, afterCommitId)
-//                    println("end of change $change")
+                    for (index in 0 until chunkSize) {
+                        val change = changeList[index + i * chunkSize];
+                        prepareAnalyseChange(change, project, beforeCommitId, afterCommitId)
+                        nowFinished++
+                    }
                 }
             }
 
 //        SlowOperations.allowSlowOperations(
 //            ThrowableRunnable {
-        futures[index] = CompletableFuture.runAsync(task)
+        futures[i] = CompletableFuture.runAsync(task)
 
 //            }
 //        )
     }
-    CompletableFuture.allOf(*futures)
+    thread {
+        while (true) {
+            println(nowFinished / size)
+            Thread.sleep(3500)
+            if (nowFinished / size > 0.9) {
+                break
+            }
+        }
+    }
+    CompletableFuture.allOf(*futures).get()
+    return res
+}
+
+fun analyseChanges(
+    changes: MutableCollection<Change>, project: Project,
+    beforeCommitId: String, afterCommitId: String,
+): Graph<String> {
+    val res = Graph<String>()
+    val size = changes.size
+    for ((index, change) in changes.withIndex()) {
+        prepareAnalyseChange(change, project, beforeCommitId, afterCommitId)
+        println(index * 1f / size)
+//        if (index * 1f / size > 0.1) {
+//            break
+//        }
+    }
+    return res
+}
+
+/**
+ * @description 获取文件变化
+ * @param changes MutableCollection<Change>
+ * @param project Project
+ */
+fun analyseChangesCoroutine(
+    changes: MutableCollection<Change>, project: Project,
+    beforeCommitId: String, afterCommitId: String,
+): Graph<String> {
+    val res = Graph<String>()
+    val size = changes.size
+    var nowFinished = 0f
+    thread {
+        while (true) {
+            println(nowFinished / size)
+            Thread.sleep(3500)
+            if (nowFinished >= size) {
+                break
+            }
+        }
+    }
+    runBlocking {
+        for ((index, change) in changes.withIndex()) {
+            val task: suspend () -> Unit =
+                {
+                    prepareAnalyseChange(change, project, beforeCommitId, afterCommitId)
+                    nowFinished++
+                }
+
+            task()
+        }
+    }
+
     return res
 }
 
@@ -71,10 +144,18 @@ private fun prepareAnalyseChange(
         return
     }
     val path = change.virtualFile?.path ?: "unknown path"
-    val analyseRes = analyseChange(
-        beforeContent, afterContent, project, beforeCommitId, afterCommitId, path
-    )
+    val beforePsiFile = createOrGetJavaPsiFile(project, beforeContent, beforeCommitId, path)
+    val beforePsiList = createPsiHelpersFromFile(beforePsiFile)
+    val afterPsiFile = createOrGetJavaPsiFile(project, afterContent, afterCommitId, path)
+    val afterPsiList = createPsiHelpersFromFile(afterPsiFile)
+//    val strDiffResults = strDiff(beforeContent, afterContent)
+    val psiDiffResults = psiListDiff(beforePsiList, afterPsiList)
+//    val analyseRes = analyseChange(
+//        beforeContent, afterContent, project, beforeCommitId, afterCommitId, path
+//    )
+    val analyseRes = analyseChangeFromPsiDiff(psiDiffResults, beforePsiFile, afterPsiFile)
     if (analyseRes.adjList.isNotEmpty()) {
+//        print(analyseRes)
 //            res += analyseRes
         analyseRes.saveAsDependencyGraph(
             "${project.name}${getFileSeparator()}" +
@@ -82,6 +163,42 @@ private fun prepareAnalyseChange(
         )
     }
 }
+
+private fun psiListDiff(
+    beforePsiList: List<PsiCompareHelper>,
+    afterPsiList: List<PsiCompareHelper>,
+) = DiffUtils.diff(beforePsiList, afterPsiList).deltas
+
+private fun strDiff(
+    beforeContent: String,
+    afterContent: String,
+) = DiffUtils.diff(beforeContent.toList(), afterContent.toList()).deltas
+
+fun analyseChangeFromPsiDiff(
+    diffResults: List<AbstractDelta<PsiCompareHelper>>,
+    beforePsiJavaFile: PsiJavaFile,
+    afterPsiJavaFile: PsiJavaFile,
+): Graph<String> {
+    val result = Graph<String>()
+    for (diffResult in diffResults) {
+        if (diffResult.source != null) {
+            val beforeDependGraph =
+                dependListFromPsiChangeInfo(diffResult.source, beforePsiJavaFile)
+            if (beforeDependGraph != null && beforeDependGraph.adjList.isNotEmpty()) {
+                result += beforeDependGraph
+            }
+        }
+        if (diffResult.target != null) {
+            val afterDependGraph =
+                dependListFromPsiChangeInfo(diffResult.target, afterPsiJavaFile)
+            if (afterDependGraph != null && afterDependGraph.adjList.isNotEmpty()) {
+                result += afterDependGraph
+            }
+        }
+    }
+    return result
+}
+
 
 fun analyseChange(
     beforeContent: String, afterContent: String,
@@ -103,6 +220,26 @@ fun analyseChange(
         }
     }
     return result
+}
+
+private fun dependListFromPsiChangeInfo(
+    changeChunk: Chunk<PsiCompareHelper>,
+    psiJavaFile: PsiJavaFile,
+): Graph<String>? {
+    val changePsiList = changeChunk.lines
+    if (changePsiList.size <= 0) {
+        return null
+    }
+    val changeStartIndex = changePsiList[0].element.startOffset
+    val changeEndIndex = changePsiList[changePsiList.size - 1].element.endOffset
+    val classes = getAllClassesInJavaFile(psiJavaFile, false)
+    val classNameAndTextRange: Map<String, TextRange> =
+        classes.associate {
+            (it.qualifiedName ?: "") to it.textRange
+        }
+    val psiGroup =
+        PsiGroup(changePsiList[0].element, TextRange(changeStartIndex, changeEndIndex), classNameAndTextRange)
+    return psiGroup.dependencyGraph
 }
 
 /**

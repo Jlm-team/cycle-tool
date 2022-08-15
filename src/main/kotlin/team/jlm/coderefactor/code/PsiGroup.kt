@@ -5,6 +5,7 @@ import com.intellij.packageDependencies.DependencyVisitorFactory
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.nextLeaf
+import com.intellij.psi.util.nextLeafs
 import com.xyzboom.algorithm.graph.Graph
 
 class PsiGroup(

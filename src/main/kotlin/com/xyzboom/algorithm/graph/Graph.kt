@@ -66,6 +66,7 @@ class GNode<T>(val data: T) {
  * 图
  */
 open class Graph<T> {
+    val allowDuplicateEdges = false
     class EdgePair<T>(var edgeOut: ArrayList<GEdge<T>>, var edgeIn: ArrayList<GEdge<T>>)
 
     val nodes = { adjList.keys }
@@ -109,8 +110,14 @@ open class Graph<T> {
         checkNode(from)
         checkNode(to)
         val newEdge = GEdge(from, to, length)
-        adjList[from]!!.edgeOut.add(newEdge)
-        adjList[to]!!.edgeIn.add(newEdge)
+        if (allowDuplicateEdges) {
+            adjList[from]!!.edgeOut.add(newEdge)
+            adjList[to]!!.edgeIn.add(newEdge)
+        } else if (!adjList[from]!!.edgeOut.contains(newEdge)) {
+            adjList[from]!!.edgeOut.add(newEdge)
+            adjList[to]!!.edgeIn.add(newEdge)
+        }
+
 //        from.edgeOut.add(newEdge)
 //        to.edgeIn.add(newEdge)
 //        edges.add(newEdge)
