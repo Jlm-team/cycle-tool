@@ -157,10 +157,12 @@ private fun prepareAnalyseChange(
     if (analyseRes.adjList.isNotEmpty()) {
 //        print(analyseRes)
 //            res += analyseRes
-        analyseRes.saveAsDependencyGraph(
-            "${project.name}${getFileSeparator()}" +
-                    "${beforeCommitId.subSequence(0, 6)}__${afterCommitId.subSequence(0, 6)}"
-        )
+        project.basePath?.let {
+            analyseRes.saveAsDependencyGraph(
+                "${project.name}${getFileSeparator()}" +
+                        "${beforeCommitId.subSequence(0, 6)}__${afterCommitId.subSequence(0, 6)}", it
+            )
+        }
     }
 }
 

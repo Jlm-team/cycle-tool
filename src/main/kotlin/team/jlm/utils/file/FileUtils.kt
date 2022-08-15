@@ -3,6 +3,7 @@ package team.jlm.utils.file
 import com.intellij.ide.projectView.actions.MarkRootActionBase
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.module.Module
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.util.Comparing
 import com.intellij.openapi.vfs.VirtualFile
@@ -13,15 +14,20 @@ fun getFileSeparator(): String {
 }
 
 fun getPluginFoldrPath(projectBase: String): String {
-    return "$projectBase${getFileSeparator()}.hya"
+    return projectBase+getFileSeparator()+".hya"
 }
+
 fun pluginBaseFoldrExist(projectBasePath: String): Boolean {
-    val file = File("$projectBasePath${getFileSeparator()}.hya")
+    val file = File(projectBasePath+getFileSeparator()+".hya")
     if (!file.exists() && !file.isDirectory) {
         file.mkdir()
         return false
     }
     return true
+}
+
+fun tryCreatePluginBaseFolder(project: Project) {
+    project.basePath?.let { pluginBaseFoldrExist(it) }
 }
 
 fun getSavePath(className: String?, pathSuffix: String, projectBasePath: String, fileName: String?): String {
@@ -30,7 +36,7 @@ fun getSavePath(className: String?, pathSuffix: String, projectBasePath: String,
         projectBasePath + fileSeparator + ".hya" + fileSeparator + pathSuffix + fileSeparator +
                 className.replace(".", fileSeparator) + ".json"
     } else {
-        "$projectBasePath$fileSeparator.hya$fileSeparator$pathSuffix$fileName"
+        "$projectBasePath$fileSeparator.hya$fileSeparator$pathSuffix$fileSeparator$fileName"
     }
 
 }

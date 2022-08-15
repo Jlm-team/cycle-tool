@@ -1,15 +1,18 @@
 package team.jlm.utils.uml
 
-import com.google.gson.Gson
-import com.google.gson.JsonObject
-import com.intellij.openapi.project.Project
 import com.xyzboom.algorithm.graph.Graph
+import team.jlm.utils.file.getFileSeparator
 import team.jlm.utils.file.getSavePath
-import java.io.File
+import java.nio.ByteBuffer
+import java.nio.channels.FileChannel
+import java.nio.charset.Charset
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
-fun buildJson(graph: Graph<String>): JsonObject {
+fun buildJson(graph: Graph<String>,label: String): String {
     val sb = StringBuilder()
-    sb.append("{node:[")
+    sb.append("[label:").append(label).append("{")
+    sb.append("node:[")
     for (i in graph.adjList.keys) {
         sb.append("{")
         sb.append("id:").append(i).append(",")
@@ -29,14 +32,24 @@ fun buildJson(graph: Graph<String>): JsonObject {
         }
     }
     sb.append("]")
-    sb.append("}")
-    return Gson().fromJson(sb.toString(),JsonObject().javaClass)
+    sb.append("}").append("],")
+    return sb.toString()
 }
 
-fun jsonToFile(json: JsonObject,baseProjectPath:String){
+private fun jsonToFile(json: String,fileWirter:FileChannel){
+    val buffer  = ByteBuffer.wrap(json.toByteArray(Charsets.UTF_8))
+    fileWirter.write(buffer)
+//    val fileName = System.currentTimeMillis().toString()
+//    val suffix = "Logs"+getFileSeparator()+ fileName
+//    val path = getSavePath(null,suffix,filePath, "$fileName.json")
+
 //    val file = File(getSavePath())
 //    if(!file.exists() &&!file.isDirectory){
 //        file.mkdir()
 //    }
+
+}
+
+fun jsonToFile(graphsPath:String){
 
 }
