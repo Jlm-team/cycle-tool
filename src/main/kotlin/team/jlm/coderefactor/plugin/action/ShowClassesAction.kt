@@ -2,6 +2,7 @@ package team.jlm.coderefactor.plugin.action
 
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
 import com.intellij.util.SlowOperations
 import com.xyzboom.algorithm.graph.Graph
@@ -22,6 +23,7 @@ class ShowClassesAction : AnAction() {
 
     override fun actionPerformed(e: AnActionEvent) {
         val project = e.project
+
         showClassesInProject(project)
     }
 
