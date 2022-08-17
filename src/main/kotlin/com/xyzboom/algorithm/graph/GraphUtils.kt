@@ -62,7 +62,7 @@ class Tarjan<T>(private var graph: Graph<T>) {
 fun Graph<String>.saveAsDependencyGraph(pathSuffix: String,projectBasePath:String) {
     for ((node, edgePair) in adjList) {
         pluginBaseFoldrExist(projectBasePath)
-        val saveFile = File(getSavePath(node.data, pathSuffix,projectBasePath,null))
+        val saveFile = File(getSavePath(node.data, pathSuffix,projectBasePath))
         val saveParent = saveFile.parentFile
         if (!saveParent.exists()) {
             saveParent.mkdirs()
