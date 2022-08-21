@@ -3,9 +3,10 @@ package team.jlm.coderefactor.plugin.action
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.runReadAction
-import git4idea.history.GitHistoryUtils
 import team.jlm.utils.*
 import team.jlm.utils.change.analyseChanges
+import team.jlm.utils.change.analyseChangesCompletableFuture
+import team.jlm.utils.change.analyseChangesCoroutine
 
 class CommitsAnalyseAction : AnAction() {
     @Suppress("UnstableApiUsage")
@@ -42,8 +43,8 @@ class CommitsAnalyseAction : AnAction() {
                             timedVcsCommits[afterIndex - 1], timedVcsCommits[afterIndex]
                         )
                     )
-                    val dg = analyseChanges(
-                        changes, e, afterCommitId, beforeCommitId
+                    val dg = analyseChangesCompletableFuture(
+                        changes, project, beforeCommitId, afterCommitId
                     )
                     println(dg)
                     clearPsiMapAccordingToCommit(beforeCommitId)

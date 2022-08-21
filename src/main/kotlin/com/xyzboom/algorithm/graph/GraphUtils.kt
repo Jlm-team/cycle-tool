@@ -4,12 +4,6 @@ import com.google.gson.Gson
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.actionSystem.LangDataKeys
-import com.intellij.openapi.module.ModuleManager
-import com.intellij.openapi.project.Project
-import com.intellij.openapi.project.modifyModules
-import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.vfs.VirtualFileManager
-import com.intellij.openapi.vfs.VirtualFileSystem
 import team.jlm.utils.file.excludePluginBaseFolder
 import team.jlm.utils.file.getPluginFoldrPath
 import team.jlm.utils.file.getSavePath
@@ -65,15 +59,10 @@ class Tarjan<T>(private var graph: Graph<T>) {
     }
 }
 
-fun Graph<String>.saveAsDependencyGraph(pathSuffix: String,projectBasePath:String,event: AnActionEvent) {
+fun Graph<String>.saveAsDependencyGraph(pathSuffix: String,projectBasePath:String) {
     for ((node, edgePair) in adjList) {
-        if(!pluginBaseFoldrExist(projectBasePath))
-        {
-            val module = event.getData(LangDataKeys.MODULE)
-            val vsfiles = event.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY)
-            module?.let { vsfiles?.let { it1 -> excludePluginBaseFolder(it, it1, getPluginFoldrPath(projectBasePath)) } }
-        }
-        val saveFile = File(getSavePath(node.data, pathSuffix,projectBasePath,null))
+        pluginBaseFoldrExist(projectBasePath)
+        val saveFile = File(getSavePath(node.data, pathSuffix,projectBasePath))
         val saveParent = saveFile.parentFile
         if (!saveParent.exists()) {
             saveParent.mkdirs()

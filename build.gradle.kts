@@ -15,9 +15,6 @@ repositories {
         setUrl("https://plugins.gradle.org/m2/")
     }
     maven {
-        setUrl("https://maven.pkg.jetbrains.space/public/p/kotlinx-html/maven")
-    }
-    maven {
         setUrl("https://maven.aliyun.com/nexus/content/repositories/google")
     }
     maven {
@@ -53,12 +50,13 @@ dependencies {
     }
     implementation("com.google.code.gson:gson:2.9.0")
 
+
+
 //    implementation("org.eclipse.jgit:org.eclipse.jgit:6.1.0.202203080745-r"){
 //        //这个依赖已经在idea的jbr里面存在了
 //        exclude("org.slf4j", "slf4j-api")
 //    }
 //    implementation("com.github.adedayo.intellij.sdk:git4idea:142.1")
-    implementation(kotlin("script-runtime"))
 
 }
 

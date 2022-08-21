@@ -3,20 +3,23 @@ package team.jlm.utils.file
 import com.intellij.ide.projectView.actions.MarkRootActionBase
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.module.Module
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.util.Comparing
 import com.intellij.openapi.vfs.VirtualFile
 import java.io.File
+import java.io.IOException
 
 fun getFileSeparator(): String {
     return System.getProperty("file.separator")
 }
 
 fun getPluginFoldrPath(projectBase: String): String {
-    return "$projectBase${getFileSeparator()}.hya"
+    return projectBase + getFileSeparator() + ".hya"
 }
+
 fun pluginBaseFoldrExist(projectBasePath: String): Boolean {
-    val file = File("$projectBasePath${getFileSeparator()}.hya")
+    val file = File(projectBasePath + getFileSeparator() + ".hya")
     if (!file.exists() && !file.isDirectory) {
         file.mkdir()
         return false
@@ -24,15 +27,35 @@ fun pluginBaseFoldrExist(projectBasePath: String): Boolean {
     return true
 }
 
-fun getSavePath(className: String?, pathSuffix: String, projectBasePath: String, fileName: String?): String {
+fun tryCreatePluginBaseFolder(project: Project) {
+    project.basePath?.let { pluginBaseFoldrExist(it) }
+}
+
+fun getSavePath(className: String?, pathSuffix: String, projectBasePath: String): String {
     val fileSeparator = getFileSeparator()
     return if (className != null) {
         projectBasePath + fileSeparator + ".hya" + fileSeparator + pathSuffix + fileSeparator +
                 className.replace(".", fileSeparator) + ".json"
     } else {
-        "$projectBasePath$fileSeparator.hya$fileSeparator$pathSuffix$fileName"
+        "$projectBasePath$fileSeparator.hya$fileSeparator$pathSuffix"
     }
 
+}
+
+fun checkFilePath(filePath: String,fileName: String) {
+    val folder = File(filePath)
+    if(!folder.exists() || !folder.isDirectory){
+        folder.mkdirs()
+    }
+    val path = filePath+ getFileSeparator()+fileName
+    val file = File(path)
+    if(!file.exists()){
+        try{
+            file.createNewFile()
+        }catch (e:IOException){
+            throw e
+        }
+    }
 }
 
 fun excludePluginBaseFolder(module: Module, files: Array<VirtualFile>, folderPath: String) {
