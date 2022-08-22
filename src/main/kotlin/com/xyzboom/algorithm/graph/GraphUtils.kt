@@ -86,6 +86,9 @@ fun Graph<String>.saveAsDependencyGraph(pathSuffix: String, projectBasePath: Str
 fun Graph<String>.toJson(): String =
     Gson().toJson(this)
 
+fun graphFromJson(str: String): Graph<String> =
+    Gson().fromJson(str, Graph<String>().javaClass)
+
 
 private operator fun <T> Graph.EdgePair<T>.plusAssign(other: Graph.EdgePair<T>) {
     other.edgeOut.forEach {
