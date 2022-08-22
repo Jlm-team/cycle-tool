@@ -3,6 +3,8 @@ package team.jlm.coderefactor.plugin.action
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.runReadAction
+import com.intellij.openapi.components.service
+import team.jlm.coderefactor.plugin.service.CommitsAnalyseCacheService
 import team.jlm.utils.*
 import team.jlm.utils.change.analyseChanges
 import team.jlm.utils.change.analyseChangesCompletableFuture
@@ -12,6 +14,12 @@ class CommitsAnalyseAction : AnAction() {
     @Suppress("UnstableApiUsage")
     override fun actionPerformed(e: AnActionEvent) {
         val project = e.project ?: return
+        val service = project.service<CommitsAnalyseCacheService>()
+        println("analysed: ")
+        for (s in service.state.analysedCommits!!) {
+            print("$s, ")
+        }
+        println()
         val gitRepos = project.gitRepositories
         for (repo in gitRepos) {
             println(repo)
@@ -48,6 +56,8 @@ class CommitsAnalyseAction : AnAction() {
                     )
                     println(dg)
                     clearPsiMapAccordingToCommit(beforeCommitId)
+                    service.state.analysedCommits?.add(beforeCommitId)
+                    break
                 }
 //                for (i in 0 until timedVcsCommits.size - 1) {
 //                    println("${timedVcsCommits[i + 1]}, ${timedVcsCommits[i]}")

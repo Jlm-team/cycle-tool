@@ -50,6 +50,6 @@
     <extensions defaultExtensionNs="com.intellij">
         <toolWindow id="image" secondary="true" icon="AllIcons.General.Modified" anchor="right"
                     factoryClass="team.jlm.coderefactor.plugin.ImageWindowFactory"/>
-        <projectService serviceImplementation="team.jlm.coderefactor.plugin.service.CacheService"/>
+        <projectService serviceImplementation="team.jlm.coderefactor.plugin.service.CommitsAnalyseCacheService"/>
     </extensions>
 </idea-plugin>

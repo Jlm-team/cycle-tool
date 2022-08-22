@@ -17,6 +17,8 @@ public class TestGraph {
             nodes.add(graph.addNode(String.valueOf((char) ('A' + (char) i))));
         }
         graph.addEdge(nodes.get(0), nodes.get(1));//A -> B
+        graph.addEdge(nodes.get(0), nodes.get(1));//A -> B
+        assert graph.getAdjList().get(new GNode<>("A")).getEdgeOut().size() == 1;
         graph.addEdge(nodes.get(0), nodes.get(2));//A -> C
         graph.addEdge(nodes.get(1), nodes.get(3));//B -> D
         graph.addEdge(nodes.get(1), nodes.get(4));//B -> E

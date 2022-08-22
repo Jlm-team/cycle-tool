@@ -66,8 +66,9 @@ class GNode<T>(val data: T) {
  * 图
  */
 open class Graph<T> {
-    val allowDuplicateEdges = false
-    class EdgePair<T>(var edgeOut: ArrayList<GEdge<T>>, var edgeIn: ArrayList<GEdge<T>>)
+    private val allowSelfRing = false
+
+    class EdgePair<T>(var edgeOut: HashSet<GEdge<T>>, var edgeIn: HashSet<GEdge<T>>)
 
     val nodes = { adjList.keys }
     val adjList = HashMap<GNode<T>, EdgePair<T>>()
@@ -82,7 +83,7 @@ open class Graph<T> {
         if (adjList.contains(result)) {
             return result
         }
-        adjList[result] = EdgePair(ArrayList(), ArrayList())
+        adjList[result] = EdgePair(HashSet(), HashSet())
         return result
     }
 
@@ -110,14 +111,8 @@ open class Graph<T> {
         checkNode(from)
         checkNode(to)
         val newEdge = GEdge(from, to, length)
-        if (allowDuplicateEdges) {
-            adjList[from]!!.edgeOut.add(newEdge)
-            adjList[to]!!.edgeIn.add(newEdge)
-        } else if (!adjList[from]!!.edgeOut.contains(newEdge)) {
-            adjList[from]!!.edgeOut.add(newEdge)
-            adjList[to]!!.edgeIn.add(newEdge)
-        }
-
+        adjList[from]!!.edgeOut.add(newEdge)
+        adjList[to]!!.edgeIn.add(newEdge)
 //        from.edgeOut.add(newEdge)
 //        to.edgeIn.add(newEdge)
 //        edges.add(newEdge)
@@ -135,6 +130,9 @@ open class Graph<T> {
 
     @JvmOverloads
     open fun addEdge(from: T, to: T, length: Int = 1): GEdge<T> {
+        if (!allowSelfRing && from == to) {
+            return GEdge(GNode(from), GNode(to), length)//虽然返回正常的值，但是因为不允许自环，所以不加入到图中
+        }
         val fromNode = getNode(from) ?: addNode(from)
         val toNode = getNode(to) ?: addNode(to)
         return addEdge(fromNode, toNode, length)
@@ -146,7 +144,7 @@ open class Graph<T> {
         for (node in adjList.keys) {
             val newNode = GNode(node.data)
             newNodeMap[node] = newNode
-            result.adjList[newNode] = EdgePair(ArrayList(), ArrayList())
+            result.adjList[newNode] = EdgePair(HashSet(), HashSet())
         }
         for (edgePair in adjList.values) {
             //只需要检查一条边就行

@@ -59,10 +59,10 @@ class Tarjan<T>(private var graph: Graph<T>) {
     }
 }
 
-fun Graph<String>.saveAsDependencyGraph(pathSuffix: String,projectBasePath:String) {
+fun Graph<String>.saveAsDependencyGraph(pathSuffix: String, projectBasePath: String) {
     for ((node, edgePair) in adjList) {
         pluginBaseFoldrExist(projectBasePath)
-        val saveFile = File(getSavePath(node.data, pathSuffix,projectBasePath))
+        val saveFile = File(getSavePath(node.data, pathSuffix, projectBasePath))
         val saveParent = saveFile.parentFile
         if (!saveParent.exists()) {
             saveParent.mkdirs()
@@ -82,6 +82,10 @@ fun Graph<String>.saveAsDependencyGraph(pathSuffix: String,projectBasePath:Strin
         }
     }
 }
+
+fun Graph<String>.toJson(): String =
+    Gson().toJson(this)
+
 
 private operator fun <T> Graph.EdgePair<T>.plusAssign(other: Graph.EdgePair<T>) {
     other.edgeOut.forEach {
