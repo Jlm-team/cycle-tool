@@ -2,6 +2,7 @@ package graph;
 
 import com.xyzboom.algorithm.graph.GNode;
 import com.xyzboom.algorithm.graph.Graph;
+import com.xyzboom.algorithm.graph.GraphUtilsKt;
 import com.xyzboom.algorithm.graph.NodeNotInGraphException;
 import org.junit.Test;
 
@@ -9,8 +10,10 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class TestGraph {
+
     @Test
-    public void testGraph() throws NodeNotInGraphException {
+
+     public void testGraph() throws NodeNotInGraphException {
         Graph<String> graph = new Graph<String>();
         ArrayList<GNode<String>> nodes = new ArrayList<>();
         for (int i = 0; i < 6; ++i) {
@@ -25,6 +28,7 @@ public class TestGraph {
         graph.addEdge(nodes.get(2), nodes.get(3));//C -> D
         graph.addEdge(nodes.get(3), nodes.get(4));//D -> E
         graph.addEdge(nodes.get(3), nodes.get(5));//D -> F
+        GraphUtilsKt.saveAsDependencyGraph(graph,"1","G:\\test");
         graph.bfsVisit(stringGNode -> {
             System.out.println(stringGNode.getData());
             return null;

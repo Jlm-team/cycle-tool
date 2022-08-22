@@ -1,13 +1,16 @@
-import { createApp } from 'vue'
-import App from './App.vue'
-import { Graph } from '@antv/x6';
+import {createApp} from 'vue'
+import App from './App'
+import router from './router'
+import ViewUI from 'view-ui-plus'
 import axios from 'axios'
-import VueGridLayout from "vue-grid-layout/src/components"
-import ViewUI from 'view-design'
+import 'view-ui-plus/dist/styles/viewuiplus.css'
 
 const app = createApp(App)
-app.mount('#app')
-app.config.globalProperties.$axios = axios
-app.config.globalProperties.$graph = Graph
-app.use(VueGridLayout)
 app.use(ViewUI)
+/* eslint-disable no-new */
+// app.config.globalProperties.routerAppend = (path, pathToAppend) => {
+//   return path + (path.endsWith('/') ? '' : '/') + pathToAppend
+// }
+app.use(router)
+app.mount('#app')
+app.config.globalProperties.axios = axios

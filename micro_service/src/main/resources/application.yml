@@ -1,6 +1,8 @@
 micronaut:
   application:
     name: mico_service
+  server:
+    port: 8086
 netty:
   default:
     allocator:
