@@ -28,7 +28,10 @@ public class TestGraph {
         graph.addEdge(nodes.get(2), nodes.get(3));//C -> D
         graph.addEdge(nodes.get(3), nodes.get(4));//D -> E
         graph.addEdge(nodes.get(3), nodes.get(5));//D -> F
-        GraphUtilsKt.saveAsDependencyGraph(graph,"1","G:\\test");
+        String jsonGraph = GraphUtilsKt.toJson(graph);
+        System.out.println(jsonGraph);
+        Graph<String> graph1 = GraphUtilsKt.graphFromJson(jsonGraph);
+        assert graph.equals(graph1);
         graph.bfsVisit(stringGNode -> {
             System.out.println(stringGNode.getData());
             return null;

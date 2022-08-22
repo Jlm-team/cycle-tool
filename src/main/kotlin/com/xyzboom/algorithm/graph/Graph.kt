@@ -1,8 +1,8 @@
 package com.xyzboom.algorithm.graph
 
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.collections.HashSet
 
 /**
  * 图的边，不指定长度时默认为1
@@ -10,6 +10,7 @@ import kotlin.collections.HashSet
  * @param nodeFrom 边到来的节点
  * @param length 边的长度
  */
+@Serializable
 class GEdge<T>(val nodeFrom: GNode<T>, val nodeTo: GNode<T>, val length: Int = 1) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -40,6 +41,7 @@ class GEdge<T>(val nodeFrom: GNode<T>, val nodeTo: GNode<T>, val length: Int = 1
  * 图的节点，存储出边和入边的邻接表
  * @param data 节点存储的数据
  */
+@Serializable
 class GNode<T>(val data: T) {
 
     override fun equals(other: Any?): Boolean {
@@ -65,12 +67,30 @@ class GNode<T>(val data: T) {
 /**
  * 图
  */
+@Serializable
 open class Graph<T> {
     private val allowSelfRing = false
 
-    class EdgePair<T>(var edgeOut: HashSet<GEdge<T>>, var edgeIn: HashSet<GEdge<T>>)
+    @Serializable
+    class EdgePair<T>(var edgeOut: HashSet<GEdge<T>>, var edgeIn: HashSet<GEdge<T>>){
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (other !is EdgePair<*>) return false
 
-    val nodes = { adjList.keys }
+            if (edgeOut != other.edgeOut) return false
+            if (edgeIn != other.edgeIn) return false
+
+            return true
+        }
+
+        override fun hashCode(): Int {
+            var result = edgeOut.hashCode()
+            result = 31 * result + edgeIn.hashCode()
+            return result
+        }
+    }
+
+    val nodes: MutableSet<GNode<T>> get() = adjList.keys
     val adjList = HashMap<GNode<T>, EdgePair<T>>()
 
     /**
@@ -320,6 +340,22 @@ open class Graph<T> {
             }
         }
         return result.toString()
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is Graph<*>) return false
+
+        if (allowSelfRing != other.allowSelfRing) return false
+        if (adjList != other.adjList) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = allowSelfRing.hashCode()
+        result = 31 * result + adjList.hashCode()
+        return result
     }
 
 }

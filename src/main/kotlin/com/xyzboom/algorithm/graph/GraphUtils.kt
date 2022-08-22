@@ -1,16 +1,15 @@
+@file:OptIn(ExperimentalSerializationApi::class)
+
 package com.xyzboom.algorithm.graph
 
-import com.google.gson.Gson
-import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.actionSystem.CommonDataKeys
-import com.intellij.openapi.actionSystem.LangDataKeys
-import team.jlm.utils.file.excludePluginBaseFolder
-import team.jlm.utils.file.getPluginFoldrPath
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import team.jlm.utils.file.getSavePath
 import team.jlm.utils.file.pluginBaseFoldrExist
 import java.io.File
 import java.util.*
-import kotlin.collections.ArrayList
 import kotlin.math.min
 
 class Tarjan<T>(private var graph: Graph<T>) {
@@ -71,23 +70,21 @@ fun Graph<String>.saveAsDependencyGraph(pathSuffix: String, projectBasePath: Str
             saveFile.createNewFile()
         }
         val str = saveFile.readText()
-        var edgePairInFile = Gson().fromJson(str, edgePair.javaClass)
-        if (edgePairInFile != null) {
-            edgePairInFile += edgePair
-        } else {
-            edgePairInFile = edgePair
-        }
+        val edgePairInFile = Json.decodeFromString<Graph.EdgePair<String>>(str)
+        edgePairInFile += edgePair
         saveFile.outputStream().use {
-            it.write(Gson().toJson(edgePairInFile).toByteArray())
+            it.write(Json.encodeToString(edgePairInFile).toByteArray())
         }
     }
 }
 
+private val json = Json { allowStructuredMapKeys = true }
+
 fun Graph<String>.toJson(): String =
-    Gson().toJson(this)
+    json.encodeToString(this)
 
 fun graphFromJson(str: String): Graph<String> =
-    Gson().fromJson(str, Graph<String>().javaClass)
+    json.decodeFromString(str)
 
 
 private operator fun <T> Graph.EdgePair<T>.plusAssign(other: Graph.EdgePair<T>) {

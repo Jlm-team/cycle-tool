@@ -3,6 +3,7 @@ plugins {
     id("org.jetbrains.kotlin.jvm") version "1.7.0"
     id("org.jetbrains.intellij") version "1.6.0"
     id("org.jetbrains.kotlin.plugin.noarg") version "1.7.0"
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.4.20"
 }
 
 group = "team.jlm"
@@ -48,8 +49,9 @@ dependencies {
         //这个依赖已经在idea的jbr里面存在了
         exclude("org.slf4j", "slf4j-api")
     }
-    implementation("com.google.code.gson:gson:2.9.0")
-
+//    implementation("com.google.code.gson:gson:2.9.0")
+//    implementation("org.projectlombok:lombok:1.18.24")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.0")
 
 
 //    implementation("org.eclipse.jgit:org.eclipse.jgit:6.1.0.202203080745-r"){
