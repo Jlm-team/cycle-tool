@@ -65,6 +65,7 @@ class GNode<T>(val data: T) {
 /**
  * 图
  */
+
 open class Graph<T> {
     val allowDuplicateEdges = false
     class EdgePair<T>(var edgeOut: ArrayList<GEdge<T>>, var edgeIn: ArrayList<GEdge<T>>)

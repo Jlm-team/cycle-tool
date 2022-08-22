@@ -1,6 +1,7 @@
 package team.jlm.utils
 
-import com.google.gson.Gson
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 import team.jlm.entity.Edge
 import team.jlm.entity.GraphBean
 import team.jlm.entity.Node
@@ -9,25 +10,53 @@ import java.io.FileInputStream
 import java.io.IOException
 import java.nio.ByteBuffer
 
-private fun deSerialization(obj: String): Graph<String> {
-    return Gson().fromJson(obj, Graph<String>().javaClass)
+
+
+fun deSerialization(str: String): Graph<String> {
+    val json =  Json { allowStructuredMapKeys = true }
+    return  json.decodeFromString(str)
 }
+
 
 private fun graphToBean(id: String, graph: Graph<String>): GraphBean {
     val nodes = ArrayList<Node>()
     val edges = ArrayList<Edge>()
-    for ((index, i) in graph.adjList.keys.withIndex()) {
-        nodes.add(Node(index, i.data, 100, 50))
+    for (i in graph.adjList.keys) {
+        nodes.add(Node(i.data, i.data, 100, 50,"rect"))
     }
     for (i in graph.adjList) {
         val inEdge = i.value.edgeIn
         for (e in inEdge) {
-            edges.add(Edge(e.nodeFrom.data, e.nodeTo.data))
+            edges.add(Edge(e.nodeFrom.data, e.nodeTo.data,"edge"))
         }
     }
     return GraphBean(id, nodes, edges)
 }
 
+fun testGraph(): GraphBean {
+    val graph= Graph<String>()
+    val nodes= ArrayList<GNode<String>>()
+    for (i in 0..5) {
+        nodes.add(graph.addNode(('A'.code + i.toChar().code).toChar().toString()))
+    }
+    graph.addEdge(nodes[0], nodes[1]) //A -> B
+
+    graph.addEdge(nodes[0], nodes[1]) //A -> B
+
+    graph.addEdge(nodes[0], nodes[2]) //A -> C
+
+    graph.addEdge(nodes[1], nodes[3]) //B -> D
+
+    graph.addEdge(nodes[1], nodes[4]) //B -> E
+
+    graph.addEdge(nodes[2], nodes[3]) //C -> D
+
+    graph.addEdge(nodes[3], nodes[4]) //D -> E
+
+    graph.addEdge(nodes[3], nodes[5]) //D -> F
+    return graphToBean("1",graph)
+
+}
 fun packJson(path: String): ArrayList<GraphBean> {
     val folder = File(path)
     val graphs = ArrayList<GraphBean>()
@@ -52,7 +81,8 @@ fun packJson(path: String): ArrayList<GraphBean> {
                     inputStream.close()
                     val graph = deSerialization(sb.toString())
                     graphs.add(graphToBean(i.name, graph))
-                } catch (e: IOException) {
+                } catch (e: Exception) {
+                    println(e.message)
                     throw e
                 }
             }

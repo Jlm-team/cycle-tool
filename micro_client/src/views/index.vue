@@ -83,7 +83,6 @@ import { Graph, Shape,FunctionExt, DataUri } from '@antv/x6'
 import RightDrawer from './components/RightDrawer'
 import insertCss from 'insert-css'
 import { startDragToGraph } from './Graph/methods.js'
-const data = {}
 export default {
   data() {
     return {
@@ -119,13 +118,14 @@ export default {
   methods: {
     protract(){
       this.axios.get(
-          '/serve'
+          'api/test'
       ).then((graph)=>{
-        console.log(graph)
+        this.initX6(graph.data)
+        console.log(graph.data)
           }
       )
     },
-    initX6() {
+    initX6(graph) {
       const _that = this;
       this.graph = new Graph({
         container: document.getElementById('containerChart'),
@@ -195,11 +195,12 @@ export default {
               }
             }
           `)
-      this.graph.fromJSON(data)
+      this.graph.fromJSON(graph)
       this.graph.history.redo()
       this.graph.history.undo()
       // 鼠标移入移出节点
       this.graph.on(
+
         'node:mouseenter',
         FunctionExt.debounce(() => {
           const container = document.getElementById('containerChart')
@@ -306,7 +307,7 @@ export default {
     },
   },
   mounted() {
-    this.initX6()
+    this.protract()
     setTimeout(() => {
       this.showTips = true
     }, 1000)
