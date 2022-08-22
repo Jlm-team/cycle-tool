@@ -1,0 +1,56 @@
+@font-face {font-family: "iconfont";
+    src: url("./font/font_2431749_zpzhmewttjs.ttf") format("truetype");
+  }
+  
+  .iconfont {
+    font-family: "iconfont" !important;
+    font-size: 16px;
+    font-style: normal;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  .icon-straight:before {
+    content: "\e752";
+  }
+  
+  .icon-mousepointershubiao:before {
+    content: "\e6df";
+  }
+  
+  .icon-ai28:before {
+    content: "\e68e";
+  }
+  
+  .icon-baocun:before {
+    content: "\e60b";
+  }
+  
+  .icon-Down-Right:before {
+    content: "\e741";
+  }
+  
+  .icon-tuozhuai:before {
+    content: "\e636";
+  }
+  
+  .icon-circle:before {
+    content: "\e642";
+  }
+  
+  .icon-quxian:before {
+    content: "\e637";
+  }
+  
+  .icon-square:before {
+    content: "\e676";
+  }
+  
+  .icon-shanchu:before {
+    content: "\e696";
+  }
+  
+  .icon-jiantou:before {
+    content: "\e7e2";
+  }
+  

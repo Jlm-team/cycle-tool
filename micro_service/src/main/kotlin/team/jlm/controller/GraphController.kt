@@ -20,4 +20,15 @@ class GraphController {
         }
         return HttpResponse.created(graphs)
     }
+
+    @Get("/")
+    fun test(): HttpResponse<ArrayList<GraphBean>> {
+        var graphs = ArrayList<GraphBean>()
+        try {
+            graphs = packJson("G:\\test")
+        } catch (e: IOException) {
+            return HttpResponse.created(graphs)
+        }
+        return HttpResponse.created(graphs)
+    }
 }
