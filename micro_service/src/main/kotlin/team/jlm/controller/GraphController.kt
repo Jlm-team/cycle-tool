@@ -23,7 +23,7 @@ class GraphController {
         return HttpResponse.created(graphs)
     }
 
-    @Get("/api/test")
+    @Get("api/test")
     fun test(): HttpResponse<GraphBean> {
         return HttpResponse.created(testGraph())
     }
