@@ -42,34 +42,31 @@ class PsiGroup(
         return "team.jlm.UnknownClass"
     }
 
-    val dependencyGraph: Graph<String>
-        get() {
-            val result = Graph<String>()
-            var commonParentPsi: PsiElement
-            if (elements.size > 1) {
-                commonParentPsi = elements[0]
-                while (!commonParentPsi.textRange.contains(elements[elements.size - 1].textRange)) {
-                    commonParentPsi = commonParentPsi.parent
-                }
-            } else {
-                commonParentPsi = elements[0]
+    fun getDependencyGraph(outGraph: Graph<String>) {
+        var commonParentPsi: PsiElement
+        if (elements.size > 1) {
+            commonParentPsi = elements[0]
+            while (!commonParentPsi.textRange.contains(elements[elements.size - 1].textRange)) {
+                commonParentPsi = commonParentPsi.parent
             }
-            commonParentPsi.accept(
-                DependVisitor(
-                    { placeElement: PsiElement, dependElement: PsiElement ->
-                        run {
-                            if (dependElement !is PsiClass) return@run
-                            //提取的公共父节点中可能包含不在改变文本中的节点，因此用文本偏移进行排除
-                            if (!shouldBeRange.contains(placeElement.textRange)) return@run
-                            dependElement.qualifiedName?.let {
-                                val selfClassName = getRangeInClassName(placeElement.textRange)
-//                                println("add dependency: $selfClassName --> $it")
-                                result.addEdge(selfClassName, it)
-                            }
-                        }
-                    }, DependencyVisitorFactory.VisitorOptions.INCLUDE_IMPORTS
-                )
-            )
-            return result
+        } else {
+            commonParentPsi = elements[0]
         }
+        commonParentPsi.accept(
+            DependVisitor(
+                { placeElement: PsiElement, dependElement: PsiElement ->
+                    run {
+                        if (dependElement !is PsiClass) return@run
+                        //提取的公共父节点中可能包含不在改变文本中的节点，因此用文本偏移进行排除
+                        if (!shouldBeRange.contains(placeElement.textRange)) return@run
+                        dependElement.qualifiedName?.let {
+                            val selfClassName = getRangeInClassName(placeElement.textRange)
+//                                println("add dependency: $selfClassName --> $it")
+                            outGraph.addEdge(selfClassName, it)
+                        }
+                    }
+                }, DependencyVisitorFactory.VisitorOptions.INCLUDE_IMPORTS
+            )
+        )
+    }
 }

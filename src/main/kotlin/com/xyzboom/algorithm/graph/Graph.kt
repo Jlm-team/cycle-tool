@@ -1,7 +1,6 @@
 package com.xyzboom.algorithm.graph
 
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.Transient
 import java.util.*
 
 /**

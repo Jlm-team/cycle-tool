@@ -4,11 +4,10 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.components.service
+import com.xyzboom.algorithm.graph.saveAsDependencyGraph
 import team.jlm.coderefactor.plugin.service.CommitsAnalyseCacheService
 import team.jlm.utils.*
-import team.jlm.utils.change.analyseChanges
 import team.jlm.utils.change.analyseChangesCompletableFuture
-import team.jlm.utils.change.analyseChangesCoroutine
 
 class CommitsAnalyseAction : AnAction() {
     @Suppress("UnstableApiUsage")
@@ -57,6 +56,13 @@ class CommitsAnalyseAction : AnAction() {
                     println(dg)
                     clearPsiMapAccordingToCommit(beforeCommitId)
                     service.state.analysedCommits?.add(beforeCommitId)
+                    fun last6Str(s: String) =
+                        s.substring(s.length - 6, s.length)
+                    project.basePath?.let { it1 ->
+                        dg.saveAsDependencyGraph(
+                            "gitCommits/${last6Str(beforeCommitId)}-${last6Str(afterCommitId)}", it1
+                        )
+                    }
                     break
                 }
 //                for (i in 0 until timedVcsCommits.size - 1) {

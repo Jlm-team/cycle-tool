@@ -8,6 +8,8 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import team.jlm.utils.file.getSavePath
 import team.jlm.utils.file.pluginBaseFoldrExist
+import team.jlm.utils.file.pluginCacheFolderName
+import team.jlm.utils.file.tryCreatePluginBaseFolder
 import java.io.File
 import java.util.*
 import kotlin.math.min
@@ -58,8 +60,10 @@ class Tarjan<T>(private var graph: Graph<T>) {
     }
 }
 
+private val json1 = Json { allowStructuredMapKeys = true }
+
 fun Graph<String>.saveAsDependencyGraph(pathSuffix: String, projectBasePath: String) {
-    for ((node, edgePair) in adjList) {
+    /*for ((node, edgePair) in adjList) {
         pluginBaseFoldrExist(projectBasePath)
         val saveFile = File(getSavePath(node.data, pathSuffix, projectBasePath))
         val saveParent = saveFile.parentFile
@@ -75,6 +79,17 @@ fun Graph<String>.saveAsDependencyGraph(pathSuffix: String, projectBasePath: Str
         saveFile.outputStream().use {
             it.write(Json.encodeToString(edgePairInFile).toByteArray())
         }
+    }*/
+    val saveFile = File("${projectBasePath}/${pluginCacheFolderName}/${pathSuffix}/info.json")
+    val saveParent = saveFile.parentFile
+    if (!saveParent.exists()) {
+        saveParent.mkdirs()
+    }
+    if (!saveFile.exists()) {
+        saveFile.createNewFile()
+    }
+    saveFile.outputStream().use {
+        it.write(json1.encodeToString(this).toByteArray())
     }
 }
 

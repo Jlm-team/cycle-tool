@@ -33,8 +33,10 @@ fun analyseChangesCompletableFuture(
 ): Graph<String> {
     val res = Graph<String>()
     val threadNum = 16
-    if (changes.size < threadNum)
-        return analyseChanges(changes, project, beforeCommitId, afterCommitId)
+    if (changes.size < threadNum) {
+        analyseChanges(changes, project, beforeCommitId, afterCommitId, res)
+        return res
+    }
     val futures = arrayOfNulls<CompletableFuture<*>>(threadNum)
     val changeList = ArrayList(changes)
     val size = changes.size
@@ -45,9 +47,10 @@ fun analyseChangesCompletableFuture(
             {
                 runReadAction {
                     for (index in 0 until chunkSize) {
-                        val change = changeList[index + i * chunkSize];
-                        prepareAnalyseChange(change, project, beforeCommitId, afterCommitId)
+                        val change = changeList[index + i * chunkSize]
+                        prepareAnalyseChange(change, project, beforeCommitId, afterCommitId, res)
                         nowFinished++
+                        println(nowFinished / size)
                     }
                 }
             }
@@ -59,15 +62,6 @@ fun analyseChangesCompletableFuture(
 //            }
 //        )
     }
-    thread {
-        while (true) {
-            println(nowFinished / size)
-            Thread.sleep(3500)
-            if (nowFinished / size > 0.9) {
-                break
-            }
-        }
-    }
     CompletableFuture.allOf(*futures).get()
     return res
 }
@@ -75,53 +69,16 @@ fun analyseChangesCompletableFuture(
 fun analyseChanges(
     changes: MutableCollection<Change>, project: Project,
     beforeCommitId: String, afterCommitId: String,
-): Graph<String> {
-    val res = Graph<String>()
+    outGraph: Graph<String>,
+) {
     val size = changes.size
     for ((index, change) in changes.withIndex()) {
-        prepareAnalyseChange(change, project, beforeCommitId, afterCommitId)
+        prepareAnalyseChange(change, project, beforeCommitId, afterCommitId, outGraph)
         println(index * 1f / size)
 //        if (index * 1f / size > 0.1) {
 //            break
 //        }
     }
-    return res
-}
-
-/**
- * @description 获取文件变化
- * @param changes MutableCollection<Change>
- * @param project Project
- */
-fun analyseChangesCoroutine(
-    changes: MutableCollection<Change>, project: Project,
-    beforeCommitId: String, afterCommitId: String,
-): Graph<String> {
-    val res = Graph<String>()
-    val size = changes.size
-    var nowFinished = 0f
-    thread {
-        while (true) {
-            println(nowFinished / size)
-            Thread.sleep(3500)
-            if (nowFinished >= size) {
-                break
-            }
-        }
-    }
-    runBlocking {
-        for ((index, change) in changes.withIndex()) {
-            val task: suspend () -> Unit =
-                {
-                    prepareAnalyseChange(change, project, beforeCommitId, afterCommitId)
-                    nowFinished++
-                }
-
-            task()
-        }
-    }
-
-    return res
 }
 
 private fun prepareAnalyseChange(
@@ -129,6 +86,7 @@ private fun prepareAnalyseChange(
     project: Project,
     beforeCommitId: String,
     afterCommitId: String,
+    outGraph: Graph<String>,
 ) {
     if (change.type != Change.Type.MODIFICATION) {
         return
@@ -153,17 +111,7 @@ private fun prepareAnalyseChange(
 //    val analyseRes = analyseChange(
 //        beforeContent, afterContent, project, beforeCommitId, afterCommitId, path
 //    )
-    val analyseRes = analyseChangeFromPsiDiff(psiDiffResults, beforePsiFile, afterPsiFile)
-    if (analyseRes.adjList.isNotEmpty()) {
-//        print(analyseRes)
-//            res += analyseRes
-        project.basePath?.let {
-            analyseRes.saveAsDependencyGraph(
-                "${project.name}${getFileSeparator()}" +
-                        "${beforeCommitId.subSequence(0, 6)}__${afterCommitId.subSequence(0, 6)}", it
-            )
-        }
-    }
+    analyseChangeFromPsiDiff(psiDiffResults, beforePsiFile, afterPsiFile, outGraph)
 }
 
 private fun psiListDiff(
@@ -171,66 +119,34 @@ private fun psiListDiff(
     afterPsiList: List<PsiCompareHelper>,
 ) = DiffUtils.diff(beforePsiList, afterPsiList).deltas
 
-private fun strDiff(
-    beforeContent: String,
-    afterContent: String,
-) = DiffUtils.diff(beforeContent.toList(), afterContent.toList()).deltas
-
 fun analyseChangeFromPsiDiff(
     diffResults: List<AbstractDelta<PsiCompareHelper>>,
     beforePsiJavaFile: PsiJavaFile,
     afterPsiJavaFile: PsiJavaFile,
-): Graph<String> {
-    val result = Graph<String>()
+    outGraph: Graph<String>,
+) {
     for (diffResult in diffResults) {
         if (diffResult.source != null) {
-            val beforeDependGraph =
-                dependListFromPsiChangeInfo(diffResult.source, beforePsiJavaFile)
-            if (beforeDependGraph != null && beforeDependGraph.adjList.isNotEmpty()) {
-                result += beforeDependGraph
-            }
+            dependListFromPsiChangeInfo(diffResult.source, beforePsiJavaFile, outGraph)
         }
         if (diffResult.target != null) {
-            val afterDependGraph =
-                dependListFromPsiChangeInfo(diffResult.target, afterPsiJavaFile)
-            if (afterDependGraph != null && afterDependGraph.adjList.isNotEmpty()) {
-                result += afterDependGraph
-            }
+            dependListFromPsiChangeInfo(diffResult.target, afterPsiJavaFile, outGraph)
         }
     }
-    return result
 }
 
 
-fun analyseChange(
-    beforeContent: String, afterContent: String,
-    project: Project, beforeCommitId: String, afterCommitId: String,
-    path: String,
-): Graph<String> {
-    val diffResults = DiffUtils.diff(beforeContent.toList(), afterContent.toList()).deltas
-    val result = Graph<String>()
-    for (diffResult in diffResults) {
-        val beforeDependGraph =
-            dependListFromChangeInfo(diffResult.source, project, beforeContent, beforeCommitId, path)
-        if (beforeDependGraph != null && beforeDependGraph.adjList.isNotEmpty()) {
-            result += beforeDependGraph
-        }
-        val afterDependGraph =
-            dependListFromChangeInfo(diffResult.target, project, afterContent, afterCommitId, path)
-        if (afterDependGraph != null && afterDependGraph.adjList.isNotEmpty()) {
-            result += afterDependGraph
-        }
-    }
-    return result
-}
-
+/**
+ * 从语法树差异中分析的依赖项
+ */
 private fun dependListFromPsiChangeInfo(
     changeChunk: Chunk<PsiCompareHelper>,
     psiJavaFile: PsiJavaFile,
-): Graph<String>? {
+    outGraph: Graph<String>,
+) {
     val changePsiList = changeChunk.lines
     if (changePsiList.size <= 0) {
-        return null
+        return
     }
     val changeStartIndex = changePsiList[0].element.startOffset
     val changeEndIndex = changePsiList[changePsiList.size - 1].element.endOffset
@@ -241,34 +157,6 @@ private fun dependListFromPsiChangeInfo(
         }
     val psiGroup =
         PsiGroup(changePsiList[0].element, TextRange(changeStartIndex, changeEndIndex), classNameAndTextRange)
-    return psiGroup.dependencyGraph
-}
-
-/**
- * 从文本差异中分析到的依赖项
- */
-private fun dependListFromChangeInfo(
-    changeChunk: Chunk<Char>,
-    project: Project,
-    content: String,
-    commitId: String,
-    path: String,
-): Graph<String>? {
-    val changeStr = String(changeChunk.lines.toCharArray())
-    val eleTrim = changeStr.trim()
-    if (eleTrim.isEmpty()) return null
-    val psiJavaFile = createOrGetJavaPsiFile(project, content, commitId, path)
-    val classes = getAllClassesInJavaFile(psiJavaFile, false)
-    val classNameAndTextRange: Map<String, TextRange> =
-        classes.associate {
-            (it.qualifiedName ?: "") to it.textRange
-        }
-    val eleIndex = changeChunk.position + changeStr.indexOf(eleTrim)
-    val psiElement = psiJavaFile.findElementAt(eleIndex)
-    if (psiElement != null) {
-        val psiGroup = PsiGroup(psiElement, TextRange(eleIndex, eleTrim.length + eleIndex), classNameAndTextRange)
-        return psiGroup.dependencyGraph
-    }
-    return null
+    psiGroup.getDependencyGraph(outGraph)
 }
 

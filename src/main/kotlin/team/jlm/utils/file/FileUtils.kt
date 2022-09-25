@@ -10,6 +10,8 @@ import com.intellij.openapi.vfs.VirtualFile
 import java.io.File
 import java.io.IOException
 
+const val pluginCacheFolderName = ".hya"
+
 fun getFileSeparator(): String {
     return System.getProperty("file.separator")
 }
@@ -42,17 +44,17 @@ fun getSavePath(className: String?, pathSuffix: String, projectBasePath: String)
 
 }
 
-fun checkFilePath(filePath: String,fileName: String) {
+fun checkFilePath(filePath: String, fileName: String) {
     val folder = File(filePath)
-    if(!folder.exists() || !folder.isDirectory){
+    if (!folder.exists() || !folder.isDirectory) {
         folder.mkdirs()
     }
-    val path = filePath+ getFileSeparator()+fileName
+    val path = filePath + getFileSeparator() + fileName
     val file = File(path)
-    if(!file.exists()){
-        try{
+    if (!file.exists()) {
+        try {
             file.createNewFile()
-        }catch (e:IOException){
+        } catch (e: IOException) {
             throw e
         }
     }
