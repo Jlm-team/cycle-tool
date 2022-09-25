@@ -31,6 +31,9 @@ fun analyseChangesCompletableFuture(
     changes: MutableCollection<Change>, project: Project,
     beforeCommitId: String, afterCommitId: String,
 ): Graph<String> {
+    //d69692-febce6差异分析16线程耗时： 216秒, 227秒
+    //d69692-febce6差异分析与change集合数相同线程耗时： 215秒, 234秒
+    //从内存占用来看，后者开的线程数量远大于前者，因此固定线程数量方案优先
     val res = Graph<String>()
     val threadNum = 16
     if (changes.size < threadNum) {
@@ -38,15 +41,18 @@ fun analyseChangesCompletableFuture(
         return res
     }
     val futures = arrayOfNulls<CompletableFuture<*>>(threadNum)
+//    val futures = arrayOfNulls<CompletableFuture<*>>(changes.size)
     val changeList = ArrayList(changes)
     val size = changes.size
     val chunkSize = size / threadNum
     var nowFinished = 0f
     for (i in 0 until threadNum) {
+//    for (i in changes.indices) {
         val task: () -> Unit =
             {
                 runReadAction {
                     for (index in 0 until chunkSize) {
+//                        val change = changeList[i]
                         val change = changeList[index + i * chunkSize]
                         prepareAnalyseChange(change, project, beforeCommitId, afterCommitId, res)
                         nowFinished++
@@ -58,7 +64,6 @@ fun analyseChangesCompletableFuture(
 //        SlowOperations.allowSlowOperations(
 //            ThrowableRunnable {
         futures[i] = CompletableFuture.runAsync(task)
-
 //            }
 //        )
     }

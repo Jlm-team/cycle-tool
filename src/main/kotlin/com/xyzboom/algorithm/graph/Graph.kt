@@ -2,6 +2,7 @@ package com.xyzboom.algorithm.graph
 
 import kotlinx.serialization.Serializable
 import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * 图的边，不指定长度时默认为1
@@ -71,7 +72,7 @@ open class Graph<T> {
     private val allowSelfRing = false
 
     @Serializable
-    class EdgePair<T>(var edgeOut: HashSet<GEdge<T>>, var edgeIn: HashSet<GEdge<T>>){
+    class EdgePair<T>(var edgeOut: HashSet<GEdge<T>>, var edgeIn: HashSet<GEdge<T>>) {
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
             if (other !is EdgePair<*>) return false
@@ -90,7 +91,7 @@ open class Graph<T> {
     }
 
     val nodes: MutableSet<GNode<T>> get() = adjList.keys
-    val adjList = HashMap<GNode<T>, EdgePair<T>>()
+    val adjList: MutableMap<GNode<T>, EdgePair<T>> = ConcurrentHashMap<GNode<T>, EdgePair<T>>()
 
     /**
      * 将提供的数据加到图中
