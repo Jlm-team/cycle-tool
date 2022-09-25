@@ -3,6 +3,8 @@ micronaut:
     name: mico_service
   server:
     port: 8086
+    cors:
+      enabled: true
 netty:
   default:
     allocator:

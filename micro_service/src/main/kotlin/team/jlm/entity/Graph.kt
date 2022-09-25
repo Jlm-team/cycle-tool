@@ -1,19 +1,22 @@
 package team.jlm.entity
 
 data class Node(
-    val id: Int,
+    val id: String,
     val label: String,
     val width: Int,
-    val height: Int
+    val height: Int,
+    val shape:String
 )
 
 data class Edge(
     val source: String,
-    val target: String
+    val target: String,
+    val shape:String
 )
+
 
 data class GraphBean(
     val id:String,
-    val node: ArrayList<Node>,
-    val edge: ArrayList<Edge>
+    val nodes: ArrayList<Node>,
+    val edges: ArrayList<Edge>
 )

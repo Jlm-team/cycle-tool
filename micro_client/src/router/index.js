@@ -1,13 +1,14 @@
-import { createRouter,createWebHashHistory} from "vue-router";
+import Vue from 'vue'
+import Router from 'vue-router'
 
-const index = ()=>import('@/views/index')
-export default createRouter({
-  history: createWebHashHistory(),
+Vue.use(Router)
+
+export default new Router({
   routes: [
     {
       path: '/',
       name: 'index',
-      component:index,
-    },
-  ],
+      component: () => import('../views/index')
+    }
+  ]
 })
