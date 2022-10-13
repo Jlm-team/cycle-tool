@@ -46,7 +46,7 @@ fun getPsiJavaFile(project: Project, text: String): PsiJavaFile {
     return psiFile
 }
 
-fun getAllClassesInProject(project: Project): List<PsiClass> {
+fun getAllClassesInProject(project: Project): MutableList<PsiClass> {
     val files = getAllJavaFilesInProject(project)
     return files.stream().flatMap {
         getAllClassesInJavaFile(it).stream()

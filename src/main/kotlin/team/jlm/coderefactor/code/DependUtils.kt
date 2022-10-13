@@ -1,19 +1,12 @@
 package team.jlm.coderefactor.code
 
 import com.intellij.openapi.project.Project
-import com.intellij.packageDependencies.DependenciesBuilder
 import com.intellij.packageDependencies.DependencyVisitorFactory
-import com.intellij.packageDependencies.ForwardDependenciesBuilder
-import com.intellij.packageDependencies.JavaDependencyVisitorFactory
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiJavaFile
+import com.intellij.psi.impl.source.PsiJavaCodeReferenceElementImpl
 import com.intellij.psi.impl.source.tree.JavaElementType.*
 import com.intellij.psi.impl.source.tree.TreeElement
-import com.intellij.psi.util.elementType
-import org.jetbrains.uast.findAnyContaining
-import org.jetbrains.uast.findContaining
-import org.jetbrains.uast.test.env.findUElementByTextFromPsi
 import team.jlm.utils.getPsiJavaFile
 
 fun getDependencyList(fileString: String, project: Project): List<Dependency> {
@@ -57,24 +50,30 @@ val PsiElement.dependencyType: DependencyType
                 when (this.treeParent.elementType) {
                     EXTENDS_LIST -> DependencyType.EXTENDS
                     IMPLEMENTS_LIST -> DependencyType.IMPLEMENT
-                    IMPORT_STATEMENT, IMPORT_LIST, IMPORT_STATIC_STATEMENT, IMPORT_STATIC_REFERENCE,
-                    -> DependencyType.IMPORT
+                    IMPORT_STATEMENT -> DependencyType.IMPORT_STATEMENT
+                    IMPORT_LIST -> DependencyType.IMPORT_LIST
+                    IMPORT_STATIC_STATEMENT -> DependencyType.IMPORT_STATIC_STATEMENT
+                    IMPORT_STATIC_REFERENCE -> DependencyType.IMPORT_STATIC_REFERENCE
                     ANNOTATION -> DependencyType.ANNOTATION
                     TYPE -> when (this.treeParent.treeParent.elementType) {
                         FIELD -> DependencyType.CONTAIN
                         PARAMETER -> DependencyType.PARAMETER
                         else -> DependencyType.DEPEND
                     }
+
                     else -> DependencyType.DEPEND
                 }
+
             REFERENCE_EXPRESSION ->
                 when (this.treeParent.elementType) {
                     REFERENCE_EXPRESSION -> when (this.treeParent.treeParent.elementType) {
-                        METHOD_CALL_EXPRESSION -> DependencyType.CALL
+                        METHOD_CALL_EXPRESSION -> DependencyType.STATIC_CALL
                         else -> DependencyType.DEPEND
                     }
+
                     else -> DependencyType.DEPEND
                 }
+
             else -> DependencyType.DEPEND
         }
         return dependencyType

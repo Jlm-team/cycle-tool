@@ -80,7 +80,10 @@ fun Graph<String>.saveAsDependencyGraph(pathSuffix: String, projectBasePath: Str
             it.write(Json.encodeToString(edgePairInFile).toByteArray())
         }
     }*/
-    val saveFile = File("${projectBasePath}/${pluginCacheFolderName}/${pathSuffix}/info.json")
+    val saveFile = File(
+        "${projectBasePath}/${pluginCacheFolderName}/${pathSuffix}/" +
+                "DependencyGraph.json"
+    )
     val saveParent = saveFile.parentFile
     if (!saveParent.exists()) {
         saveParent.mkdirs()

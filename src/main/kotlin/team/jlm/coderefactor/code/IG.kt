@@ -4,8 +4,6 @@ import com.intellij.packageDependencies.ForwardDependenciesBuilder
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiJavaFile
-import com.intellij.psi.impl.source.tree.TreeElement
-import com.intellij.psi.util.elementType
 import com.xyzboom.algorithm.graph.GEdge
 import com.xyzboom.algorithm.graph.Graph
 import guru.nidi.graphviz.attribute.Style
@@ -18,9 +16,9 @@ import guru.nidi.graphviz.model.Graph as VizGraph
 /**
  * 继承与依赖图 ----- TODO 待完善
  */
-open class IG(private var classes: List<PsiClass>) : Graph<String>() {
+open class IG(private var classes: MutableList<PsiClass>) : Graph<String>() {
     private val classWhoseParentsAdded = HashSet<String>()
-    private val dependencyMap = HashMap<GEdge<String>, DependencyType>()
+    private val dependencyMap = HashMap<GEdge<String>, MutableSet<DependencyType>>()
 
     init {
         for (clazz in classes) {
@@ -40,7 +38,9 @@ open class IG(private var classes: List<PsiClass>) : Graph<String>() {
 //        }
 //        vizGraph = vizGraph.with(node(from).link(node(to)))
         val edge = super.addEdge(from, to, 1)
-        dependencyMap[edge] = dependency
+        val tempSet = dependencyMap.getOrDefault(edge, HashSet())
+        tempSet.add(dependency)
+        dependencyMap[edge] = tempSet
     }
 
     override fun delNode(data: String) {
@@ -54,6 +54,7 @@ open class IG(private var classes: List<PsiClass>) : Graph<String>() {
             adjList[edge.nodeFrom]!!.edgeOut.remove(edge)
         }
         adjList.remove(node)
+        classes.removeIf { it.name?.equals(data) == true }
     }
 
     private fun addClassAndParents(clazz: PsiClass) {
@@ -93,7 +94,7 @@ open class IG(private var classes: List<PsiClass>) : Graph<String>() {
         { dependElement: PsiElement, selfElement: PsiElement ->
             run {
                 if (selfElement is PsiClass) {
-                    println(dependElement.elementType)
+//                    println(dependElement.elementType)
                     val dependency = dependElement.dependencyType
                     selfElement.name?.let { it1 -> clazz.name?.let { addEdge(it, it1, dependency) } }
                 }
@@ -110,7 +111,7 @@ open class IG(private var classes: List<PsiClass>) : Graph<String>() {
         var viz = graph().directed()
         for (pair in adjList) {
             for (edgeOut in pair.value.edgeOut) {
-                viz = if (dependencyMap[edgeOut] == DependencyType.EXTENDS) {
+                viz = if (dependencyMap[edgeOut]?.contains(DependencyType.EXTENDS) == true) {
                     viz.with(node(pair.key.data).link(node(edgeOut.nodeTo.data)))
                 } else {
                     viz.with(

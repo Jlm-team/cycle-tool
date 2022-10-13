@@ -11,16 +11,12 @@ import com.intellij.psi.PsiJavaFile
 import com.intellij.refactoring.suggested.endOffset
 import com.intellij.refactoring.suggested.startOffset
 import com.xyzboom.algorithm.graph.Graph
-import com.xyzboom.algorithm.graph.saveAsDependencyGraph
-import kotlinx.coroutines.runBlocking
 import team.jlm.coderefactor.code.PsiGroup
 import team.jlm.utils.createOrGetJavaPsiFile
-import team.jlm.utils.file.getFileSeparator
 import team.jlm.utils.getAllClassesInJavaFile
 import team.jlm.utils.psi.PsiCompareHelper
 import team.jlm.utils.psi.createPsiHelpersFromFile
 import java.util.concurrent.CompletableFuture
-import kotlin.concurrent.thread
 
 /**
  * @description 获取文件变化

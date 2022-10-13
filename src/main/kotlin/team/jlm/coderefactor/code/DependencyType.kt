@@ -9,7 +9,10 @@ enum class DependencyType {
      * Import is a relation between files. It indicates that File A includes or imports from File B.
      * 文件间的依赖关系，例如文件A导入了文件B，具有方向性。
      */
-    IMPORT,
+    IMPORT_STATEMENT,
+    IMPORT_LIST,
+    IMPORT_STATIC_STATEMENT,
+    IMPORT_STATIC_REFERENCE,//import static xxx 会识别为此类型
 
     /**
      * Contain is a relation between code elements(entities).
@@ -26,10 +29,9 @@ enum class DependencyType {
     PARAMETER,
 
     /**
-     * Call is a relation of function/method invocation.
-     * 代码块和代码块内调用的方法的关系
+     * 类A调用了类B的静态方法
      */
-    CALL,
+    STATIC_CALL,
 
     /**
      * Return is a relation of function/method and it's return type(s).

@@ -31,13 +31,18 @@
 
     </extensions>
     <actions>
-        <action id="team.jlm.coderefactor.plugin.action.ShowClassesAction" class="team.jlm.coderefactor.plugin.action.ShowClassesAction" text="查看所有类"
+        <action id="team.jlm.coderefactor.plugin.action.ShowClassesAction"
+                class="team.jlm.coderefactor.plugin.action.ShowClassesAction" text="查看所有类"
                 description="Show all java class">
             <add-to-group group-id="CodeMenu" anchor="last"/>
         </action>
         <action id="team.jlm.coderefactor.plugin.action.CommitsAnalyseAction"
                 class="team.jlm.coderefactor.plugin.action.CommitsAnalyseAction" text="分析Git提交"
                 description="Analyse git commits">
+            <add-to-group group-id="CodeMenu" anchor="last"/>
+        </action>
+        <action id="CycleDependency" class="team.jlm.coderefactor.plugin.action.CycleDependencyAction"
+                text="循环依赖分析">
             <add-to-group group-id="CodeMenu" anchor="last"/>
         </action>
     </actions>

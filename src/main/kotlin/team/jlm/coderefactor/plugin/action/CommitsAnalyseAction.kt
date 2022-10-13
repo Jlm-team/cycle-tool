@@ -2,7 +2,6 @@ package team.jlm.coderefactor.plugin.action
 
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.components.service
 import com.xyzboom.algorithm.graph.saveAsDependencyGraph
 import team.jlm.coderefactor.plugin.service.CommitsAnalyseCacheService
@@ -27,14 +26,16 @@ class CommitsAnalyseAction : AnAction() {
         computeWithModalProgress(project, "Analysing...") {
 //            runReadAction {
             val timedVcsCommits = repo.timedVcsCommits
-            val commits = repo.commits
+            var commits = repo.commits
             commits.removeIf {
                 val affectedPaths = it.affectedPaths
                 affectedPaths.removeIf { it1 ->
                     !it1.name.endsWith(".java")
                 }
-                return@removeIf affectedPaths.size > 10 || affectedPaths.size == 0
+                return@removeIf affectedPaths.size > 10 || affectedPaths.size <= 1
             }
+            commits = commits.subList(commits.size - 100, commits.size)
+            println("number commits to analyse: ${commits.size}")
             for (afterCommit in commits) {
                 val afterIndex = timedVcsCommits.indexOfFirst {
                     it.id == afterCommit.id
@@ -55,7 +56,7 @@ class CommitsAnalyseAction : AnAction() {
                     changes, project, beforeCommitId, afterCommitId
                 )
                 println(dg)
-                println("time analyse used: ${(System.currentTimeMillis() - start) / 1000}")
+                println("time change dp analyse used: ${(System.currentTimeMillis() - start) / 1000}")
                 clearPsiMapAccordingToCommit(beforeCommitId)
                 service.state.analysedCommits?.add(beforeCommitId)
                 fun last6Str(s: String) =
