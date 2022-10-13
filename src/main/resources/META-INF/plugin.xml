@@ -56,5 +56,21 @@
         <toolWindow id="image" secondary="true" icon="AllIcons.General.Modified" anchor="right"
                     factoryClass="team.jlm.coderefactor.plugin.ImageWindowFactory"/>
         <projectService serviceImplementation="team.jlm.coderefactor.plugin.service.CommitsAnalyseCacheService"/>
+        <localInspection language="JAVA"
+                         displayName="Test inspection"
+                         groupPath="Java"
+                         groupKey="group.names.probable.bugs"
+                         groupBundle="messages.InspectionsBundle"
+                         level="WARNING"
+                         enabledByDefault="true"
+                         implementationClass="team.jlm.coderefactor.plugin.inspection.TestInspection"/>
+        <localInspection language="JAVA"
+                         displayName="Cycle dependency between two files"
+                         groupPath="Java"
+                         groupKey="group.names.probable.bugs"
+                         groupBundle="messages.InspectionsBundle"
+                         level="WARNING"
+                         enabledByDefault="true"
+                         implementationClass="team.jlm.coderefactor.plugin.inspection.CycleDependencyInspection"/>
     </extensions>
 </idea-plugin>
