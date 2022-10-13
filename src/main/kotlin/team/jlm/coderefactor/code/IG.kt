@@ -32,7 +32,7 @@ open class IG(private var classes: MutableList<PsiClass>) : Graph<String>() {
 //        }
     }
 
-    private fun addEdge(from: String, to: String, dependency: DependencyType = DependencyType.DEPEND) {
+    fun addEdge(from: String, to: String, dependency: DependencyType = DependencyType.DEPEND) {
 //        vizNodes[from.data]?.let {
 //            vizGraph = vizGraph.with(it.link(vizNodes[to.data]))
 //        }
