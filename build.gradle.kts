@@ -10,27 +10,19 @@ group = "team.jlm"
 version = "1.0-SNAPSHOT"
 
 repositories {
-    mavenLocal()
     mavenCentral()
-    maven {
-        setUrl("https://plugins.gradle.org/m2/")
+    google()
+    jcenter()
+    maven{
+        setUrl("https://www.jetbrains.com/intellij-repository/releases")
+        setUrl("https://maven.pkg.jetbrains.space/public/p/kotlinx-html/maven")
+        setUrl("https://mvnrepository.com/")
     }
-    maven {
-        setUrl("https://maven.aliyun.com/nexus/content/repositories/google")
-    }
-    maven {
-        setUrl("https://maven.aliyun.com/nexus/content/groups/public")
-    }
-    maven {
-        setUrl("https://maven.aliyun.com/nexus/content/repositories/jcenter")
-    }
-
 }
 noArg {
     annotation("team.jlm.annotation.NoArg")
     invokeInitializers = true
 }
-// Configure Gradle IntelliJ Plugin - read more: https://github.com/JetBrains/gradle-intellij-plugin
 intellij {
     version.set("2021.2")
     type.set("IC") // Target IDE Platform
@@ -43,22 +35,13 @@ intellij {
     )
 }
 dependencies {
-    // https://mvnrepository.com/artifact/guru.nidi/graphviz-java
-    //graphviz java的绘图库
     implementation("guru.nidi:graphviz-java:0.18.1") {
         //这个依赖已经在idea的jbr里面存在了
         exclude("org.slf4j", "slf4j-api")
     }
-//    implementation("com.google.code.gson:gson:2.9.0")
-//    implementation("org.projectlombok:lombok:1.18.24")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.0")
-
-
-//    implementation("org.eclipse.jgit:org.eclipse.jgit:6.1.0.202203080745-r"){
-//        //这个依赖已经在idea的jbr里面存在了
-//        exclude("org.slf4j", "slf4j-api")
-//    }
-//    implementation("com.github.adedayo.intellij.sdk:git4idea:142.1")
+    // https://mvnrepository.com/artifact/com.google.code.gson/gson
+    implementation("com.google.code.gson:gson:2.8.9")
 
 }
 
@@ -66,6 +49,8 @@ sourceSets {
     getByName("main").java.srcDirs("src/main/kotlin")
     getByName("test").java.srcDirs("src/test/kotlin")
 }
+
+
 
 
 
@@ -80,7 +65,7 @@ tasks {
     }
 
     patchPluginXml {
-        sinceBuild.set("212")
+        sinceBuild.set("212.*")
         untilBuild.set("222.*")
     }
 
