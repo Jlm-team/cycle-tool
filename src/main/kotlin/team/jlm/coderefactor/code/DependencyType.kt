@@ -59,8 +59,7 @@ enum class DependencyType {
     EXTENDS,
 
     /**
-     * Create is a relation of the function and objects it created
-     * 函数和函数内创建的对象的关系
+     * 类A中创建了类B的对象
      */
     CREATE,
 

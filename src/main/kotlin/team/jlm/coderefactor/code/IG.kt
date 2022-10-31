@@ -6,6 +6,9 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiField
 import com.intellij.psi.PsiJavaFile
 import com.intellij.psi.PsiJvmMember
+import com.intellij.psi.impl.compiled.ClsClassImpl
+import com.intellij.psi.impl.source.PsiFieldImpl
+import com.intellij.psi.impl.source.tree.java.PsiLocalVariableImpl
 import com.xyzboom.algorithm.graph.GEdge
 import com.xyzboom.algorithm.graph.Graph
 import guru.nidi.graphviz.attribute.Style
@@ -116,8 +119,7 @@ open class IG(private var classes: MutableList<PsiClass>) : Graph<String>() {
                         }
                     }
                 }*/
-                println("$clazzQualifiedName ${selfElement.text}" +
-                        "${selfElement.javaClass} ${dependElement.javaClass}")
+                println("${selfElement.javaClass}")
                 when (selfElement) {
                     is PsiClass -> {
                         val className = selfElement.qualifiedName ?: return@run

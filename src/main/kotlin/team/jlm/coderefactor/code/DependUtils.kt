@@ -58,9 +58,10 @@ val PsiElement.dependencyType: DependencyType
                     TYPE -> when (this.treeParent.treeParent.elementType) {
                         FIELD -> DependencyType.CONTAIN
                         PARAMETER -> DependencyType.PARAMETER
+                        LOCAL_VARIABLE -> DependencyType.USE
                         else -> DependencyType.DEPEND
                     }
-
+                    NEW_EXPRESSION -> DependencyType.CREATE
                     else -> DependencyType.DEPEND
                 }
 
