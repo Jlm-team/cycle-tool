@@ -15,7 +15,7 @@ import kotlin.streams.toList
 
 class CycleDependencyInspection : AbstractBaseJavaLocalInspectionTool() {
     companion object {
-        const val DESCRIPTION_TEMPLATE = "Cycle dependency"
+        const val DESCRIPTION_TEMPLATE = "Cycle dependency between %s and %s"
 
     }
 
@@ -50,7 +50,7 @@ class CycleDependencyInspection : AbstractBaseJavaLocalInspectionTool() {
                                     cycles.add(Pair(clazz, selfElement))
                                 }
                             }
-                            println("${selfElement.name} --> ${clazz.name} : ${dependElement.dependencyType}")
+//                            println("${selfElement.name} --> ${clazz.name} : ${dependElement.dependencyType}")
                         }
                     }
                 }
@@ -66,12 +66,14 @@ class CycleDependencyInspection : AbstractBaseJavaLocalInspectionTool() {
         }.toArray()
         for (p in cycles) {
             val i1 = p.first.nameIdentifier
+            println("i1 ${p.first.containingFile == psiFile}")
             if (i1 != null && classes.contains(p.first.qualifiedName)) {
-                holder.registerProblem(i1, DESCRIPTION_TEMPLATE, null)
+                holder.registerProblem(i1, DESCRIPTION_TEMPLATE.format(p.first.name, p.second.name), null)
             }
             val i2 = p.second.nameIdentifier
+            println("i2 ${p.second.containingFile == psiFile}")
             if (i2 != null && classes.contains(p.second.qualifiedName)) {
-                holder.registerProblem(i2, DESCRIPTION_TEMPLATE, null)
+                holder.registerProblem(i2, DESCRIPTION_TEMPLATE.format(p.first.name, p.second.name), null)
             }
         }
         super.inspectionFinished(session, holder)

@@ -68,7 +68,7 @@ val PsiElement.dependencyType: DependencyType
                 when (this.treeParent.elementType) {
                     REFERENCE_EXPRESSION -> when (this.treeParent.treeParent.elementType) {
                         METHOD_CALL_EXPRESSION -> DependencyType.STATIC_CALL
-                        else -> DependencyType.DEPEND
+                        else -> DependencyType.STATIC_REFERENCE
                     }
 
                     else -> DependencyType.DEPEND

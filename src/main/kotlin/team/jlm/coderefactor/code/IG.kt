@@ -3,22 +3,28 @@ package team.jlm.coderefactor.code
 import com.intellij.packageDependencies.ForwardDependenciesBuilder
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiField
 import com.intellij.psi.PsiJavaFile
+import com.intellij.psi.PsiJvmMember
 import com.xyzboom.algorithm.graph.GEdge
 import com.xyzboom.algorithm.graph.Graph
 import guru.nidi.graphviz.attribute.Style
 import guru.nidi.graphviz.model.Factory
 import guru.nidi.graphviz.model.Factory.graph
 import guru.nidi.graphviz.model.Factory.node
+import team.jlm.psi.cache.IPsiCache
+import team.jlm.psi.cache.PsiMemberCacheImpl
 import guru.nidi.graphviz.model.Graph as VizGraph
 
+private val emptyType = PsiClass::class.java
 
 /**
  * 继承与依赖图 ----- TODO 待完善
  */
 open class IG(private var classes: MutableList<PsiClass>) : Graph<String>() {
     private val classWhoseParentsAdded = HashSet<String>()
-    private val dependencyMap = HashMap<GEdge<String>, MutableSet<DependencyType>>()
+    val dependencyMap = HashMap<GEdge<String>, MutableList<DependencyType>>()
+    val dependencyPsiMap = HashMap<GEdge<String>, MutableList<IPsiCache<*>>>()
 
     init {
         for (clazz in classes) {
@@ -32,25 +38,33 @@ open class IG(private var classes: MutableList<PsiClass>) : Graph<String>() {
 //        }
     }
 
-    fun addEdge(from: String, to: String, dependency: DependencyType = DependencyType.DEPEND) {
+    fun addEdge(
+        from: String, to: String, dependency: DependencyType = DependencyType.DEPEND,
+        psiCache: IPsiCache<*> = IPsiCache.EMPTY,
+    ) {
 //        vizNodes[from.data]?.let {
 //            vizGraph = vizGraph.with(it.link(vizNodes[to.data]))
 //        }
 //        vizGraph = vizGraph.with(node(from).link(node(to)))
         val edge = super.addEdge(from, to, 1)
-        val tempSet = dependencyMap.getOrDefault(edge, HashSet())
-        tempSet.add(dependency)
-        dependencyMap[edge] = tempSet
+        val tempList0 = dependencyMap.getOrDefault(edge, ArrayList())
+        val tempList1 = dependencyPsiMap.getOrDefault(edge, ArrayList())
+        tempList0.add(dependency)
+        tempList1.add(psiCache)
+        dependencyMap[edge] = tempList0
+        dependencyPsiMap[edge] = tempList1
     }
 
     override fun delNode(data: String) {
         val node = getNode(data)
         for (edge in adjList[node]!!.edgeOut) {
             dependencyMap.remove(edge)
+            dependencyPsiMap.remove(edge)
             adjList[edge.nodeTo]!!.edgeIn.remove(edge)
         }
         for (edge in adjList[node]!!.edgeIn) {
             dependencyMap.remove(edge)
+            dependencyPsiMap.remove(edge)
             adjList[edge.nodeFrom]!!.edgeOut.remove(edge)
         }
         adjList.remove(node)
@@ -62,14 +76,14 @@ open class IG(private var classes: MutableList<PsiClass>) : Graph<String>() {
         if (classWhoseParentsAdded.contains(clazz.qualifiedName)) {
             return
         }
-        val clazzQualifiedName = clazz.qualifiedName
+        val clazzQualifiedName = clazz.qualifiedName ?: return
         //不存在当前扫描到的类则添加这个类
-        clazzQualifiedName?.let {
+        clazzQualifiedName.let {
             classWhoseParentsAdded.add(it)
             super.addNode(it)
         }
 //        clazzQualifiedName?.let { super.addNode(it) }
-        if (!classes.contains(clazz) || clazzQualifiedName == null) {//排除不在项目里的类的父类
+        if (!classes.contains(clazz)) {//排除不在项目里的类的父类
             return
         }
         val parents = clazz.supers
@@ -83,8 +97,8 @@ open class IG(private var classes: MutableList<PsiClass>) : Graph<String>() {
                 }
                 addClassAndParents(parent)
 
-                clazz.name?.let {
-                    parent.name?.let { it1 ->
+                clazz.qualifiedName?.let {
+                    parent.qualifiedName?.let { it1 ->
                         addEdge(it, it1, DependencyType.EXTENDS)
                     }
                 }
@@ -93,18 +107,43 @@ open class IG(private var classes: MutableList<PsiClass>) : Graph<String>() {
         ForwardDependenciesBuilder.analyzeFileDependencies(clazz.containingFile as PsiJavaFile)
         { dependElement: PsiElement, selfElement: PsiElement ->
             run {
-                if (selfElement is PsiClass) {
+                /*if (selfElement is PsiClass) {
 //                    println(dependElement.elementType)
                     val dependency = dependElement.dependencyType
-                    selfElement.name?.let { it1 -> clazz.name?.let { addEdge(it, it1, dependency) } }
+                    selfElement.qualifiedName?.let { it1 ->
+                        clazz.qualifiedName?.let {
+                            addEdge(it, it1, dependency, dependElement.textRange, dependElement.javaClass)
+                        }
+                    }
+                }*/
+                println("$clazzQualifiedName ${selfElement.text}" +
+                        "${selfElement.javaClass} ${dependElement.javaClass}")
+                when (selfElement) {
+                    is PsiClass -> {
+                        val className = selfElement.qualifiedName ?: return@run
+                        addEdge(
+                            clazzQualifiedName, className,
+                            dependElement.dependencyType
+                        )
+                        return@run
+                    }
+
+                    is PsiJvmMember -> {
+                        val containingClass = selfElement.containingClass ?: return@run
+                        val containingClassName = containingClass.qualifiedName ?: return@run
+                        val cache = PsiMemberCacheImpl(
+                            selfElement.textOffset - containingClass.textOffset,
+                            containingClassName,
+                            selfElement.javaClass
+                        )
+                        addEdge(
+                            clazzQualifiedName, containingClassName,
+                            DependencyType.STATIC_REFERENCE, cache
+                        )
+                    }
                 }
             }
         }
-//        for (dependency in dependencies) {
-////            dependency.
-//            if (dependency is PsiClass)
-//                dependency.name?.let { it1 -> clazz.name?.let { addDependencyEdge(it, it1) } }
-//        }
     }
 
     fun toGraphvizGraph(): VizGraph {

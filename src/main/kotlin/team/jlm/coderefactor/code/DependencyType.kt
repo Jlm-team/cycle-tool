@@ -13,6 +13,7 @@ enum class DependencyType {
     IMPORT_LIST,
     IMPORT_STATIC_STATEMENT,
     IMPORT_STATIC_REFERENCE,//import static xxx 会识别为此类型
+    STATIC_REFERENCE,//使用类的静态属性
 
     /**
      * Contain is a relation between code elements(entities).
