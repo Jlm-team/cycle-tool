@@ -3,11 +3,14 @@ package team.jlm.coderefactor.plugin.action
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.Project
+import com.intellij.packageDependencies.DependencyVisitorFactory
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiJvmMember
 import com.intellij.psi.PsiMember
 import com.intellij.refactoring.JavaRefactoringFactory
 import com.xyzboom.algorithm.graph.GEdge
 import com.xyzboom.algorithm.graph.Tarjan
+import team.jlm.coderefactor.code.DependVisitor
 import team.jlm.coderefactor.code.DependencyType
 import team.jlm.coderefactor.code.IG
 import team.jlm.psi.cache.PsiMemberCacheImpl
@@ -93,7 +96,18 @@ class CycleDependencyAction : AnAction() {
         for (i in dpList.indices) {
             val cache = ig.dependencyPsiMap[edge]?.get(i) ?: continue
             if (cache is PsiMemberCacheImpl) {
-                staticFields.add(cache.getPsi(project))
+                val directDependPsi = cache.getPsi(project)
+                staticFields.add(directDependPsi)
+                directDependPsi.accept(DependVisitor(
+                    { dependElementInThisFile: PsiElement, dependElement: PsiElement ->
+                        println(dependElementInThisFile)
+                        println(dependElement)
+                        if (dependElement is PsiJvmMember
+                            && dependElement.containingFile == directDependPsi.containingFile) {
+                            staticFields.add(dependElement)
+                        }
+                    }, DependencyVisitorFactory.VisitorOptions.fromSettings(project)
+                ))
             }
         }
         if (staticFields.isEmpty()) return

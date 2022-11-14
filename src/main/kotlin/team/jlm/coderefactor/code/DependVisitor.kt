@@ -28,7 +28,7 @@ class DependVisitor internal constructor(
         val refs = element.references
         for (ref in refs) {
             val resolved = ref.resolve()
-            if (resolved != null && resolved is PsiClass && resolved !is PsiCompiledElement) {
+            if (resolved != null && resolved !is PsiCompiledElement) {
                 myProcessor.process(ref.element, resolved)
             }
         }
