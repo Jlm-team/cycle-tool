@@ -10,8 +10,6 @@ import com.xyzboom.algorithm.graph.GEdge
 import com.xyzboom.algorithm.graph.GNode
 import team.jlm.coderefactor.code.DependencyType
 import team.jlm.coderefactor.code.IG
-import team.jlm.coderefactor.code.dependencyType
-import kotlin.streams.toList
 
 class CycleDependencyInspection : AbstractBaseJavaLocalInspectionTool() {
     companion object {
@@ -39,7 +37,7 @@ class CycleDependencyInspection : AbstractBaseJavaLocalInspectionTool() {
                             if (selfName == null || clazzName == null) {
                                 return@run
                             }
-                            ig.addEdge(clazzName, selfName, DependencyType.DEPEND)
+                            ig.addEdge(clazzName, selfName, DependencyType.OTHER)
                             val edgePair = ig.adjList[GNode(selfName)] ?: return@run
                             if (edgePair.edgeOut.contains(GEdge(GNode(selfName), GNode(clazzName)))) {
                                 print("detected cycle: ")

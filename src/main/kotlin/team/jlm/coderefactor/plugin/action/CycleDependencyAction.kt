@@ -3,7 +3,6 @@ package team.jlm.coderefactor.plugin.action
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiField
 import com.intellij.psi.PsiJvmMember
 import com.intellij.psi.PsiMember
 import com.intellij.refactoring.JavaRefactoringFactory
@@ -19,9 +18,9 @@ val importDependencySet = HashSet<DependencyType>(
         DependencyType.IMPORT_LIST,
         DependencyType.IMPORT_STATIC_STATEMENT,
         DependencyType.IMPORT_STATEMENT,
-        DependencyType.IMPORT_STATIC_REFERENCE,
-        DependencyType.STATIC_REFERENCE,
-        DependencyType.STATIC_CALL,
+        DependencyType.IMPORT_STATIC_FIELD,
+        DependencyType.STATIC_FIELD,
+        DependencyType.STATIC_METHOD,
     )
 )
 
@@ -32,8 +31,8 @@ class CycleDependencyAction : AnAction() {
         val classes = getAllClassesInProject(project)
         classes.removeIf {
             val path = it.containingFile.originalFile.containingDirectory.toString()
-            it.containingClass != null /*||
-                    path.contains("test", true) || path.contains("docs", false)
+            it.containingClass != null ||
+                    path.contains("after", true) /*|| path.contains("docs", false)
                     || path.contains("examples", true)*/
         }
         val ig = IG(classes)
@@ -44,11 +43,17 @@ class CycleDependencyAction : AnAction() {
                 for (col in row) {
                     ig.delNode(col.data)
                 }
-            } else {
-                println("${row[0]} ${row[1]}")
             }
         }
-        for (p in ig.adjList) {
+        result.filter { it.size == 2 }.forEach {
+            val row = it
+            println("${row[0]} ${row[1]}")
+            val edge0 = GEdge(row[0], row[1])
+            val edge1 = GEdge(row[1], row[0])
+            if (!handleEdge(ig, edge0, project))
+                handleEdge(ig, edge1, project)
+        }
+        /*for (p in ig.adjList) {
             val edgePair = p.value
             for (edge in edgePair.edgeOut) {
                 val dpList = ig.dependencyMap[edge] ?: continue
@@ -59,8 +64,23 @@ class CycleDependencyAction : AnAction() {
                     println(edge)
                 }
             }
-        }
+        }*/
         println()
+    }
+
+    private fun handleEdge(
+        ig: IG,
+        edge: GEdge<String>,
+        project: Project,
+    ): Boolean {
+        val dpList = ig.dependencyMap[edge] ?: return false
+        val dpSet = HashSet(dpList)
+        dpSet.removeAll(importDependencySet)
+        return if (dpSet.size == 0) {
+            handleOnlyStaticFieldsInOneClass(dpList, ig, edge, project)
+            println(edge)
+            true
+        } else false
     }
 
     private fun handleOnlyStaticFieldsInOneClass(

@@ -12,8 +12,9 @@ enum class DependencyType {
     IMPORT_STATEMENT,
     IMPORT_LIST,
     IMPORT_STATIC_STATEMENT,
-    IMPORT_STATIC_REFERENCE,//import static xxx 会识别为此类型
-    STATIC_REFERENCE,//使用类的静态属性
+    IMPORT_STATIC_FIELD,//import static xxx 会识别为此类型
+    STATIC_FIELD,//使用类的静态属性
+    NONSTATIC_FIELD,
 
     /**
      * Contain is a relation between code elements(entities).
@@ -32,19 +33,12 @@ enum class DependencyType {
     /**
      * 类A调用了类B的静态方法
      */
-    STATIC_CALL,
+    STATIC_METHOD,
 
     /**
-     * Return is a relation of function/method and it's return type(s).
-     * 函数和其返回值类型的关系
+     * 类A通过类B的实例调用类B的方法
      */
-    RETURN,
-
-    /**
-     * Throw is similar as Return, it is a relation of function/method and it's throws type(s).
-     * 函数和函数抛出的异常类型的关系
-     */
-    THROW,
+    NONSTATIC_METHOD,
 
     /**
      * Implement is a relation between a function or class implementation, and it's prototype/interface.
@@ -64,6 +58,11 @@ enum class DependencyType {
     CREATE,
 
     /**
+     * 在类A中使用语句B.class
+     */
+    CLASS_OBJECT_ACCESS,
+
+    /**
      * Cast is a relation of an expression and the casted types
      * 表达式和强制类型转换的类型的关系
      */
@@ -80,5 +79,5 @@ enum class DependencyType {
      * java类和java注解的关系
      */
     ANNOTATION,
-    DEPEND
+    OTHER,
 }
