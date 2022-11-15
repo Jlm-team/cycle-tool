@@ -7,6 +7,7 @@ import com.intellij.packageDependencies.DependencyVisitorFactory
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiJvmMember
 import com.intellij.psi.PsiMember
+import com.intellij.psi.PsiModifier
 import com.intellij.refactoring.JavaRefactoringFactory
 import com.xyzboom.algorithm.graph.GEdge
 import com.xyzboom.algorithm.graph.Tarjan
@@ -80,9 +81,8 @@ class CycleDependencyAction : AnAction() {
         val dpSet = HashSet(dpList)
         dpSet.removeAll(importDependencySet)
         return if (dpSet.size == 0) {
-            handleOnlyStaticFieldsInOneClass(dpList, ig, edge, project)
             println(edge)
-            true
+            handleOnlyStaticFieldsInOneClass(dpList, ig, edge, project)
         } else false
     }
 
@@ -91,31 +91,42 @@ class CycleDependencyAction : AnAction() {
         ig: IG,
         edge: GEdge<String>,
         project: Project,
-    ) {
+    ): Boolean {
         val staticFields = ArrayList<PsiJvmMember>()
+        var nonStatic = false
         for (i in dpList.indices) {
             val cache = ig.dependencyPsiMap[edge]?.get(i) ?: continue
             if (cache is PsiMemberCacheImpl) {
                 val directDependPsi = cache.getPsi(project)
                 staticFields.add(directDependPsi)
-                directDependPsi.accept(DependVisitor(
-                    { dependElementInThisFile: PsiElement, dependElement: PsiElement ->
-                        println(dependElementInThisFile)
-                        println(dependElement)
-                        if (dependElement is PsiJvmMember
-                            && dependElement.containingFile == directDependPsi.containingFile) {
-                            staticFields.add(dependElement)
-                        }
-                    }, DependencyVisitorFactory.VisitorOptions.fromSettings(project)
-                ))
+                directDependPsi.accept(
+                    DependVisitor(
+                        { dependElementInThisFile: PsiElement, dependElement: PsiElement ->
+                            println(dependElementInThisFile)
+                            println(dependElement)
+                            if (dependElement is PsiJvmMember) {
+                                if (dependElement == directDependPsi.containingClass) {
+                                    nonStatic = true
+                                    return@DependVisitor
+                                } else if (dependElement.hasModifierProperty(PsiModifier.STATIC)) {
+                                    staticFields.add(dependElement)
+                                } else if (!dependElement.hasModifierProperty(PsiModifier.PUBLIC)) {
+                                    nonStatic = true
+                                    return@DependVisitor
+                                }
+                            }
+                        }, DependencyVisitorFactory.VisitorOptions.fromSettings(project)
+                    )
+                )
             }
         }
-        if (staticFields.isEmpty()) return
+        if (staticFields.isEmpty() || nonStatic) return false
         val move = JavaRefactoringFactory.getInstance(project)
             .createMoveMembers(
                 staticFields.toArray(arrayOf<PsiMember>()),
                 edge.nodeFrom.data, "public"
             )
         move.run()
+        return true
     }
 }
