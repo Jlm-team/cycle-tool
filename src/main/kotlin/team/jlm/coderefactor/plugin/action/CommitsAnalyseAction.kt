@@ -3,6 +3,7 @@ package team.jlm.coderefactor.plugin.action
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.components.service
+import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.xyzboom.algorithm.graph.saveAsDependencyGraph
 import team.jlm.coderefactor.plugin.service.CommitsAnalyseCacheService
 import team.jlm.utils.*
@@ -22,6 +23,11 @@ class CommitsAnalyseAction : AnAction() {
         for (repo in gitRepos) {
             println(repo)
         }
+        if (gitRepos.isEmpty()) {
+            JBPopupFactory.getInstance().createPopupChooserBuilder(listOf("确认"))
+                .setTitle("您的项目中没有git仓库").createPopup().showInFocusCenter()
+            return
+        }
         val repo = gitRepos[0]
         computeWithModalProgress(project, "Analysing...") {
 //            runReadAction {
@@ -34,7 +40,9 @@ class CommitsAnalyseAction : AnAction() {
                 }
                 return@removeIf affectedPaths.size > 10 || affectedPaths.size <= 1
             }
-            commits = commits.subList(commits.size - 100, commits.size)
+            if (commits.size > 100) {
+                commits = commits.subList(commits.size - 100, commits.size)
+            }
             println("number commits to analyse: ${commits.size}")
             for (afterCommit in commits) {
                 val afterIndex = timedVcsCommits.indexOfFirst {
