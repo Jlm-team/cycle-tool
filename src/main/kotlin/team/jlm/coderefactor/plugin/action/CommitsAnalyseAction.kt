@@ -2,8 +2,10 @@ package team.jlm.coderefactor.plugin.action
 
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.components.service
 import com.intellij.openapi.ui.popup.JBPopupFactory
+import com.xyzboom.algorithm.graph.Graph
 import com.xyzboom.algorithm.graph.saveAsDependencyGraph
 import team.jlm.coderefactor.plugin.service.CommitsAnalyseCacheService
 import team.jlm.utils.*
@@ -60,10 +62,13 @@ class CommitsAnalyseAction : AnAction() {
                     )
                 )
                 val start = System.currentTimeMillis()
-                val dg = analyseChangesCompletableFuture(
-                    changes, project, beforeCommitId, afterCommitId
-                )
-                println(dg)
+                var dg = Graph<String>()
+                runReadAction {
+                    dg = analyseChangesCompletableFuture(
+                        changes, project, beforeCommitId, afterCommitId
+                    )
+                    println(dg)
+                }
                 println("time change dp analyse used: ${(System.currentTimeMillis() - start) / 1000}")
                 clearPsiMapAccordingToCommit(beforeCommitId)
                 service.state.analysedCommits?.add(beforeCommitId)
@@ -74,7 +79,7 @@ class CommitsAnalyseAction : AnAction() {
                         "gitCommits/${last6Str(beforeCommitId)}-${last6Str(afterCommitId)}", it1
                     )
                 }
-                break
+//                break
             }
 //                for (i in 0 until timedVcsCommits.size - 1) {
 //                    println("${timedVcsCommits[i + 1]}, ${timedVcsCommits[i]}")

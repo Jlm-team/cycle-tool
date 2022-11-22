@@ -82,7 +82,7 @@ class CycleDependencyAction : AnAction() {
         dpSet.removeAll(importDependencySet)
         return if (dpSet.size == 0) {
             println(edge)
-            handleOnlyStaticFieldsInOneClass(dpList, ig, edge, project)
+            return handleOnlyStaticFieldsInOneClass(dpList, ig, edge, project)
         } else false
     }
 
@@ -92,7 +92,7 @@ class CycleDependencyAction : AnAction() {
         edge: GEdge<String>,
         project: Project,
     ): Boolean {
-        val staticFields = ArrayList<PsiJvmMember>()
+        val staticFields = HashSet<PsiJvmMember>()
         var nonStatic = false
         for (i in dpList.indices) {
             val cache = ig.dependencyPsiMap[edge]?.get(i) ?: continue
@@ -110,7 +110,7 @@ class CycleDependencyAction : AnAction() {
                                     return@DependVisitor
                                 } else if (dependElement.hasModifierProperty(PsiModifier.STATIC)) {
                                     staticFields.add(dependElement)
-                                } else if (!dependElement.hasModifierProperty(PsiModifier.PUBLIC)) {
+                                } else {
                                     nonStatic = true
                                     return@DependVisitor
                                 }

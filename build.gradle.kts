@@ -1,7 +1,7 @@
 plugins {
     id("java")
     id("org.jetbrains.kotlin.jvm") version "1.7.0"
-    id("org.jetbrains.intellij") version "1.6.0"
+    id("org.jetbrains.intellij") version "1.9.0"
     id("org.jetbrains.kotlin.plugin.noarg") version "1.7.0"
     id("org.jetbrains.kotlin.plugin.serialization") version "1.4.20"
 }

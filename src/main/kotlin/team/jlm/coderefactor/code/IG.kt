@@ -7,6 +7,7 @@ import com.intellij.psi.PsiField
 import com.intellij.psi.PsiJavaFile
 import com.intellij.psi.PsiJvmMember
 import com.intellij.psi.PsiMethod
+import com.intellij.psi.PsiModifier
 import com.intellij.psi.impl.source.tree.JavaElementType
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.util.PsiTreeUtil
@@ -132,8 +133,68 @@ open class IG(private var classes: MutableList<PsiClass>) : Graph<String>() {
                     }
                 }*/
                 println("${selfElement.javaClass}")
+                val selfClass = PsiTreeUtil.getParentOfType(selfElement, PsiClass::class.java, false) ?: return@run
+                val selfClassName = selfElement.let {
+                    if (it is PsiClass) {
+                        it.qualifiedName ?: ""
+                    } else {
+                        selfClass.qualifiedName ?: ""
+                    }
+                }
+                if (selfClassName == clazzQualifiedName
+                    || selfClassName.startsWith(clazzQualifiedName)
+                    || clazzQualifiedName.startsWith(selfClassName)
+                    || !classes.contains(selfClass)
+                ) {
+                    return@run
+                }
+                var dependencyType = DependencyType.OTHER
+                var psiCache = IPsiCache.EMPTY
+                if (selfElement !is PsiClass) {
+                    if (dependElement.elementType == JavaElementType.METHOD_REF_EXPRESSION) {
+                        dependencyType = when (selfElement) {
+                            is PsiMethod -> {
+                                psiCache = PsiMemberCacheImpl(
+                                    selfElement.startOffset - selfClass.startOffset,
+                                    selfClassName,
+                                    selfElement.javaClass
+                                )
+                                if (selfElement.modifierList.hasModifierProperty(PsiModifier.STATIC)) {
+                                    DependencyType.STATIC_METHOD
+                                }
+                                DependencyType.NONSTATIC_METHOD
+                            }
+
+                            else -> {
+                                DependencyType.OTHER
+                            }
+                        }
+                    } else if (selfElement is PsiJvmMember) {
+                        dependencyType = if (selfElement.hasModifierProperty(PsiModifier.STATIC)) {
+                            when (selfElement) {
+                                is PsiMethod -> DependencyType.STATIC_METHOD
+                                is PsiField -> DependencyType.STATIC_FIELD
+                                else -> DependencyType.OTHER
+                            }
+                        } else {
+                            when (selfElement) {
+                                is PsiMethod -> DependencyType.NONSTATIC_METHOD
+                                is PsiField -> DependencyType.NONSTATIC_FIELD
+                                else -> DependencyType.OTHER
+                            }
+                        }
+                        psiCache = PsiMemberCacheImpl(
+                            selfElement.startOffset - selfClass.startOffset,
+                            selfClassName,
+                            selfElement.javaClass
+                        )
+                    }
+                } else {
+                    dependencyType = dependElement.dependencyType
+                    psiCache = IPsiCache.EMPTY
+                }
                 igDebug {
-                    if (dependElement.dependencyType == DependencyType.OTHER) {
+                    if (dependencyType == DependencyType.OTHER) {
                         val selfName: String = when (selfElement) {
                             is PsiClass -> {
                                 selfElement.qualifiedName ?: ""
@@ -172,66 +233,6 @@ open class IG(private var classes: MutableList<PsiClass>) : Graph<String>() {
                                 a
                             }
                     }
-                }
-                val selfClass = PsiTreeUtil.getParentOfType(selfElement, PsiClass::class.java, false) ?: return@run
-                val selfClassName = selfElement.let {
-                    if (it is PsiClass) {
-                        it.qualifiedName ?: ""
-                    } else {
-                        selfClass.qualifiedName ?: ""
-                    }
-                }
-                if (selfClassName == clazzQualifiedName
-                    || selfClassName.startsWith(clazzQualifiedName)
-                    || clazzQualifiedName.startsWith(selfClassName)
-                    || !classes.contains(selfClass)
-                ) {
-                    return@run
-                }
-                var dependencyType = DependencyType.OTHER
-                var psiCache = IPsiCache.EMPTY
-                if (selfElement !is PsiClass) {
-                    if (dependElement.elementType == JavaElementType.METHOD_REF_EXPRESSION) {
-                        dependencyType = when (selfElement) {
-                            is PsiMethod -> {
-                                psiCache = PsiMemberCacheImpl(
-                                    selfElement.startOffset - selfClass.startOffset,
-                                    selfClassName,
-                                    selfElement.javaClass
-                                )
-                                if (selfElement.modifierList.hasModifierProperty("static")) {
-                                    DependencyType.STATIC_METHOD
-                                }
-                                DependencyType.NONSTATIC_METHOD
-                            }
-
-                            else -> {
-                                DependencyType.OTHER
-                            }
-                        }
-                    } else if (selfElement is PsiJvmMember) {
-                        dependencyType = if (selfElement.hasModifierProperty("static")) {
-                            when (selfElement) {
-                                is PsiMethod -> DependencyType.STATIC_METHOD
-                                is PsiField -> DependencyType.STATIC_FIELD
-                                else -> DependencyType.OTHER
-                            }
-                        } else {
-                            when (selfElement) {
-                                is PsiMethod -> DependencyType.NONSTATIC_METHOD
-                                is PsiField -> DependencyType.NONSTATIC_FIELD
-                                else -> DependencyType.OTHER
-                            }
-                        }
-                        psiCache = PsiMemberCacheImpl(
-                            selfElement.startOffset - selfClass.startOffset,
-                            selfClassName,
-                            selfElement.javaClass
-                        )
-                    }
-                } else {
-                    dependencyType = dependElement.dependencyType
-                    psiCache = IPsiCache.EMPTY
                 }
                 addEdge(
                     clazzQualifiedName, selfClassName,
