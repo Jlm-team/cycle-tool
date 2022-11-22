@@ -3,7 +3,28 @@
 ## Requirements
 
 1. jbr >= 11 (JetBrains Runtime)
-2. Itellj IDEA
+
+2. Intellij IDEA
+
+3. Graphviz  [more details](./docs/install_graphviz.md)
+
+## 功能介绍
+
+### 1. 查看所有类
+
+分析整个项目并且将所有java类间的依赖关系，并将含有循环依赖的类进行绘图，结果以图片输出。
+
+[more details](./docs/details/show_all_classes.md)
+
+### 2. 分析git提交
+
+分析整个项目中的提交中的代码变动的依赖情况，并在控制台进行输出。
+
+[more details](./docs/details/commits_analyse.md)
+
+### 3. 循环依赖分析
+
+分析项目当前的循环依赖情况，并自动重构可以执行重构操作的循环依赖项。
 
 ## Getting Start
 
