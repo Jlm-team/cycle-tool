@@ -2,6 +2,7 @@ package team.jlm.coderefactor.plugin.action
 
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.xyzboom.algorithm.graph.Graph
@@ -10,9 +11,12 @@ import guru.nidi.graphviz.engine.Format
 import guru.nidi.graphviz.engine.Graphviz
 import team.jlm.coderefactor.code.IG
 import team.jlm.coderefactor.plugin.ui.ImagePanel
+import team.jlm.utils.debug
 import team.jlm.utils.file.pluginCacheFolderName
 import team.jlm.utils.getAllClassesInProject
 import java.io.File
+
+private val logger = logger<ShowClassesAction>()
 
 class ShowClassesAction : AnAction() {
     companion object {
@@ -33,7 +37,7 @@ fun showClassesInProject(project: Project?, name: String = "all_classes.png") {
     val classes = project?.let { getAllClassesInProject(it) }
 //    if (classes != null) {
 //        for (clazz in classes) {
-//            println(clazz.name)
+//            logger.debug{ clazz.name}
 //        }
 //    }
     val ig = classes?.let { IG(it) }
@@ -46,7 +50,7 @@ fun showClassesInProject(project: Project?, name: String = "all_classes.png") {
             for (col in row) {
                 print("${col.data} ,")
             }
-            println()
+            logger.debug { }
         }
     }
     val g = ig.toGraphvizGraph()
@@ -59,5 +63,5 @@ fun showClassesInProject(project: Project?, name: String = "all_classes.png") {
     )
     val img = r.toImage()
     ImagePanel.img = img
-    VirtualFileManager.getInstance().asyncRefresh {  }
+    VirtualFileManager.getInstance().asyncRefresh { }
 }

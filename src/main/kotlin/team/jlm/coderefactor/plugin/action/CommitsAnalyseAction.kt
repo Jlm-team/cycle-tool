@@ -4,6 +4,7 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.components.service
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.xyzboom.algorithm.graph.Graph
 import com.xyzboom.algorithm.graph.saveAsDependencyGraph
@@ -11,19 +12,21 @@ import team.jlm.coderefactor.plugin.service.CommitsAnalyseCacheService
 import team.jlm.utils.*
 import team.jlm.utils.change.analyseChangesCompletableFuture
 
+private val logger = logger<CommitsAnalyseAction>()
+
 class CommitsAnalyseAction : AnAction() {
     @Suppress("UnstableApiUsage")
     override fun actionPerformed(e: AnActionEvent) {
         val project = e.project ?: return
         val service = project.service<CommitsAnalyseCacheService>()
-        println("analysed: ")
+        logger.debug { "analysed: " }
         for (s in service.state.analysedCommits!!) {
-            print("$s, ")
+            logger.debug { "$s, " }
         }
-        println()
+        logger.debug {}
         val gitRepos = project.gitRepositories
         for (repo in gitRepos) {
-            println(repo)
+            logger.debug { repo }
         }
         if (gitRepos.isEmpty()) {
             JBPopupFactory.getInstance().createPopupChooserBuilder(listOf("确认"))
@@ -45,7 +48,7 @@ class CommitsAnalyseAction : AnAction() {
             if (commits.size > 100) {
                 commits = commits.subList(commits.size - 100, commits.size)
             }
-            println("number commits to analyse: ${commits.size}")
+            logger.debug { "number commits to analyse: ${commits.size}" }
             for (afterCommit in commits) {
                 val afterIndex = timedVcsCommits.indexOfFirst {
                     it.id == afterCommit.id
@@ -55,7 +58,7 @@ class CommitsAnalyseAction : AnAction() {
                 }
                 val beforeCommitId = timedVcsCommits[afterIndex - 1].id.asString()
                 val afterCommitId = afterCommit.id.asString()
-                println("analyse: $beforeCommitId, $afterCommitId")
+                logger.debug { "analyse: $beforeCommitId, $afterCommitId" }
                 val changes = filterOnlyJavaSrc(
                     repo.diff(
                         timedVcsCommits[afterIndex - 1], timedVcsCommits[afterIndex]
@@ -67,9 +70,9 @@ class CommitsAnalyseAction : AnAction() {
                     dg = analyseChangesCompletableFuture(
                         changes, project, beforeCommitId, afterCommitId
                     )
-                    println(dg)
+                    logger.debug { dg }
                 }
-                println("time change dp analyse used: ${(System.currentTimeMillis() - start) / 1000}")
+                logger.debug { "time change dp analyse used: ${(System.currentTimeMillis() - start) / 1000}" }
                 clearPsiMapAccordingToCommit(beforeCommitId)
                 service.state.analysedCommits?.add(beforeCommitId)
                 fun last6Str(s: String) =
@@ -82,12 +85,12 @@ class CommitsAnalyseAction : AnAction() {
 //                break
             }
 //                for (i in 0 until timedVcsCommits.size - 1) {
-//                    println("${timedVcsCommits[i + 1]}, ${timedVcsCommits[i]}")
+//                    logger.debug{ "${timedVcsCommits[i + 1]}, ${timedVcsCommits[i]}")
 //                    val changes = filterOnlyJavaSrc(repo.diff(timedVcsCommits[i + 1], timedVcsCommits[i]))
 //                    val dg = analyseChanges(
 //                        changes, project, commits[i + 1].id.asString(), commits[i].id.asString()
 //                    )
-//                    println(dg)
+//                    logger.debug{ dg)
 //                    clearPsiMapAccordingToCommit(commits[i].id.asString())
 //                }
 //            }.run { }
@@ -96,7 +99,7 @@ class CommitsAnalyseAction : AnAction() {
 }
 //        SlowOperations.allowSlowOperations(ThrowableRunnable {
 //            for (commit in commits) {
-//                println(commit)
+//                logger.debug{ commit)
 //                checkout(repo, commit.id.asString(), null, true, false)
 //                showClassesInProject(project, commit.id.asString() + ".png")
 //            }

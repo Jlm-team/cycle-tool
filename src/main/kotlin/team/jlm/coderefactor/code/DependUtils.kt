@@ -44,7 +44,7 @@ val PsiElement.dependencyType: DependencyType
     get() {
         if (this !is TreeElement)
             return DependencyType.OTHER
-//        println("$this, ${this.treeParent.elementType}, ${this.treeParent.treeParent.elementType}")
+//        logger.debug{ ("$this, ${this.treeParent.elementType}, ${this.treeParent.treeParent.elementType}")
         val dependencyType = when (this.elementType) {
             JAVA_CODE_REFERENCE ->
                 when (this.treeParent.elementType) {

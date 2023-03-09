@@ -1,5 +1,6 @@
 package team.jlm.coderefactor.code
 
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.packageDependencies.ForwardDependenciesBuilder
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
@@ -21,8 +22,10 @@ import guru.nidi.graphviz.model.Factory.graph
 import guru.nidi.graphviz.model.Factory.node
 import team.jlm.psi.cache.IPsiCache
 import team.jlm.psi.cache.PsiMemberCacheImpl
+import team.jlm.utils.debug
 import guru.nidi.graphviz.model.Graph as VizGraph
 
+private val logger = logger<IG>()
 private val emptyType = PsiClass::class.java
 
 private inline fun <R> igDebug(block: () -> R) {
@@ -124,7 +127,7 @@ open class IG(private var classes: MutableList<PsiClass>) : Graph<String>() {
         { dependElement: PsiElement, selfElement: PsiElement ->
             run {
                 /*if (selfElement is PsiClass) {
-//                    println(dependElement.elementType)
+//                    logger.debug{ dependElement.elementType)
                     val dependency = dependElement.dependencyType
                     selfElement.qualifiedName?.let { it1 ->
                         clazz.qualifiedName?.let {
@@ -132,7 +135,7 @@ open class IG(private var classes: MutableList<PsiClass>) : Graph<String>() {
                         }
                     }
                 }*/
-                println("${selfElement.javaClass}")
+                logger.debug { "${selfElement.javaClass}" }
                 val selfClass = PsiTreeUtil.getParentOfType(selfElement, PsiClass::class.java, false) ?: return@run
                 val selfClassName = selfElement.let {
                     if (it is PsiClass) {

@@ -3,6 +3,7 @@ package team.jlm.coderefactor.plugin.inspection
 import com.intellij.codeInspection.AbstractBaseJavaLocalInspectionTool
 import com.intellij.codeInspection.LocalInspectionToolSession
 import com.intellij.codeInspection.ProblemsHolder
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.packageDependencies.ForwardDependenciesBuilder
 import com.intellij.psi.*
 import com.intellij.util.containers.stream
@@ -10,6 +11,9 @@ import com.xyzboom.algorithm.graph.GEdge
 import com.xyzboom.algorithm.graph.GNode
 import team.jlm.coderefactor.code.DependencyType
 import team.jlm.coderefactor.code.IG
+import team.jlm.utils.debug
+
+private val logger = logger<CycleDependencyInspection>()
 
 class CycleDependencyInspection : AbstractBaseJavaLocalInspectionTool() {
     companion object {
@@ -41,14 +45,14 @@ class CycleDependencyInspection : AbstractBaseJavaLocalInspectionTool() {
                             val edgePair = ig.adjList[GNode(selfName)] ?: return@run
                             if (edgePair.edgeOut.contains(GEdge(GNode(selfName), GNode(clazzName)))) {
                                 print("detected cycle: ")
-                                println("${selfElement.name} --> ${clazz.name}")
+                                logger.debug { "${selfElement.name} --> ${clazz.name}" }
                                 if (!addedCycles.contains(Pair(clazz.qualifiedName, selfElement.qualifiedName))) {
                                     addedCycles.add(Pair(clazz.qualifiedName, selfElement.qualifiedName))
                                     addedCycles.add(Pair(selfElement.qualifiedName, clazz.qualifiedName))
                                     cycles.add(Pair(clazz, selfElement))
                                 }
                             }
-//                            println("${selfElement.name} --> ${clazz.name} : ${dependElement.dependencyType}")
+//                            logger.debug{ "${selfElement.name} --> ${clazz.name} : ${dependElement.dependencyType}")
                         }
                     }
                 }
@@ -64,12 +68,12 @@ class CycleDependencyInspection : AbstractBaseJavaLocalInspectionTool() {
         }.toArray()
         for (p in cycles) {
             val i1 = p.first.nameIdentifier
-            println("i1 ${p.first.containingFile == psiFile}")
+            logger.debug { "i1 ${p.first.containingFile == psiFile}" }
             if (i1 != null && classes.contains(p.first.qualifiedName)) {
                 holder.registerProblem(i1, DESCRIPTION_TEMPLATE.format(p.first.name, p.second.name), null)
             }
             val i2 = p.second.nameIdentifier
-            println("i2 ${p.second.containingFile == psiFile}")
+            logger.debug { "i2 ${p.second.containingFile == psiFile}" }
             if (i2 != null && classes.contains(p.second.qualifiedName)) {
                 holder.registerProblem(i2, DESCRIPTION_TEMPLATE.format(p.first.name, p.second.name), null)
             }

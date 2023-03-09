@@ -2,21 +2,24 @@ package team.jlm.coderefactor.plugin.action
 
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
 import com.intellij.packageDependencies.DependencyVisitorFactory
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiJvmMember
-import com.intellij.psi.PsiMember
 import com.intellij.psi.PsiModifier
 import com.intellij.refactoring.JavaRefactoringFactory
+import com.intellij.refactoring.Refactoring
 import com.xyzboom.algorithm.graph.GEdge
 import com.xyzboom.algorithm.graph.Tarjan
 import team.jlm.coderefactor.code.DependVisitor
 import team.jlm.coderefactor.code.DependencyType
 import team.jlm.coderefactor.code.IG
 import team.jlm.psi.cache.PsiMemberCacheImpl
+import team.jlm.utils.debug
 import team.jlm.utils.getAllClassesInProject
 
+private val logger = logger<CycleDependencyAction>()
 val importDependencySet = HashSet<DependencyType>(
     arrayListOf(
         DependencyType.IMPORT_LIST,
@@ -49,14 +52,14 @@ class CycleDependencyAction : AnAction() {
                 }
             }
         }
-        result.filter { it.size == 2 }.forEach {
+        val refactors = result.filter { it.size == 2 }.map {
             val row = it
-            println("${row[0]} ${row[1]}")
+            logger.debug { "${row[0]} ${row[1]}" }
             val edge0 = GEdge(row[0], row[1])
             val edge1 = GEdge(row[1], row[0])
-            if (!handleEdge(ig, edge0, project))
-                handleEdge(ig, edge1, project)
-        }
+            handleEdge(ig, edge0, project) ?: handleEdge(ig, edge1, project)
+        }.filterNotNull()
+        refactors.forEach { it.run() }
         /*for (p in ig.adjList) {
             val edgePair = p.value
             for (edge in edgePair.edgeOut) {
@@ -65,25 +68,25 @@ class CycleDependencyAction : AnAction() {
                 dpSet.removeAll(importDependencySet)
                 if (dpSet.size == 0) {
                     handleOnlyStaticFieldsInOneClass(dpList, ig, edge, project)
-                    println(edge)
+                    logger.debug{ (edge)
                 }
             }
         }*/
-        println()
+        logger.debug { }
     }
 
     private fun handleEdge(
         ig: IG,
         edge: GEdge<String>,
         project: Project,
-    ): Boolean {
-        val dpList = ig.dependencyMap[edge] ?: return false
+    ): Refactoring? {
+        val dpList = ig.dependencyMap[edge] ?: return null
         val dpSet = HashSet(dpList)
         dpSet.removeAll(importDependencySet)
         return if (dpSet.size == 0) {
-            println(edge)
+            logger.debug { edge }
             return handleOnlyStaticFieldsInOneClass(dpList, ig, edge, project)
-        } else false
+        } else null
     }
 
     private fun handleOnlyStaticFieldsInOneClass(
@@ -91,7 +94,7 @@ class CycleDependencyAction : AnAction() {
         ig: IG,
         edge: GEdge<String>,
         project: Project,
-    ): Boolean {
+    ): Refactoring? {
         val staticFields = HashSet<PsiJvmMember>()
         var nonStatic = false
         for (i in dpList.indices) {
@@ -102,8 +105,8 @@ class CycleDependencyAction : AnAction() {
                 directDependPsi.accept(
                     DependVisitor(
                         { dependElementInThisFile: PsiElement, dependElement: PsiElement ->
-                            println(dependElementInThisFile)
-                            println(dependElement)
+                            logger.debug { dependElementInThisFile }
+                            logger.debug { dependElement }
                             if (dependElement is PsiJvmMember) {
                                 if (dependElement == directDependPsi.containingClass) {
                                     nonStatic = true
@@ -120,13 +123,11 @@ class CycleDependencyAction : AnAction() {
                 )
             }
         }
-        if (staticFields.isEmpty() || nonStatic) return false
-        val move = JavaRefactoringFactory.getInstance(project)
+        if (staticFields.isEmpty() || nonStatic) return null
+        return JavaRefactoringFactory.getInstance(project)
             .createMoveMembers(
-                staticFields.toArray(arrayOf<PsiMember>()),
+                staticFields.toArray(arrayOf()),
                 edge.nodeFrom.data, "public"
             )
-        move.run()
-        return true
     }
 }

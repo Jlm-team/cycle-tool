@@ -1,3 +1,5 @@
+import org.jetbrains.intellij.tasks.RunIdeTask
+
 plugins {
     id("java")
     id("org.jetbrains.kotlin.jvm") version "1.7.0"
@@ -13,7 +15,7 @@ repositories {
     mavenCentral()
     google()
     jcenter()
-    maven{
+    maven {
         setUrl("https://www.jetbrains.com/intellij-repository/releases")
         setUrl("https://maven.pkg.jetbrains.space/public/p/kotlinx-html/maven")
         setUrl("https://mvnrepository.com/")
@@ -50,11 +52,11 @@ sourceSets {
     getByName("test").java.srcDirs("src/test/kotlin")
 }
 
-
-
-
-
 tasks {
+    withType<RunIdeTask> {
+        println("RunIdeTask")
+        System.setProperty("idea.log.debug.categories", "true")
+    }
     // Set the JVM compatibility versions
     withType<JavaCompile> {
         sourceCompatibility = "11"
