@@ -67,7 +67,7 @@ class CycleDependencyAction : AnAction() {
             refactor?.let { r ->
                 edge0 to r
             }
-        }.associate { it.first to it.second }
+        }
 
         var toolWindow = ToolWindowManager.getInstance(project).getToolWindow("dependenciesToolWindow")
         if (toolWindow == null) {

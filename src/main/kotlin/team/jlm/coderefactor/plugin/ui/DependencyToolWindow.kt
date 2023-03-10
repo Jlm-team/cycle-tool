@@ -16,22 +16,21 @@ import javax.swing.JPanel
 class DependencyToolWindow {
 
     fun getWindow(): JPanel {
-        return getWindow(emptyMap())
+        return getWindow(ArrayList())
     }
 
-    fun getWindow(values: Map<GEdge<String>, Refactoring>): JPanel {
+    fun getWindow(values: List<Pair<GEdge<String>, Refactoring>>): JPanel {
         var flag = false
-        if(values.isEmpty()){ flag = true}
+        if (values.isEmpty()) {
+            flag = true
+        }
         val panel = JPanel(BorderLayout())
         val table = DependencyTable(values)
         val buttons = JPanel(FlowLayout(FlowLayout.LEFT, 0, 0))
         val doneButton = JButton("确定")
         doneButton.addActionListener {
-            val selected = table.selectedRows.map {
-                Pair(table.getValueAt(it, 0), table.getValueAt(it, 2))
-            }
-            val refactors = selected.map { table.refactorsMap[it] }
-            refactors.forEach { it?.run() }
+            val refactors = table.selectedRows.map { s -> table.refactorsMap[s] }
+            refactors.forEach { it.second.run() }
         }
         val selectAllButton = JButton("全选")
         selectAllButton.addActionListener { table.selectAll() }
@@ -43,15 +42,15 @@ class DependencyToolWindow {
             ActionPlaces.TOOLWINDOW_TOOLBAR_BAR,
             Dimension(32, 32)
         )
-        if (flag){
-            doneButton.isEnabled  = false
+        if (flag) {
+            doneButton.isEnabled = false
             selectAllButton.isEnabled = false
         }
         buttons.add(doneButton)
         buttons.add(selectAllButton)
         buttons.add(refreshButton)
         panel.add(buttons, BorderLayout.NORTH)
-        panel.add(buttons, BorderLayout.CENTER)
+        panel.add(table, BorderLayout.CENTER)
         return panel
     }
 }

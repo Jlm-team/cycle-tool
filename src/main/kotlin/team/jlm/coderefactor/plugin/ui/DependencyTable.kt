@@ -14,7 +14,8 @@ import javax.swing.table.DefaultTableModel
 
 class DependencyTable : JBTable {
 
-    val refactorsMap = HashMap<Pair<String,String>,Refactoring>()
+    val refactorsMap = ArrayList<Pair<GEdge<String>, Refactoring>>()
+
     private constructor(tableModel: DefaultTableModel) : super(tableModel) {
         this.tableHeader.isVisible = false
         val headerRenderer = DefaultTableCellRenderer()
@@ -22,14 +23,10 @@ class DependencyTable : JBTable {
         this.tableHeader.defaultRenderer = headerRenderer
         this.autoscrolls = true
         this.tableHeader.reorderingAllowed = false
-        if(this.columnCount>2)
-            this.columnModel.getColumn(1).cellRenderer = DependencyTableCellRenderer()
     }
 
-    constructor(edges: Map<GEdge<String>,Refactoring>) : this(initValues(edges)){
-        edges.forEach {
-            refactorsMap[Pair(it.key.nodeTo.data,it.key.nodeFrom.data)] = it.value
-        }
+    constructor(edges: List<Pair<GEdge<String>, Refactoring>>) : this(initValues(edges)) {
+        refactorsMap.addAll(edges)
     }
 
 
@@ -39,12 +36,12 @@ class DependencyTable : JBTable {
 
     companion object {
         @JvmStatic
-        private fun initValues(edges: Map<GEdge<String>,Refactoring>): DefaultTableModel {
+        private fun initValues(edges: List<Pair<GEdge<String>, Refactoring>>): DefaultTableModel {
             val values = Vector<Vector<String>>(edges.size)
-            edges.forEach {(k,_)->
+            edges.forEach { (k, _) ->
                 values.add(Vector(listOf(k.nodeFrom.data, "", k.nodeTo.data)))
             }
-            return DefaultTableModel(values, 3)
+            return DefaultTableModel(values, Vector(listOf("", "")))
         }
     }
 
@@ -62,7 +59,7 @@ class DependencyTableCellRenderer : DefaultTableCellRenderer() {
         isSelected: Boolean,
         hasFocus: Boolean,
         row: Int,
-        column: Int
+        column: Int,
     ): Component {
         return if (column == 1) {
             val label = JBLabel(dIcon)
