@@ -12,6 +12,7 @@ import java.awt.Dimension
 import java.awt.FlowLayout
 import javax.swing.JButton
 import javax.swing.JPanel
+import kotlin.collections.ArrayList
 
 class DependencyToolWindow {
 
@@ -29,8 +30,10 @@ class DependencyToolWindow {
         val buttons = JPanel(FlowLayout(FlowLayout.LEFT, 0, 0))
         val doneButton = JButton("确定")
         doneButton.addActionListener {
-            val refactors = table.selectedRows.map { s -> table.refactorsMap[s] }
+            val rows = table.selectedRows
+            val refactors = rows.map { s -> table.refactorsMap[s] }
             refactors.forEach { it.second.run() }
+            table.removeRows(rows.toList())
         }
         val selectAllButton = JButton("全选")
         selectAllButton.addActionListener { table.selectAll() }

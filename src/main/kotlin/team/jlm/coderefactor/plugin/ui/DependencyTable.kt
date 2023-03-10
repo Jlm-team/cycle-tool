@@ -7,7 +7,7 @@ import com.intellij.ui.table.JBTable
 import com.xyzboom.algorithm.graph.GEdge
 import java.awt.Component
 import java.awt.Dimension
-import java.util.Vector
+import java.util.*
 import javax.swing.JTable
 import javax.swing.table.DefaultTableCellRenderer
 import javax.swing.table.DefaultTableModel
@@ -23,6 +23,9 @@ class DependencyTable : JBTable {
         this.tableHeader.defaultRenderer = headerRenderer
         this.autoscrolls = true
         this.tableHeader.reorderingAllowed = false
+        if (this.columnCount == 3) {
+            this.columnModel.getColumn(1).cellRenderer = DependencyTableCellRenderer()
+        }
     }
 
     constructor(edges: List<Pair<GEdge<String>, Refactoring>>) : this(initValues(edges)) {
@@ -34,6 +37,22 @@ class DependencyTable : JBTable {
         return false
     }
 
+    fun removeRows(rows: List<Int>) {
+        val keeps = ArrayList<Pair<GEdge<String>, Refactoring>>(refactorsMap.size - rows.size)
+        val newRaws = ArrayList<Vector<String>>(refactorsMap.size - rows.size)
+        refactorsMap.forEachIndexed { index, pair ->
+            if (index !in rows){
+                keeps.add(pair)
+                newRaws.add(Vector(listOf(pair.first.nodeFrom.data,"",pair.first.nodeTo.data)))
+            }
+        }
+        (model as DefaultTableModel).dataVector.clear()
+        newRaws.forEach {
+            (model as DefaultTableModel).addRow(it)
+        }
+        updateUI()
+    }
+
     companion object {
         @JvmStatic
         private fun initValues(edges: List<Pair<GEdge<String>, Refactoring>>): DefaultTableModel {
@@ -41,7 +60,7 @@ class DependencyTable : JBTable {
             edges.forEach { (k, _) ->
                 values.add(Vector(listOf(k.nodeFrom.data, "", k.nodeTo.data)))
             }
-            return DefaultTableModel(values, Vector(listOf("", "")))
+            return DefaultTableModel(values, Vector(listOf("", "", "")))
         }
     }
 
@@ -61,7 +80,7 @@ class DependencyTableCellRenderer : DefaultTableCellRenderer() {
         row: Int,
         column: Int,
     ): Component {
-        return if (column == 1) {
+        return if (column == 1 && table !=null) {
             val label = JBLabel(dIcon)
             label.isOpaque = false
             label
