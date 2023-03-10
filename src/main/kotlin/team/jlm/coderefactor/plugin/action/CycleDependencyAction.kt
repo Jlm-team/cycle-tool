@@ -4,17 +4,23 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.wm.RegisterToolWindowTask
+import com.intellij.openapi.wm.ToolWindowFactory
+import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.packageDependencies.DependencyVisitorFactory
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiJvmMember
 import com.intellij.psi.PsiModifier
 import com.intellij.refactoring.JavaRefactoringFactory
 import com.intellij.refactoring.Refactoring
+import com.intellij.ui.content.ContentFactory
 import com.xyzboom.algorithm.graph.GEdge
 import com.xyzboom.algorithm.graph.Tarjan
 import team.jlm.coderefactor.code.DependVisitor
 import team.jlm.coderefactor.code.DependencyType
 import team.jlm.coderefactor.code.IG
+import team.jlm.coderefactor.plugin.ui.DependencyToolWindow
+import team.jlm.coderefactor.plugin.ui.DependencyToolWindowFactory
 import team.jlm.psi.cache.PsiMemberCacheImpl
 import team.jlm.utils.debug
 import team.jlm.utils.getAllClassesInProject
@@ -52,14 +58,32 @@ class CycleDependencyAction : AnAction() {
                 }
             }
         }
-        val refactors = result.filter { it.size == 2 }.map {
+        val refactors = result.filter { it.size == 2 }.mapNotNull {
             val row = it
             logger.debug { "${row[0]} ${row[1]}" }
             val edge0 = GEdge(row[0], row[1])
             val edge1 = GEdge(row[1], row[0])
-            handleEdge(ig, edge0, project) ?: handleEdge(ig, edge1, project)
-        }.filterNotNull()
-        refactors.forEach { it.run() }
+            val refactor = handleEdge(ig, edge0, project) ?: handleEdge(ig, edge1, project)
+            refactor?.let { r ->
+                edge0 to r
+            }
+        }.associate { it.first to it.second }
+
+        var toolWindow = ToolWindowManager.getInstance(project).getToolWindow("dependenciesToolWindow")
+        if (toolWindow == null) {
+            toolWindow = ToolWindowManager.getInstance(project).registerToolWindow(
+                RegisterToolWindowTask(
+                    "dependenciesToolWindow",
+                    contentFactory = DependencyToolWindowFactory()
+                )
+            )
+        }
+        toolWindow.contentManager.removeAllContents(true)
+        val content = ContentFactory.SERVICE.getInstance()
+            .createContent(DependencyToolWindow().getWindow(refactors), "重构", false)
+        toolWindow.contentManager.addContent(content)
+        toolWindow.activate(null)
+
         /*for (p in ig.adjList) {
             val edgePair = p.value
             for (edge in edgePair.edgeOut) {
