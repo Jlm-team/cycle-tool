@@ -2,20 +2,32 @@ package team.jlm.coderefactor.code
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.JavaPsiFacade
-import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiImportStatement
-import com.intellij.psi.PsiJavaFile
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.util.IncorrectOperationException
+import team.jlm.utils.getAllJavaFilesInProject
 
-fun removeUnusedImport(project: Project, psiFile: PsiJavaFile): Int {
-    val imports = psiFile.importList ?: return 0
-    val unused = ArrayList<PsiImportStatement>(8)
-    val scope = GlobalSearchScope.fileScope(psiFile)
-    imports.importStatements.forEach {
-        val psiClass = it.qualifiedName?.let { name -> JavaPsiFacade.getInstance(project).findClass(name, scope) }
-        if (psiClass == null)
-            unused.add(it)
+fun removeUnusedImport(project: Project): Int {
+    val javaFileList = getAllJavaFilesInProject(project)
+    var resolve = 0
+    var unResolve = 0
+    javaFileList.forEach { psiFile ->
+        val imports = psiFile.importList ?: return@forEach
+        val unused = ArrayList<PsiImportStatement>(8)
+        val scope = GlobalSearchScope.fileScope(psiFile)
+        imports.importStatements.forEach {
+            val psiClass = it.qualifiedName?.let { name -> JavaPsiFacade.getInstance(project).findClass(name, scope) }
+            if (psiClass == null)
+                unused.add(it)
+        }
+        unused.forEach {
+            try {
+                it.delete()
+                resolve++
+            } catch (e: IncorrectOperationException) {
+                unResolve++
+            }
+        }
     }
-    unused.forEach(PsiElement::delete)
-    return unused.size
+    return resolve
 }
