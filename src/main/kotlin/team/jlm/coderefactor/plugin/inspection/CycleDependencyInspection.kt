@@ -13,7 +13,8 @@ import team.jlm.coderefactor.code.DependencyType
 import team.jlm.coderefactor.code.IG
 import team.jlm.utils.debug
 
-private val logger = logger<CycleDependencyInspection>()
+import mu.KotlinLogging
+private val logger = KotlinLogging.logger{}
 
 class CycleDependencyInspection : AbstractBaseJavaLocalInspectionTool() {
     companion object {

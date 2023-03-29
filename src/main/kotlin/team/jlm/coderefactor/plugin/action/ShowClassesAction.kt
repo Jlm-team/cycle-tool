@@ -16,7 +16,8 @@ import team.jlm.utils.file.pluginCacheFolderName
 import team.jlm.utils.getAllClassesInProject
 import java.io.File
 
-private val logger = logger<ShowClassesAction>()
+import mu.KotlinLogging
+private val logger = KotlinLogging.logger{}
 
 class ShowClassesAction : AnAction() {
     companion object {

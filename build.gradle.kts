@@ -1,3 +1,4 @@
+import org.gradle.internal.impldep.org.eclipse.jgit.lib.ObjectChecker.type
 import org.jetbrains.intellij.tasks.RunIdeTask
 
 plugins {
@@ -7,6 +8,7 @@ plugins {
     id("org.jetbrains.kotlin.plugin.noarg") version "1.7.0"
     id("org.jetbrains.kotlin.plugin.serialization") version "1.4.20"
 }
+val resourcesDir = "${project.projectDir}/src/main/resources"
 
 group = "team.jlm"
 version = "1.0-SNAPSHOT"
@@ -37,13 +39,17 @@ intellij {
     )
 }
 dependencies {
+    implementation("io.github.microutils:kotlin-logging:3.0.5")
+    implementation("org.slf4j:slf4j-api:2.0.6")
+    implementation("org.apache.logging.log4j:log4j-core:2.19.0")
+    implementation("org.apache.logging.log4j:log4j-slf4j2-impl:2.20.0")
     implementation("guru.nidi:graphviz-java:0.18.1") {
         //这个依赖已经在idea的jbr里面存在了
         exclude("org.slf4j", "slf4j-api")
     }
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
     // https://mvnrepository.com/artifact/com.google.code.gson/gson
-    implementation("com.google.code.gson:gson:2.8.9")
+    implementation("com.google.code.gson:gson:2.10.1")
 
 }
 
@@ -55,7 +61,9 @@ sourceSets {
 tasks {
     withType<RunIdeTask> {
         println("RunIdeTask")
-        System.setProperty("idea.log.debug.categories", "true")
+        systemProperty("idea.log.debug.categories", "true")
+        println("${resourcesDir}/log4j.xml")
+        systemProperty("idea.log.config.file", "${resourcesDir}/log4j.xml")
     }
     // Set the JVM compatibility versions
     withType<JavaCompile> {

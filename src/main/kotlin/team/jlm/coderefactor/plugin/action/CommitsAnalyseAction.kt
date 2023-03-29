@@ -12,7 +12,8 @@ import team.jlm.coderefactor.plugin.service.CommitsAnalyseCacheService
 import team.jlm.utils.*
 import team.jlm.utils.change.analyseChangesCompletableFuture
 
-private val logger = logger<CommitsAnalyseAction>()
+import mu.KotlinLogging
+private val logger = KotlinLogging.logger{}
 
 class CommitsAnalyseAction : AnAction() {
     @Suppress("UnstableApiUsage")

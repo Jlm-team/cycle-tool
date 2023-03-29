@@ -20,7 +20,9 @@ import team.jlm.utils.psi.PsiCompareHelper
 import team.jlm.utils.psi.createPsiHelpersFromFile
 import java.util.concurrent.CompletableFuture
 
-private val logger = logger<AnalyseChange>()
+import mu.KotlinLogging
+
+private val logger = KotlinLogging.logger {}
 
 class AnalyseChange
 

@@ -1,14 +1,7 @@
 package team.jlm.coderefactor.code
 
-import com.intellij.openapi.diagnostic.logger
 import com.intellij.packageDependencies.ForwardDependenciesBuilder
-import com.intellij.psi.PsiClass
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiField
-import com.intellij.psi.PsiJavaFile
-import com.intellij.psi.PsiJvmMember
-import com.intellij.psi.PsiMethod
-import com.intellij.psi.PsiModifier
+import com.intellij.psi.*
 import com.intellij.psi.impl.source.tree.JavaElementType
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.util.PsiTreeUtil
@@ -20,12 +13,12 @@ import guru.nidi.graphviz.attribute.Style
 import guru.nidi.graphviz.model.Factory
 import guru.nidi.graphviz.model.Factory.graph
 import guru.nidi.graphviz.model.Factory.node
+import mu.KotlinLogging
 import team.jlm.psi.cache.IPsiCache
 import team.jlm.psi.cache.PsiMemberCacheImpl
-import team.jlm.utils.debug
 import guru.nidi.graphviz.model.Graph as VizGraph
 
-private val logger = logger<IG>()
+private val logger = KotlinLogging.logger {}
 private val emptyType = PsiClass::class.java
 
 private inline fun <R> igDebug(block: () -> R) {

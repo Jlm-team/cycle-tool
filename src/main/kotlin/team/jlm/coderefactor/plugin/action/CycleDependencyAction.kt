@@ -5,7 +5,6 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.RegisterToolWindowTask
-import com.intellij.openapi.wm.ToolWindowFactory
 import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.packageDependencies.DependencyVisitorFactory
 import com.intellij.psi.PsiElement
@@ -25,7 +24,8 @@ import team.jlm.psi.cache.PsiMemberCacheImpl
 import team.jlm.utils.debug
 import team.jlm.utils.getAllClassesInProject
 
-private val logger = logger<CycleDependencyAction>()
+import mu.KotlinLogging
+private val logger = KotlinLogging.logger{}
 val importDependencySet = HashSet<DependencyType>(
     arrayListOf(
         DependencyType.IMPORT_LIST,
