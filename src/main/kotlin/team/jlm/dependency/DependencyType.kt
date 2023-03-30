@@ -1,4 +1,4 @@
-package team.jlm.coderefactor.code
+package team.jlm.dependency
 
 /**
  * 类间依赖关系枚举

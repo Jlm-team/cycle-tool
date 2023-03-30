@@ -1,5 +1,7 @@
 package team.jlm.coderefactor.code
 
+import team.jlm.dependency.DependencyType
+
 class Dependency(val type: DependencyType, val dependencyText: String, val dependClassName:String?) {
 
     override fun toString(): String {

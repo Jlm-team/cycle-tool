@@ -2,7 +2,6 @@ package team.jlm.coderefactor.plugin.action
 
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.RegisterToolWindowTask
 import com.intellij.openapi.wm.ToolWindowManager
@@ -16,16 +15,17 @@ import com.intellij.ui.content.ContentFactory
 import com.xyzboom.algorithm.graph.GEdge
 import com.xyzboom.algorithm.graph.Tarjan
 import team.jlm.coderefactor.code.DependVisitor
-import team.jlm.coderefactor.code.DependencyType
+import team.jlm.dependency.DependencyType
 import team.jlm.coderefactor.code.IG
 import team.jlm.coderefactor.plugin.ui.DependencyToolWindow
 import team.jlm.coderefactor.plugin.ui.DependencyToolWindowFactory
 import team.jlm.psi.cache.PsiMemberCacheImpl
-import team.jlm.utils.debug
 import team.jlm.utils.getAllClassesInProject
 
 import mu.KotlinLogging
-private val logger = KotlinLogging.logger{}
+import team.jlm.dependency.DependencyInfo
+
+private val logger = KotlinLogging.logger {}
 val importDependencySet = HashSet<DependencyType>(
     arrayListOf(
         DependencyType.IMPORT_LIST,
@@ -105,53 +105,31 @@ class CycleDependencyAction : AnAction() {
         project: Project,
     ): Refactoring? {
         val dpList = ig.dependencyMap[edge] ?: return null
-        val dpSet = HashSet(dpList)
-        dpSet.removeAll(importDependencySet)
-        return if (dpSet.size == 0) {
+        return if (dpList.all { it.posType.static }) {
             logger.debug { edge }
-            return handleOnlyStaticFieldsInOneClass(dpList, ig, edge, project)
+            return handleOnlyStaticMembersInOneClass(dpList, ig, edge, project)
         } else null
     }
 
-    private fun handleOnlyStaticFieldsInOneClass(
-        dpList: MutableList<DependencyType>,
+    private fun handleOnlyStaticMembersInOneClass(
+        dpList: MutableList<DependencyInfo>,
         ig: IG,
         edge: GEdge<String>,
         project: Project,
     ): Refactoring? {
-        val staticFields = HashSet<PsiJvmMember>()
-        var nonStatic = false
+        val staticMembers = HashSet<PsiJvmMember>()
         for (i in dpList.indices) {
             val cache = ig.dependencyPsiMap[edge]?.get(i) ?: continue
             if (cache is PsiMemberCacheImpl) {
                 val directDependPsi = cache.getPsi(project)
-                staticFields.add(directDependPsi)
-                directDependPsi.accept(
-                    DependVisitor(
-                        { dependElementInThisFile: PsiElement, dependElement: PsiElement ->
-                            logger.debug { dependElementInThisFile }
-                            logger.debug { dependElement }
-                            if (dependElement is PsiJvmMember) {
-                                if (dependElement == directDependPsi.containingClass) {
-                                    nonStatic = true
-                                    return@DependVisitor
-                                } else if (dependElement.hasModifierProperty(PsiModifier.STATIC)) {
-                                    staticFields.add(dependElement)
-                                } else {
-                                    nonStatic = true
-                                    return@DependVisitor
-                                }
-                            }
-                        }, DependencyVisitorFactory.VisitorOptions.fromSettings(project)
-                    )
-                )
+                staticMembers.add(directDependPsi)
             }
         }
-        if (staticFields.isEmpty() || nonStatic) return null
+        if (staticMembers.isEmpty()) return null
         return JavaRefactoringFactory.getInstance(project)
             .createMoveMembers(
-                staticFields.toArray(arrayOf()),
-                edge.nodeFrom.data, "public"
+                staticMembers.toArray(arrayOf()),
+                edge.nodeTo.data, "public"
             )
     }
 }

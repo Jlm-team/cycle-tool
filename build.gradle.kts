@@ -41,7 +41,7 @@ intellij {
 dependencies {
     implementation("io.github.microutils:kotlin-logging:3.0.5")
     implementation("org.slf4j:slf4j-api:2.0.6")
-    implementation("org.apache.logging.log4j:log4j-core:2.19.0")
+    implementation("org.apache.logging.log4j:log4j-core:2.20.0")
     implementation("org.apache.logging.log4j:log4j-slf4j2-impl:2.20.0")
     implementation("guru.nidi:graphviz-java:0.18.1") {
         //这个依赖已经在idea的jbr里面存在了
@@ -61,9 +61,7 @@ sourceSets {
 tasks {
     withType<RunIdeTask> {
         println("RunIdeTask")
-        systemProperty("idea.log.debug.categories", "true")
-        println("${resourcesDir}/log4j.xml")
-        systemProperty("idea.log.config.file", "${resourcesDir}/log4j.xml")
+        jvmArgs("-Xmx2g")
     }
     // Set the JVM compatibility versions
     withType<JavaCompile> {

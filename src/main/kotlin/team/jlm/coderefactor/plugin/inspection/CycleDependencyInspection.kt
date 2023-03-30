@@ -3,17 +3,17 @@ package team.jlm.coderefactor.plugin.inspection
 import com.intellij.codeInspection.AbstractBaseJavaLocalInspectionTool
 import com.intellij.codeInspection.LocalInspectionToolSession
 import com.intellij.codeInspection.ProblemsHolder
-import com.intellij.openapi.diagnostic.logger
 import com.intellij.packageDependencies.ForwardDependenciesBuilder
 import com.intellij.psi.*
 import com.intellij.util.containers.stream
 import com.xyzboom.algorithm.graph.GEdge
 import com.xyzboom.algorithm.graph.GNode
-import team.jlm.coderefactor.code.DependencyType
+import team.jlm.dependency.DependencyType
 import team.jlm.coderefactor.code.IG
-import team.jlm.utils.debug
 
 import mu.KotlinLogging
+import team.jlm.dependency.DependencyPosType
+
 private val logger = KotlinLogging.logger{}
 
 class CycleDependencyInspection : AbstractBaseJavaLocalInspectionTool() {
@@ -42,7 +42,7 @@ class CycleDependencyInspection : AbstractBaseJavaLocalInspectionTool() {
                             if (selfName == null || clazzName == null) {
                                 return@run
                             }
-                            ig.addEdge(clazzName, selfName, DependencyType.OTHER)
+                            ig.addEdge(clazzName, selfName, DependencyType.OTHER, DependencyPosType.OTHER)
                             val edgePair = ig.adjList[GNode(selfName)] ?: return@run
                             if (edgePair.edgeOut.contains(GEdge(GNode(selfName), GNode(clazzName)))) {
                                 print("detected cycle: ")
