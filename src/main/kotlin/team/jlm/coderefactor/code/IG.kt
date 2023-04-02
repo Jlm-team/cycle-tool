@@ -35,7 +35,6 @@ private inline fun <R> igDebug(block: () -> R) {
 open class IG(private var classes: MutableList<PsiClass>) : Graph<String>() {
     private val classWhoseParentsAdded = HashSet<String>()
     val dependencyMap = HashMap<GEdge<String>, MutableList<DependencyInfo>>()
-    val dependencyPsiMap = HashMap<GEdge<String>, MutableList<IPsiCache<*>>>()
     private val dependTypeSet =
         HashMap<IElementType?,
                 HashMap<IElementType?,
@@ -57,6 +56,7 @@ open class IG(private var classes: MutableList<PsiClass>) : Graph<String>() {
     fun addEdge(
         from: String, to: String, dependency: DependencyType = DependencyType.OTHER,
         dependencyPosType: DependencyPosType,
+        posPsiCache: IPsiCache<*> = IPsiCache.EMPTY,
         psiCache: IPsiCache<*> = IPsiCache.EMPTY,
     ) {
 //        vizNodes[from.data]?.let {
@@ -65,20 +65,17 @@ open class IG(private var classes: MutableList<PsiClass>) : Graph<String>() {
 //        vizGraph = vizGraph.with(node(from).link(node(to)))
         val edge = super.addEdge(from, to, 1)
         dependencyMap.getOrPut(edge) { ArrayList() }
-            .add(DependencyInfo(dependencyPosType, dependency))
-        dependencyPsiMap.getOrPut(edge) { ArrayList() }.add(psiCache)
+            .add(DependencyInfo(dependencyPosType, dependency, posPsiCache, psiCache))
     }
 
     override fun delNode(data: String) {
         val node = getNode(data)
         for (edge in adjList[node]!!.edgeOut) {
             dependencyMap.remove(edge)
-            dependencyPsiMap.remove(edge)
             adjList[edge.nodeTo]!!.edgeIn.remove(edge)
         }
         for (edge in adjList[node]!!.edgeIn) {
             dependencyMap.remove(edge)
-            dependencyPsiMap.remove(edge)
             adjList[edge.nodeFrom]!!.edgeOut.remove(edge)
         }
         adjList.remove(node)
@@ -150,6 +147,7 @@ open class IG(private var classes: MutableList<PsiClass>) : Graph<String>() {
             }
             var dependencyType = DependencyType.OTHER
             var dependencyPosType = DependencyPosType.OTHER
+            var psiPosCache = IPsiCache.EMPTY
             var psiCache = IPsiCache.EMPTY
             if (dependEle !is PsiClass) {
                 if (dependPosEle.elementType == JavaElementType.METHOD_REF_EXPRESSION) {
@@ -166,6 +164,10 @@ open class IG(private var classes: MutableList<PsiClass>) : Graph<String>() {
                         }
                     }
                 } else if (dependEle is PsiJvmMember) {
+                    psiCache = PsiMemberCacheImpl(
+                        dependEle.startOffset - dependClass.startOffset,
+                        dependClassName, dependEle.javaClass
+                    )
                     dependencyType = if (dependEle.hasModifierProperty(PsiModifier.STATIC)) {
                         when (dependEle) {
                             is PsiMethod -> DependencyType.STATIC_METHOD
@@ -182,13 +184,13 @@ open class IG(private var classes: MutableList<PsiClass>) : Graph<String>() {
                 }
             } else {
                 dependencyType = dependPosEle.dependencyType
-                psiCache = IPsiCache.EMPTY
+                psiPosCache = IPsiCache.EMPTY
             }
             val fieldSet = dependPosEle.parentsOfType<PsiField>().toSet()
             val methodSet = dependPosEle.parentsOfType<PsiMethod>().toSet()
             if (fieldSet.isNotEmpty()) {
                 val fieldEle = fieldSet.first()
-                psiCache = PsiMemberCacheImpl(
+                psiPosCache = PsiMemberCacheImpl(
                     fieldEle.startOffset - dependPosClass.startOffset,
                     dependClassName,
                     fieldEle.javaClass
@@ -201,7 +203,7 @@ open class IG(private var classes: MutableList<PsiClass>) : Graph<String>() {
                     }
             } else if (methodSet.isNotEmpty()) {
                 val methodEle = methodSet.first()
-                psiCache = PsiMemberCacheImpl(
+                psiPosCache = PsiMemberCacheImpl(
                     methodEle.startOffset - dependPosClass.startOffset,
                     dependPosClassName,
                     methodEle.javaClass
@@ -255,7 +257,7 @@ open class IG(private var classes: MutableList<PsiClass>) : Graph<String>() {
             }
             addEdge(
                 clazzQualifiedName, dependClassName,
-                dependencyType, dependencyPosType, psiCache
+                dependencyType, dependencyPosType, psiPosCache, psiCache
             )
             return@analyzeFileDependencies
         }

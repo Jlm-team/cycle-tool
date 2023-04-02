@@ -1,15 +1,13 @@
-package team.jlm.utils
+package team.jlm.utils.psi
 
 import com.intellij.lang.java.JavaLanguage
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectFileIndex
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.PsiClass
-import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiJavaFile
-import com.intellij.psi.PsiManager
+import com.intellij.psi.*
 import com.intellij.psi.impl.PsiFileFactoryImpl
 import com.intellij.psi.impl.source.resolve.FileContextUtil
+import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.testFramework.LightVirtualFile
 import java.util.stream.Collectors
 
@@ -95,4 +93,7 @@ fun clearPsiMapAccordingToCommit(commitId: String) {
     psiMap.remove(commitId)
 }
 
-
+fun findPsiClass(project: Project,className: String): PsiClass? {
+    val javaPsiFacade = JavaPsiFacade.getInstance(project)
+    return javaPsiFacade.findClass(className, GlobalSearchScope.projectScope(project))
+}

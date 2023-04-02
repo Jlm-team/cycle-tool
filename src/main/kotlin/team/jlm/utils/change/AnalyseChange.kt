@@ -4,7 +4,6 @@ import com.github.difflib.DiffUtils
 import com.github.difflib.patch.AbstractDelta
 import com.github.difflib.patch.Chunk
 import com.intellij.openapi.application.runReadAction
-import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.vcs.changes.Change
@@ -13,9 +12,8 @@ import com.intellij.refactoring.suggested.endOffset
 import com.intellij.refactoring.suggested.startOffset
 import com.xyzboom.algorithm.graph.Graph
 import team.jlm.coderefactor.code.PsiGroup
-import team.jlm.utils.createOrGetJavaPsiFile
-import team.jlm.utils.debug
-import team.jlm.utils.getAllClassesInJavaFile
+import team.jlm.utils.psi.createOrGetJavaPsiFile
+import team.jlm.utils.psi.getAllClassesInJavaFile
 import team.jlm.utils.psi.PsiCompareHelper
 import team.jlm.utils.psi.createPsiHelpersFromFile
 import java.util.concurrent.CompletableFuture

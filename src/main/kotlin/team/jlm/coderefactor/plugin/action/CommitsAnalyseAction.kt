@@ -4,7 +4,6 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.components.service
-import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.xyzboom.algorithm.graph.Graph
 import com.xyzboom.algorithm.graph.saveAsDependencyGraph
@@ -13,6 +12,8 @@ import team.jlm.utils.*
 import team.jlm.utils.change.analyseChangesCompletableFuture
 
 import mu.KotlinLogging
+import team.jlm.utils.psi.clearPsiMapAccordingToCommit
+
 private val logger = KotlinLogging.logger{}
 
 class CommitsAnalyseAction : AnAction() {

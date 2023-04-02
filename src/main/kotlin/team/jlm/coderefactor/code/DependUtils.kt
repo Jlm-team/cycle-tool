@@ -7,7 +7,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.tree.JavaElementType.*
 import com.intellij.psi.impl.source.tree.TreeElement
 import team.jlm.dependency.DependencyType
-import team.jlm.utils.getPsiJavaFile
+import team.jlm.utils.psi.getPsiJavaFile
 
 fun getDependencyList(fileString: String, project: Project): List<Dependency> {
     val psiClass = getPsiJavaFile(project, fileString)

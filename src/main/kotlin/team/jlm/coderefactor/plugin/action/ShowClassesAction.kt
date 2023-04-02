@@ -2,7 +2,6 @@ package team.jlm.coderefactor.plugin.action
 
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.xyzboom.algorithm.graph.Graph
@@ -11,9 +10,8 @@ import guru.nidi.graphviz.engine.Format
 import guru.nidi.graphviz.engine.Graphviz
 import team.jlm.coderefactor.code.IG
 import team.jlm.coderefactor.plugin.ui.ImagePanel
-import team.jlm.utils.debug
 import team.jlm.utils.file.pluginCacheFolderName
-import team.jlm.utils.getAllClassesInProject
+import team.jlm.utils.psi.getAllClassesInProject
 import java.io.File
 
 import mu.KotlinLogging

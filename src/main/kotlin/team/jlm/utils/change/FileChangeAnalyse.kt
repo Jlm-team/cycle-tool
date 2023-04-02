@@ -4,8 +4,8 @@ import com.github.difflib.DiffUtils
 import com.github.difflib.patch.DeltaType
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vcs.changes.Change
-import team.jlm.utils.getAllClassesInJavaFile
-import team.jlm.utils.getPsiJavaFile
+import team.jlm.utils.psi.getAllClassesInJavaFile
+import team.jlm.utils.psi.getPsiJavaFile
 import team.jlm.utils.modify.JavaClassDiff
 import java.lang.Integer.max
 

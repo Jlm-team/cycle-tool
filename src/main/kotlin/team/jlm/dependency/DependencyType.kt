@@ -4,16 +4,16 @@ package team.jlm.dependency
  * 类间依赖关系枚举
  * @see <a href="https://github.com/multilang-depends/depends">depends</a>
  */
-enum class DependencyType {
+enum class DependencyType(val static: Boolean = false) {
     /**
      * Import is a relation between files. It indicates that File A includes or imports from File B.
      * 文件间的依赖关系，例如文件A导入了文件B，具有方向性。
      */
     IMPORT_STATEMENT,
     IMPORT_LIST,
-    IMPORT_STATIC_STATEMENT,
-    IMPORT_STATIC_FIELD,//import static xxx 会识别为此类型
-    STATIC_FIELD,//使用类的静态属性
+    IMPORT_STATIC_STATEMENT(true),
+    IMPORT_STATIC_FIELD(true),//import static xxx 会识别为此类型
+    STATIC_FIELD(true),//使用类的静态属性
     NONSTATIC_FIELD,
 
     /**
@@ -33,7 +33,7 @@ enum class DependencyType {
     /**
      * 类A调用了类B的静态方法
      */
-    STATIC_METHOD,
+    STATIC_METHOD(true),
 
     /**
      * 类A通过类B的实例调用类B的方法

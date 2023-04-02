@@ -5,7 +5,7 @@ import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.PsiImportStatement
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.IncorrectOperationException
-import team.jlm.utils.getAllJavaFilesInProject
+import team.jlm.utils.psi.getAllJavaFilesInProject
 
 fun removeUnusedImport(project: Project): Int {
     val javaFileList = getAllJavaFilesInProject(project)

@@ -3,8 +3,8 @@ package team.jlm.coderefactor.code
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiMethodCallExpression
 import com.intellij.psi.util.PsiTreeUtil
-import team.jlm.utils.getAllClassesInJavaFile
-import team.jlm.utils.getAllJavaFilesInProject
+import team.jlm.utils.psi.getAllClassesInJavaFile
+import team.jlm.utils.psi.getAllJavaFilesInProject
 
 fun handleDeprecatedMethod(project: Project): HashMap<String, Pair<String, String?>> {
     val javaFileList = getAllJavaFilesInProject(project)

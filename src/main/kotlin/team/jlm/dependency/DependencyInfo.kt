@@ -1,8 +1,12 @@
 package team.jlm.dependency
 
+import team.jlm.psi.cache.IPsiCache
+
 class DependencyInfo(
     val posType: DependencyPosType,
     val type: DependencyType,
+    val posPsi: IPsiCache<*> = IPsiCache.EMPTY,
+    val psi: IPsiCache<*> = IPsiCache.EMPTY,
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
