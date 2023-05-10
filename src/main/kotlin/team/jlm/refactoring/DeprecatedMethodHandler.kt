@@ -1,4 +1,4 @@
-package team.jlm.coderefactor.code
+package team.jlm.refactoring
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiMethodCallExpression

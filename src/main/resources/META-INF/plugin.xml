@@ -66,5 +66,6 @@
                          level="WARNING"
                          enabledByDefault="true"
                          implementationClass="team.jlm.coderefactor.plugin.inspection.CycleDependencyInspection"/>
+        <notificationGroup displayType="BALLOON" id="team.jlm.plugin.notification" icon="AllIcons.General.ShowInfos"/>
     </extensions>
 </idea-plugin>

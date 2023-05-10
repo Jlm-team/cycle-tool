@@ -6,7 +6,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.RegisterToolWindowTask
 import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.psi.PsiJvmMember
-import com.intellij.refactoring.JavaRefactoringFactory
 import com.intellij.refactoring.Refactoring
 import com.intellij.ui.content.ContentFactory
 import com.xyzboom.algorithm.graph.GEdge
@@ -19,6 +18,7 @@ import team.jlm.dependency.DependencyInfo
 import team.jlm.dependency.DependencyType
 import team.jlm.psi.cache.PsiMemberCacheImpl
 import team.jlm.refactoring.MoveStaticMembersBetweenTwoClasses
+import team.jlm.refactoring.removeUnusedImport
 import team.jlm.utils.psi.getAllClassesInProject
 
 private val logger = KotlinLogging.logger {}
@@ -37,6 +37,7 @@ class CycleDependencyAction : AnAction() {
 
     override fun actionPerformed(e: AnActionEvent) {
         val project = e.project ?: return
+        removeUnusedImport(project)
         val classes = getAllClassesInProject(project)
         classes.removeIf {
             val path = it.containingFile.originalFile.containingDirectory.toString()
