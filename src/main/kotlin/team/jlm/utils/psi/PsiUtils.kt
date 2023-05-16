@@ -8,6 +8,7 @@ import com.intellij.psi.*
 import com.intellij.psi.impl.PsiFileFactoryImpl
 import com.intellij.psi.impl.source.resolve.FileContextUtil
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.testFramework.LightVirtualFile
 import java.util.stream.Collectors
 
@@ -93,7 +94,18 @@ fun clearPsiMapAccordingToCommit(commitId: String) {
     psiMap.remove(commitId)
 }
 
-fun findPsiClass(project: Project,className: String): PsiClass? {
+fun findPsiClass(project: Project, className: String): PsiClass? {
     val javaPsiFacade = JavaPsiFacade.getInstance(project)
     return javaPsiFacade.findClass(className, GlobalSearchScope.projectScope(project))
+}
+
+fun PsiElement.getOuterClass(strict: Boolean = false): PsiClass? {
+    val result = PsiTreeUtil.getParentOfType(this, PsiClass::class.java, strict)
+        ?: return null
+    if (result is PsiAnonymousClass) {
+
+        return null
+    }
+    if (result.getOuterClass(true) != null) return null
+    return result
 }

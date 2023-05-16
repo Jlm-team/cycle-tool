@@ -2,6 +2,15 @@ package team.jlm.dependency
 
 import team.jlm.psi.cache.IPsiCache
 
+/**
+ * Dependency info
+ *
+ * @property posType 依赖所处位置的依赖类型
+ * @property type 依赖语句的依赖类型
+ * @property posPsi 依赖所处位置的成员的缓存
+ * @property psi 依赖的缓存
+ * @constructor Create empty Dependency info
+ */
 class DependencyInfo(
     val posType: DependencyPosType,
     val type: DependencyType,

@@ -25,6 +25,19 @@ import java.util.*
 
 private val logger = KotlinLogging.logger {}
 
+/**
+ * Move static members between two classes processor
+ *
+ * @property project 项目对象
+ * @property members0 类A中的成员列表
+ * @property targetClassName0 类A的类全名
+ * @property members1 类B中的成员列表
+ * @property targetClassName1 类B的类全名
+ * @constructor
+ *
+ * @param refactoringScope
+ * @param prepareSuccessfulCallback
+ */
 class MoveStaticMembersBetweenTwoClassesProcessor @JvmOverloads constructor(
     private val project: Project,
     refactoringScope: SearchScope = GlobalSearchScope.projectScope(project),

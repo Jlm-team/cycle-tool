@@ -7,6 +7,20 @@ import com.intellij.psi.search.SearchScope
 import com.intellij.refactoring.RefactoringImpl
 import team.jlm.refactoring.move.staticA2B.MoveStaticMembersBetweenTwoClassesProcessor
 
+/**
+ * Move static members between two classes
+ *
+ * @constructor
+ *
+ * @param project
+ * @param refactoringScope
+ * @param prepareSuccessfulCallback
+ * @param members0
+ * @param targetClassName0
+ * @param members1
+ * @param targetClassName1
+ * @see [MoveStaticMembersBetweenTwoClassesProcessor]
+ */
 class MoveStaticMembersBetweenTwoClasses(
     project: Project,
     refactoringScope: SearchScope = GlobalSearchScope.projectScope(project),

@@ -4,8 +4,8 @@ import com.intellij.packageDependencies.ForwardDependenciesBuilder
 import com.intellij.psi.*
 import com.intellij.psi.impl.source.tree.JavaElementType
 import com.intellij.psi.tree.IElementType
-import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.elementType
+import com.intellij.psi.util.parentOfType
 import com.intellij.psi.util.parentsOfType
 import com.intellij.refactoring.suggested.startOffset
 import com.xyzboom.algorithm.graph.GEdge
@@ -20,6 +20,7 @@ import team.jlm.dependency.DependencyPosType
 import team.jlm.dependency.DependencyType
 import team.jlm.psi.cache.IPsiCache
 import team.jlm.psi.cache.PsiMemberCacheImpl
+import team.jlm.utils.psi.getOuterClass
 import guru.nidi.graphviz.model.Graph as VizGraph
 
 private val logger = KotlinLogging.logger {}
@@ -119,23 +120,23 @@ open class IG(private var classes: MutableList<PsiClass>) : Graph<String>() {
         { dependPosEle: PsiElement, dependEle: PsiElement ->
 //            logger.debug { "${dependEle.javaClass}" }
             val dependClass =
-                PsiTreeUtil.getParentOfType(dependEle, PsiClass::class.java, false)
+                dependEle.getOuterClass(false)
                     ?: return@analyzeFileDependencies
             val dependPosClass =
-                PsiTreeUtil.getParentOfType(dependPosEle, PsiClass::class.java, false)
+                dependPosEle.getOuterClass(false)
                     ?: return@analyzeFileDependencies
             val dependClassName = dependEle.let {
                 if (it is PsiClass) {
-                    it.qualifiedName ?: ""
+                    it.qualifiedName ?: return@analyzeFileDependencies
                 } else {
-                    dependClass.qualifiedName ?: ""
+                    dependClass.qualifiedName ?: return@analyzeFileDependencies
                 }
             }
             val dependPosClassName = dependPosEle.let {
                 if (it is PsiClass) {
-                    it.qualifiedName ?: ""
+                    it.qualifiedName ?: return@analyzeFileDependencies
                 } else {
-                    dependPosClass.qualifiedName ?: ""
+                    dependPosClass.qualifiedName ?: return@analyzeFileDependencies
                 }
             }
             if (dependClassName == clazzQualifiedName
@@ -164,6 +165,14 @@ open class IG(private var classes: MutableList<PsiClass>) : Graph<String>() {
                         }
                     }
                 } else if (dependEle is PsiJvmMember) {
+                    if (dependEle.startOffset - dependClass.startOffset < 0) {
+                        logger.debug { dependEle.startOffset }
+                        logger.debug { dependClass.startOffset }
+                        logger.debug { dependEle.text }
+                        logger.debug { dependEle.parent.text }
+                        logger.debug { dependEle.parent.parent.text }
+                        logger.debug { dependEle.parent.parent.parent.text }
+                    }
                     psiCache = PsiMemberCacheImpl(
                         dependEle.startOffset - dependClass.startOffset,
                         dependClassName, dependEle.javaClass
