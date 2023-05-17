@@ -14,10 +14,12 @@ import mu.KotlinLogging
 import team.jlm.coderefactor.code.IG
 import team.jlm.coderefactor.plugin.ui.DependencyToolWindow
 import team.jlm.coderefactor.plugin.ui.DependencyToolWindowFactory
+import team.jlm.coderefactor.plugin.ui.DeprecatedMethodWindow
 import team.jlm.dependency.DependencyInfo
 import team.jlm.dependency.DependencyType
 import team.jlm.psi.cache.PsiMemberCacheImpl
 import team.jlm.refactoring.MoveStaticMembersBetweenTwoClasses
+import team.jlm.refactoring.handleDeprecatedMethod
 import team.jlm.refactoring.removeUnusedImport
 import team.jlm.utils.psi.getAllClassesInProject
 
@@ -38,6 +40,7 @@ class CycleDependencyAction : AnAction() {
     override fun actionPerformed(e: AnActionEvent) {
         val project = e.project ?: return
         removeUnusedImport(project)
+        val deprecatedCollection = handleDeprecatedMethod(project)
         val classes = getAllClassesInProject(project)
         classes.removeIf {
             val path = it.containingFile.originalFile.containingDirectory.toString()
@@ -76,9 +79,13 @@ class CycleDependencyAction : AnAction() {
             )
         }
         toolWindow.contentManager.removeAllContents(true)
-        val content = ContentFactory.SERVICE.getInstance()
-            .createContent(DependencyToolWindow().getWindow(refactors), "重构", false)
-        toolWindow.contentManager.addContent(content)
+        val staticTableContent = ContentFactory.SERVICE.getInstance()
+            .createContent(DependencyToolWindow.getWindow(refactors), "重构", false)
+        val deprecatedTableContent = ContentFactory.SERVICE.getInstance().createContent(
+            DeprecatedMethodWindow.getWindow(deprecatedCollection), "已弃用方法", false
+        )
+        toolWindow.contentManager.addContent(deprecatedTableContent)
+        toolWindow.contentManager.addContent(staticTableContent)
         toolWindow.activate(null)
 
         /*for (p in ig.adjList) {
