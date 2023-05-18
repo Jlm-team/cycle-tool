@@ -5,6 +5,7 @@ import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.OpenFileDescriptor
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.vfs.VirtualFileManager
+import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.table.JBTable
 import com.intellij.util.ui.JBUI
 import team.jlm.refactoring.DeprecatedMethod
@@ -14,6 +15,7 @@ import java.awt.event.ActionListener
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import javax.swing.*
+import javax.swing.table.DefaultTableCellRenderer
 import javax.swing.table.DefaultTableColumnModel
 import javax.swing.table.DefaultTableModel
 import javax.swing.table.TableColumn
@@ -33,7 +35,9 @@ object DeprecatedMethodWindow {
             panel.add(contentPanel, layoutConstraints)
             layoutConstraints.gridy--
         }
-        return panel
+        val scrollPane = JPanel(BorderLayout())
+        scrollPane.add(JBScrollPane(panel), BorderLayout.CENTER)
+        return scrollPane
     }
 }
 
@@ -68,8 +72,16 @@ class CollapsiblePanel(title: String, content: ArrayList<DeprecatedMethod>) : JP
             c.headerValue = column[i]
             columnModel.addColumn(c)
         }
-        columnModel.getColumn(column.lastIndex).maxWidth = 0
         columnModel.getColumn(column.lastIndex).width = 0
+        columnModel.getColumn(column.lastIndex).cellRenderer = object : DefaultTableCellRenderer() {
+            override fun setValue(value: Any?) {
+
+            }
+        }
+        columnModel.getColumn(column.lastIndex).width = 0
+        columnModel.getColumn(column.lastIndex).maxWidth = 0
+        columnModel.getColumn(column.lastIndex).minWidth = 0
+        columnModel.getColumn(column.lastIndex).resizable = false
         val contentTable = JBTable(tableModel, columnModel)
         contentTable.tableHeader.preferredSize = Dimension(contentTable.width, 20)
         contentTable.autoResizeMode = JTable.AUTO_RESIZE_ALL_COLUMNS
