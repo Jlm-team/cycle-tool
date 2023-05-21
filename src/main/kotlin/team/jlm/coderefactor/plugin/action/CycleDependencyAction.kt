@@ -16,10 +16,12 @@ import team.jlm.coderefactor.plugin.ui.DependencyToolWindow
 import team.jlm.coderefactor.plugin.ui.DependencyToolWindowFactory
 import team.jlm.coderefactor.plugin.ui.DeprecatedMethodWindow
 import team.jlm.dependency.DependencyInfo
+import team.jlm.dependency.DependencyPosType
 import team.jlm.dependency.DependencyType
 import team.jlm.psi.cache.PsiMemberCacheImpl
 import team.jlm.refactoring.MoveStaticMembersBetweenTwoClasses
 import team.jlm.refactoring.handleDeprecatedMethod
+import team.jlm.refactoring.handlerCallChain
 import team.jlm.refactoring.removeUnusedImport
 import team.jlm.utils.psi.getAllClassesInProject
 
@@ -58,7 +60,8 @@ class CycleDependencyAction : AnAction() {
                 }
             }
         }
-        val refactors = result.filter { it.size == 2 }.mapNotNull {
+        val candidate = result.filter { it.size == 2 }
+        val refactors = candidate.mapNotNull {
             val row = it
             logger.debug { "${row[0]} ${row[1]}" }
             val edge0 = GEdge(row[0], row[1])
@@ -67,6 +70,13 @@ class CycleDependencyAction : AnAction() {
             refactor?.let { r ->
                 edge0 to r
             }
+        }
+
+        candidate.forEach {
+            val row = it
+            val edge1 = GEdge(row[0], row[1])
+            val edge2 = GEdge(row[1], row[0])
+            handleCallChain(ig, edge1, edge2, project)
         }
 
         var toolWindow = ToolWindowManager.getInstance(project).getToolWindow("dependenciesToolWindow")
@@ -113,6 +123,28 @@ class CycleDependencyAction : AnAction() {
             logger.debug { edge }
             return handleOnlyStaticMembersInOneClass(dpList, edge, project)
         } else null
+    }
+
+    private fun handleCallChain(
+        ig: IG,
+        edge1: GEdge<String>,
+        edge2: GEdge<String>,
+        project: Project,
+    ): Any? {
+        val dpList = ig.dependencyMap[edge1] ?: mutableListOf()
+        ig.dependencyMap[edge2]?.let { dpList.addAll(it) }
+        val element = ArrayList<DependencyInfo>()
+        for (el in dpList) {
+            if ((el.type == DependencyType.NONSTATIC_METHOD || el.type == DependencyType.STATIC_METHOD) &&
+                (el.posType == DependencyPosType.METHOD || el.posType == DependencyPosType.METHOD_STATIC)
+            ) {
+                if (el.psi is PsiMemberCacheImpl) {
+                    element.add(el)
+                }
+            }
+        }
+        handlerCallChain(project, element)
+        return ""
     }
 
     private fun handleOnlyStaticMembersInOneClass(

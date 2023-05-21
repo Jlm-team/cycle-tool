@@ -6,6 +6,18 @@ import com.intellij.psi.util.PsiTreeUtil
 import team.jlm.utils.psi.getAllJavaFilesInProject
 import team.jlm.utils.psi.getOuterClass
 
+/**
+ * Deprecated method
+ *
+ * @property containingClass 使用弃用方法的类
+ * @property methodName 使用弃用方法的方法
+ * @property deprecatedCallContainingClass 弃用方法所属类
+ * @property deprecatedCallContainingMethod 弃用方法
+ * @property lineNumber 所在行数
+ * @property type 类型
+ * @property fileUrl 文件路径
+ * @constructor Create empty Deprecated method
+ */
 data class DeprecatedMethod(
     val containingClass: String?,
     val methodName: String?,

@@ -22,9 +22,7 @@ class DependencyInfo(
         if (other !is DependencyInfo) return false
 
         if (posType != other.posType) return false
-        if (type != other.type) return false
-
-        return true
+        return type == other.type
     }
 
     override fun hashCode(): Int {
