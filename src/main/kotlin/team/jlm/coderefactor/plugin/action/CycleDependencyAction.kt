@@ -143,7 +143,8 @@ class CycleDependencyAction : AnAction() {
                 }
             }
         }
-        handlerCallChain(project, element)
+        val hcc = handlerCallChain(project, element)
+        hcc.forEach(::println)
         return ""
     }
 

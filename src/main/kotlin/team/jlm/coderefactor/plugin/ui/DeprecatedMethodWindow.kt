@@ -33,7 +33,7 @@ object DeprecatedMethodWindow {
         content.forEach { (k, v) ->
             val contentPanel = CollapsiblePanel(k, v)
             panel.add(contentPanel, layoutConstraints)
-            layoutConstraints.gridy--
+            layoutConstraints.gridy++
         }
         val scrollPane = JPanel(BorderLayout())
         scrollPane.add(JBScrollPane(panel), BorderLayout.CENTER)
@@ -117,7 +117,7 @@ class CollapsiblePanel(title: String, content: ArrayList<DeprecatedMethod>) : JP
         val header = contentTable.tableHeader
         header.preferredSize = Dimension(contentTable.width, 25)
         contentPanel.add(header, layoutConstraints)
-        layoutConstraints.gridy--
+        layoutConstraints.gridy++
         contentPanel.add(contentTable, layoutConstraints)
         layout = BorderLayout()
         add(titlePanel, BorderLayout.NORTH)

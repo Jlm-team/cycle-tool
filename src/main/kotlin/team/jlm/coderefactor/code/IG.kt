@@ -21,6 +21,8 @@ import team.jlm.dependency.DependencyType
 import team.jlm.psi.cache.IPsiCache
 import team.jlm.psi.cache.PsiMemberCacheImpl
 import team.jlm.utils.psi.getOuterClass
+import java.util.Vector
+import java.util.concurrent.ConcurrentHashMap
 import guru.nidi.graphviz.model.Graph as VizGraph
 
 private val logger = KotlinLogging.logger {}

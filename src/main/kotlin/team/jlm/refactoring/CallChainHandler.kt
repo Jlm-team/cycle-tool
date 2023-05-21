@@ -68,7 +68,7 @@ fun handlerCallChain(project: Project, el: ArrayList<DependencyInfo>): ArrayList
     psiElement.forEach {
         val callee = it.dependencyInfo.psi.getPsi(project) as PsiMethod
         val calleeParams = callee.parameterList
-        val calleeReturnType = callee.returnType!!
+        val calleeReturnType = callee.returnType ?: return@forEach
 
         val paramsMap = HashMap<PsiType, Int>()
 
@@ -184,6 +184,18 @@ fun handlerCallChain(project: Project, el: ArrayList<DependencyInfo>): ArrayList
                                         )
                                     }
                                 }
+                            }
+                            else{
+                                callChain.add(
+                                    CallChain(
+                                        it.callerName,
+                                        it.callerContainingClass,
+                                        it.calleeName,
+                                        it.calleeContainingClass,
+                                        method.containingClass?.qualifiedName,
+                                        method.name
+                                    )
+                                )
                             }
                         }
                     }
