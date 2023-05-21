@@ -43,7 +43,11 @@ data class CallChain(
     val calleeContainingClass: String?,
     val callTarget: String?,
     val callTargetContainingClass: String?
-)
+) {
+    override fun toString(): String {
+        return "$callerContainingClass,$callerName,$calleeContainingClass,$calleeName,$callTargetContainingClass,$callTarget"
+    }
+}
 
 fun handlerCallChain(project: Project, el: ArrayList<DependencyInfo>): ArrayList<CallChain> {
     val psiElement = el.mapNotNull {

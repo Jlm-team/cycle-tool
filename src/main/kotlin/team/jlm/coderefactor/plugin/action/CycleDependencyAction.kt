@@ -101,8 +101,23 @@ class CycleDependencyAction : AnAction() {
         toolWindow.contentManager.addContent(deprecatedTableContent)
         toolWindow.contentManager.addContent(callChainWindow)
         toolWindow.activate(null)
-
-        logger.debug { }
+//        val deprecatedMsg = StringBuilder()
+//        deprecatedCollection.forEach { (k,v) ->
+//            v.forEach {
+//                deprecatedMsg.append(it.toString()).append("\n")
+//            }
+//        }
+//        val callChainMsg = StringBuilder()
+//
+//        callChainSet.forEach {
+//            callChainMsg.append(it.toString()).append("\n")
+//        }
+//
+//        logger.debug(deprecatedMsg.toString())
+//        logger.debug("\n")
+//        logger.debug(callChainMsg.toString())
+//
+//        logger.debug { }
     }
 
     private fun handleEdge(

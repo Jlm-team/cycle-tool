@@ -26,7 +26,11 @@ data class DeprecatedMethod(
     val lineNumber: String?,
     val type: String,
     val fileUrl: String
-)
+) {
+    override fun toString(): String {
+        return "$containingClass,$methodName,$deprecatedCallContainingClass,$deprecatedCallContainingMethod,$type"
+    }
+}
 
 fun handleDeprecatedMethod(project: Project): HashMap<String, ArrayList<DeprecatedMethod>> {
     val javaFileList = getAllJavaFilesInProject(project)
