@@ -137,7 +137,7 @@ class CollapsiblePanel(title: String, content: ArrayList<DeprecatedMethod>) : JP
         setCollapsed(!this.collapsed)
     }
 
-    class MyTableModel(data: Array<Array<String?>>, column: Array<String>) : DefaultTableModel(data, column) {
+    private class MyTableModel(data: Array<Array<String?>>, column: Array<String>) : DefaultTableModel(data, column) {
         override fun getValueAt(rowIndex: Int, columnIndex: Int): Any {
             return if (dataVector[rowIndex][columnIndex] == null) "无" else dataVector[rowIndex][columnIndex] as Any
         }

@@ -136,8 +136,8 @@ fun handlerCallChain(project: Project, el: ArrayList<DependencyInfo>): ArrayList
                                             it.callerContainingClass,
                                             it.calleeName,
                                             it.calleeContainingClass,
-                                            method.containingClass?.qualifiedName,
-                                            method.name
+                                            method.name,
+                                            method.containingClass?.qualifiedName
                                         )
                                     )
                                 } else {
@@ -178,8 +178,8 @@ fun handlerCallChain(project: Project, el: ArrayList<DependencyInfo>): ArrayList
                                                 it.callerContainingClass,
                                                 it.calleeName,
                                                 it.calleeContainingClass,
-                                                method.containingClass?.qualifiedName,
-                                                method.name
+                                                method.name,
+                                                method.containingClass?.qualifiedName
                                             )
                                         )
                                     }
@@ -192,8 +192,8 @@ fun handlerCallChain(project: Project, el: ArrayList<DependencyInfo>): ArrayList
                                         it.callerContainingClass,
                                         it.calleeName,
                                         it.calleeContainingClass,
-                                        method.containingClass?.qualifiedName,
-                                        method.name
+                                        method.name,
+                                        method.containingClass?.qualifiedName
                                     )
                                 )
                             }

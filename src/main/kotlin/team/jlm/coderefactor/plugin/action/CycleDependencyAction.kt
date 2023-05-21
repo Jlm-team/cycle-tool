@@ -12,6 +12,7 @@ import com.xyzboom.algorithm.graph.GEdge
 import com.xyzboom.algorithm.graph.Tarjan
 import mu.KotlinLogging
 import team.jlm.coderefactor.code.IG
+import team.jlm.coderefactor.plugin.ui.CallChainWindow
 import team.jlm.coderefactor.plugin.ui.DependencyToolWindow
 import team.jlm.coderefactor.plugin.ui.DependencyToolWindowFactory
 import team.jlm.coderefactor.plugin.ui.DeprecatedMethodWindow
@@ -19,10 +20,7 @@ import team.jlm.dependency.DependencyInfo
 import team.jlm.dependency.DependencyPosType
 import team.jlm.dependency.DependencyType
 import team.jlm.psi.cache.PsiMemberCacheImpl
-import team.jlm.refactoring.MoveStaticMembersBetweenTwoClasses
-import team.jlm.refactoring.handleDeprecatedMethod
-import team.jlm.refactoring.handlerCallChain
-import team.jlm.refactoring.removeUnusedImport
+import team.jlm.refactoring.*
 import team.jlm.utils.psi.getAllClassesInProject
 
 private val logger = KotlinLogging.logger {}
@@ -72,11 +70,13 @@ class CycleDependencyAction : AnAction() {
             }
         }
 
+        val callChainSet = HashSet<CallChain>(32)
+
         candidate.forEach {
             val row = it
             val edge1 = GEdge(row[0], row[1])
             val edge2 = GEdge(row[1], row[0])
-            handleCallChain(ig, edge1, edge2, project)
+            callChainSet.addAll(handleCallChain(ig, edge1, edge2, project))
         }
 
         var toolWindow = ToolWindowManager.getInstance(project).getToolWindow("dependenciesToolWindow")
@@ -94,22 +94,14 @@ class CycleDependencyAction : AnAction() {
         val deprecatedTableContent = ContentFactory.SERVICE.getInstance().createContent(
             DeprecatedMethodWindow.getWindow(deprecatedCollection), "已弃用方法", false
         )
-        toolWindow.contentManager.addContent(deprecatedTableContent)
+        val callChainWindow = ContentFactory.SERVICE.getInstance().createContent(
+            CallChainWindow.getWindow(callChainSet), "可缩短的调用链", false
+        )
         toolWindow.contentManager.addContent(staticTableContent)
+        toolWindow.contentManager.addContent(deprecatedTableContent)
+        toolWindow.contentManager.addContent(callChainWindow)
         toolWindow.activate(null)
 
-        /*for (p in ig.adjList) {
-            val edgePair = p.value
-            for (edge in edgePair.edgeOut) {
-                val dpList = ig.dependencyMap[edge] ?: continue
-                val dpSet = HashSet(dpList)
-                dpSet.removeAll(importDependencySet)
-                if (dpSet.size == 0) {
-                    handleOnlyStaticFieldsInOneClass(dpList, ig, edge, project)
-                    logger.debug{ (edge)
-                }
-            }
-        }*/
         logger.debug { }
     }
 
@@ -130,7 +122,7 @@ class CycleDependencyAction : AnAction() {
         edge1: GEdge<String>,
         edge2: GEdge<String>,
         project: Project,
-    ): Any? {
+    ): ArrayList<CallChain> {
         val dpList = ig.dependencyMap[edge1] ?: mutableListOf()
         ig.dependencyMap[edge2]?.let { dpList.addAll(it) }
         val element = ArrayList<DependencyInfo>()
@@ -143,9 +135,7 @@ class CycleDependencyAction : AnAction() {
                 }
             }
         }
-        val hcc = handlerCallChain(project, element)
-        hcc.forEach(::println)
-        return ""
+        return handlerCallChain(project, element)
     }
 
     private fun handleOnlyStaticMembersInOneClass(
