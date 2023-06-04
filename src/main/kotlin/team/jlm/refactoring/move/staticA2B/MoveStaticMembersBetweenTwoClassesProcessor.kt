@@ -15,7 +15,6 @@ import com.intellij.usageView.UsageInfo
 import com.intellij.usageView.UsageViewBundle
 import com.intellij.usageView.UsageViewDescriptor
 import com.intellij.usageView.UsageViewUtil
-import com.intellij.util.IncorrectOperationException
 import com.intellij.util.VisibilityUtil
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.containers.toArray
@@ -47,14 +46,6 @@ class MoveStaticMembersBetweenTwoClassesProcessor @JvmOverloads constructor(
     private val members1: Array<PsiJvmMember>,
     private val targetClassName1: String,
 ) : BaseRefactoringProcessor(project, refactoringScope, prepareSuccessfulCallback) {
-
-    private fun isInMovedElement(element: PsiElement, members: Array<PsiJvmMember>): Boolean {
-        for (member in members) {
-            if (PsiTreeUtil.isAncestor(member, element, false)) return true
-        }
-        return false
-    }
-
     override fun createUsageViewDescriptor(usages: Array<out UsageInfo>): UsageViewDescriptor {
         return object : UsageViewDescriptor {
             override fun getElements() =
@@ -108,6 +99,34 @@ class MoveStaticMembersBetweenTwoClassesProcessor @JvmOverloads constructor(
         return usageInfos
     }
 
+    private fun isInMovedElement(element: PsiElement, members: Array<PsiJvmMember>): Boolean {
+        for (member in members) {
+            if (PsiTreeUtil.isAncestor(member, element, false)) return true
+        }
+        return false
+    }
+
+    override fun performRefactoring(usages: Array<out UsageInfo>) {
+        val membersArray = arrayOf(members0 to targetClassName0, members1 to targetClassName1)
+        val movedMembers = HashMap<PsiMember, SmartPsiElementPointer<PsiMember>>()
+        for ((members, className) in membersArray) {
+            val targetClass = findPsiClass(project, className) ?: continue
+            val movedMembersOnce = performMove(
+                targetClass,
+                hashSetOf(*members),
+                ContainerUtil.map(usages, MoveMembersUsageInfo::class.java::cast),
+                object : MoveMembersOptions {
+                    override fun getSelectedMembers() = members
+                    override fun getTargetClassName(): String = className
+                    override fun getMemberVisibility(): String = PsiModifier.PUBLIC
+                    override fun makeEnumConstant(): Boolean = false
+                }
+            )
+            movedMembers.putAll(movedMembersOnce)
+        }
+        afterAllMovements(movedMembers)
+    }
+
     private fun performMove(
         targetClass: PsiClass,
         membersToMove: Set<PsiMember>,
@@ -135,7 +154,9 @@ class MoveStaticMembersBetweenTwoClassesProcessor @JvmOverloads constructor(
         val otherUsages = ArrayList<MoveMembersUsageInfo>()
         for (usage in usages) {
             if (!usage.reference.isValid) continue
+            usage.element ?: continue
             val handler = MoveMemberHandler.EP_NAME.forLanguage(usage.element!!.language)
+            if (handler.changeExternalUsage(options, usage)) continue
             otherUsages.add(usage)
         }
 
@@ -183,10 +204,18 @@ class MoveStaticMembersBetweenTwoClassesProcessor @JvmOverloads constructor(
         return movedMembers
     }
 
-    @Throws(IncorrectOperationException::class)
+    private fun afterAllMovements(movedMembers: Map<PsiMember, SmartPsiElementPointer<PsiMember>>) {
+        for ((oldMember, value) in movedMembers) {
+            val newMember = value.element
+            if (newMember != null) {
+                transaction.getElementListener(oldMember).elementMoved(newMember)
+            }
+        }
+    }
+
     private fun fixModifierList(
         member: PsiMember, newMember: PsiMember, usages: List<MoveMembersUsageInfo>,
-        targetClass: PsiClass
+        targetClass: PsiClass,
     ) {
         val modifierList = newMember.modifierList
         if (modifierList != null && targetClass.isInterface) {
@@ -206,34 +235,6 @@ class MoveStaticMembersBetweenTwoClassesProcessor @JvmOverloads constructor(
         }
         val infos = filtered.toArray<UsageInfo>(UsageInfo.EMPTY_ARRAY)
         VisibilityUtil.fixVisibility(UsageViewUtil.toElements(infos), newMember, PsiModifier.PUBLIC)
-    }
-
-    private fun afterAllMovements(movedMembers: Map<PsiMember, SmartPsiElementPointer<PsiMember>>) {
-        for ((oldMember, value) in movedMembers) {
-            val newMember = value.element
-            if (newMember != null) {
-                transaction.getElementListener(oldMember).elementMoved(newMember)
-            }
-        }
-    }
-
-    override fun performRefactoring(usages: Array<out UsageInfo>) {
-        val membersArray = arrayOf(members0 to targetClassName0, members1 to targetClassName1)
-        for ((members, className) in membersArray) {
-            val targetClass = findPsiClass(project, className) ?: continue
-            val movedMembers = performMove(
-                targetClass,
-                hashSetOf(*members),
-                ContainerUtil.map(usages, MoveMembersUsageInfo::class.java::cast),
-                object : MoveMembersOptions {
-                    override fun getSelectedMembers() = members
-                    override fun getTargetClassName(): String = className
-                    override fun getMemberVisibility(): String = PsiModifier.PUBLIC
-                    override fun makeEnumConstant(): Boolean = false
-                }
-            )
-            afterAllMovements(movedMembers)
-        }
     }
 
     override fun getCommandName(): String {
