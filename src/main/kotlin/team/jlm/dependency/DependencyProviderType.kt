@@ -4,7 +4,7 @@ package team.jlm.dependency
  * 类间依赖关系枚举
  * @see <a href="https://github.com/multilang-depends/depends">depends</a>
  */
-enum class DependencyType(val static: Boolean = false) {
+enum class DependencyProviderType(val static: Boolean = false) {
     /**
      * Import is a relation between files. It indicates that File A includes or imports from File B.
      * 文件间的依赖关系，例如文件A导入了文件B，具有方向性。

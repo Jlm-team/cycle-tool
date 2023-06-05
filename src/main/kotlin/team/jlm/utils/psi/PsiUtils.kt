@@ -103,7 +103,6 @@ fun PsiElement.getOuterClass(strict: Boolean = false): PsiClass? {
     val result = PsiTreeUtil.getParentOfType(this, PsiClass::class.java, strict)
         ?: return null
     if (result is PsiAnonymousClass) {
-
         return null
     }
     if (result.getOuterClass(true) != null) return null

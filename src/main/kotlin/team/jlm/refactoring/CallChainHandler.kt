@@ -51,8 +51,8 @@ data class CallChain(
 
 fun handlerCallChain(project: Project, el: ArrayList<DependencyInfo>): ArrayList<CallChain> {
     val psiElement = el.mapNotNull {
-        val calleePsi = it.psi.getPsi(project)
-        val callerPsi = it.posPsi.getPsi(project)
+        val calleePsi = it.providerCache.getPsi(project)
+        val callerPsi = it.userCache.getPsi(project)
         if (callerPsi is PsiMethod && calleePsi is PsiMethod) {
             val callerClass = PsiTreeUtil.getParentOfType(callerPsi, PsiClass::class.java)
             val calleeClass = PsiTreeUtil.getParentOfType(calleePsi, PsiClass::class.java)
@@ -70,7 +70,7 @@ fun handlerCallChain(project: Project, el: ArrayList<DependencyInfo>): ArrayList
     val callChain = ArrayList<CallChain>(16)
 
     psiElement.forEach {
-        val callee = it.dependencyInfo.psi.getPsi(project) as PsiMethod
+        val callee = it.dependencyInfo.providerCache.getPsi(project) as PsiMethod
         val calleeParams = callee.parameterList
         val calleeReturnType = callee.returnType ?: return@forEach
 

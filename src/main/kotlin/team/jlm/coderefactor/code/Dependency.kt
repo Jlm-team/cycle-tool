@@ -1,8 +1,8 @@
 package team.jlm.coderefactor.code
 
-import team.jlm.dependency.DependencyType
+import team.jlm.dependency.DependencyProviderType
 
-class Dependency(val type: DependencyType, val dependencyText: String, val dependClassName:String?) {
+class Dependency(val type: DependencyProviderType, val dependencyText: String, val dependClassName:String?) {
 
     override fun toString(): String {
         return "Dependency(type=$type, dependencyText='$dependencyText', dependClassName='$dependClassName')"

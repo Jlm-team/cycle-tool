@@ -8,11 +8,11 @@ import com.intellij.psi.*
 import com.intellij.util.containers.stream
 import team.jlm.utils.graph.GEdge
 import team.jlm.utils.graph.GNode
-import team.jlm.dependency.DependencyType
+import team.jlm.dependency.DependencyProviderType
 import team.jlm.coderefactor.code.IG
 
 import mu.KotlinLogging
-import team.jlm.dependency.DependencyPosType
+import team.jlm.dependency.DependencyUserType
 
 private val logger = KotlinLogging.logger{}
 
@@ -42,7 +42,7 @@ class CycleDependencyInspection : AbstractBaseJavaLocalInspectionTool() {
                             if (selfName == null || clazzName == null) {
                                 return@run
                             }
-                            ig.addEdge(clazzName, selfName, DependencyType.OTHER, DependencyPosType.OTHER)
+                            ig.addEdge(clazzName, selfName, DependencyProviderType.OTHER, DependencyUserType.OTHER)
                             val edgePair = ig.adjList[GNode(selfName)] ?: return@run
                             if (edgePair.edgeOut.contains(GEdge(GNode(selfName), GNode(clazzName)))) {
                                 print("detected cycle: ")

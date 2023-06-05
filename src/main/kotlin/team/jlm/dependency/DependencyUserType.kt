@@ -7,7 +7,7 @@ package team.jlm.dependency
  *
  * @property static 依赖是否为静态
  */
-enum class DependencyPosType(
+enum class DependencyUserType(
     val static: Boolean = false,
 ) {
     /**

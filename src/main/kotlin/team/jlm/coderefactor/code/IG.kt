@@ -1,12 +1,7 @@
 package team.jlm.coderefactor.code
 
-import com.intellij.packageDependencies.ForwardDependenciesBuilder
 import com.intellij.psi.*
-import com.intellij.psi.impl.source.tree.JavaElementType
 import com.intellij.psi.tree.IElementType
-import com.intellij.psi.util.elementType
-import com.intellij.psi.util.parentsOfType
-import com.intellij.refactoring.suggested.startOffset
 import team.jlm.utils.graph.GEdge
 import team.jlm.utils.graph.Graph
 import guru.nidi.graphviz.attribute.Style
@@ -14,12 +9,11 @@ import guru.nidi.graphviz.model.Factory
 import guru.nidi.graphviz.model.Factory.graph
 import guru.nidi.graphviz.model.Factory.node
 import mu.KotlinLogging
+import team.jlm.dependency.DependenciesBuilder
 import team.jlm.dependency.DependencyInfo
-import team.jlm.dependency.DependencyPosType
-import team.jlm.dependency.DependencyType
+import team.jlm.dependency.DependencyUserType
+import team.jlm.dependency.DependencyProviderType
 import team.jlm.psi.cache.IPsiCache
-import team.jlm.psi.cache.PsiMemberCacheImpl
-import team.jlm.utils.psi.getOuterClass
 import guru.nidi.graphviz.model.Graph as VizGraph
 
 private val logger = KotlinLogging.logger {}
@@ -54,10 +48,11 @@ open class IG(private var classes: MutableList<PsiClass>) : Graph<String>() {
     }
 
     fun addEdge(
-        from: String, to: String, dependency: DependencyType = DependencyType.OTHER,
-        dependencyPosType: DependencyPosType,
-        posPsiCache: IPsiCache<*> = IPsiCache.EMPTY,
-        psiCache: IPsiCache<*> = IPsiCache.EMPTY,
+        from: String, to: String,
+        providerType: DependencyProviderType = DependencyProviderType.OTHER,
+        userType: DependencyUserType,
+        providerCache: IPsiCache<*> = IPsiCache.EMPTY,
+        userCache: IPsiCache<*> = IPsiCache.EMPTY,
     ) {
 //        vizNodes[from.data]?.let {
 //            vizGraph = vizGraph.with(it.link(vizNodes[to.data]))
@@ -65,7 +60,7 @@ open class IG(private var classes: MutableList<PsiClass>) : Graph<String>() {
 //        vizGraph = vizGraph.with(node(from).link(node(to)))
         val edge = super.addEdge(from, to, 1)
         dependencyMap.getOrPut(edge) { ArrayList() }
-            .add(DependencyInfo(dependencyPosType, dependency, posPsiCache, psiCache))
+            .add(DependencyInfo(userType, providerType, userCache, providerCache))
     }
 
     override fun delNode(data: String) {
@@ -110,164 +105,27 @@ open class IG(private var classes: MutableList<PsiClass>) : Graph<String>() {
 
                 clazz.qualifiedName?.let {
                     parent.qualifiedName?.let { it1 ->
-                        addEdge(it, it1, DependencyType.EXTENDS, DependencyPosType.EXTENDS)
+                        addEdge(it, it1, DependencyProviderType.EXTENDS, DependencyUserType.EXTENDS)
                     }
                 }
             }
         }
-        ForwardDependenciesBuilder.analyzeFileDependencies(clazz.containingFile as PsiJavaFile)
-        { dependPosEle: PsiElement, dependEle: PsiElement ->
-//            logger.debug { "${dependEle.javaClass}" }
-            val dependClass =
-                dependEle.getOuterClass(false)
-                    ?: return@analyzeFileDependencies
-            val dependPosClass =
-                dependPosEle.getOuterClass(false)
-                    ?: return@analyzeFileDependencies
-            val dependClassName = dependEle.let {
-                if (it is PsiClass) {
-                    it.qualifiedName ?: return@analyzeFileDependencies
-                } else {
-                    dependClass.qualifiedName ?: return@analyzeFileDependencies
+        DependenciesBuilder.analyzeClassDependencies(
+            clazz,
+            filter@{ providerClass ->
+                val providerClassName = providerClass.qualifiedName ?: return@filter false
+                if (providerClassName == clazzQualifiedName
+                    || providerClassName.startsWith(clazzQualifiedName)
+                    || clazzQualifiedName.startsWith(providerClassName)
+                    || !classes.contains(providerClass)
+                ) {
+                    return@filter false
                 }
+                return@filter true
             }
-            val dependPosClassName = dependPosEle.let {
-                if (it is PsiClass) {
-                    it.qualifiedName ?: return@analyzeFileDependencies
-                } else {
-                    dependPosClass.qualifiedName ?: return@analyzeFileDependencies
-                }
-            }
-            if (dependClassName == clazzQualifiedName
-                || dependClassName.startsWith(clazzQualifiedName)
-                || clazzQualifiedName.startsWith(dependClassName)
-                || !classes.contains(dependClass)
-            ) {
-                return@analyzeFileDependencies
-            }
-            var dependencyType = DependencyType.OTHER
-            var dependencyPosType = DependencyPosType.OTHER
-            var psiPosCache = IPsiCache.EMPTY
-            var psiCache = IPsiCache.EMPTY
-            if (dependEle !is PsiClass) {
-                if (dependPosEle.elementType == JavaElementType.METHOD_REF_EXPRESSION) {
-                    dependencyType = when (dependEle) {
-                        is PsiMethod -> {
-                            if (dependEle.modifierList.hasModifierProperty(PsiModifier.STATIC)) {
-                                DependencyType.STATIC_METHOD
-                            }
-                            DependencyType.NONSTATIC_METHOD
-                        }
-
-                        else -> {
-                            DependencyType.OTHER
-                        }
-                    }
-                } else if (dependEle is PsiJvmMember) {
-                    if (dependEle.startOffset - dependClass.startOffset < 0) {
-                        logger.debug { dependEle.startOffset }
-                        logger.debug { dependClass.startOffset }
-                        logger.debug { dependEle.text }
-                        logger.debug { dependEle.parent.text }
-                        logger.debug { dependEle.parent.parent.text }
-                        logger.debug { dependEle.parent.parent.parent.text }
-                    }
-                    psiCache = PsiMemberCacheImpl(
-                        dependEle.startOffset - dependClass.startOffset,
-                        dependClassName, dependEle.javaClass
-                    )
-                    dependencyType = if (dependEle.hasModifierProperty(PsiModifier.STATIC)) {
-                        when (dependEle) {
-                            is PsiMethod -> DependencyType.STATIC_METHOD
-                            is PsiField -> DependencyType.STATIC_FIELD
-                            else -> DependencyType.OTHER
-                        }
-                    } else {
-                        when (dependEle) {
-                            is PsiMethod -> DependencyType.NONSTATIC_METHOD
-                            is PsiField -> DependencyType.NONSTATIC_FIELD
-                            else -> DependencyType.OTHER
-                        }
-                    }
-                }
-            } else {
-                dependencyType = dependPosEle.dependencyType
-                psiPosCache = IPsiCache.EMPTY
-            }
-            val fieldSet = dependPosEle.parentsOfType<PsiField>().toSet()
-            val methodSet = dependPosEle.parentsOfType<PsiMethod>().toSet()
-            if (fieldSet.isNotEmpty()) {
-                val fieldEle = fieldSet.first()
-                psiPosCache = PsiMemberCacheImpl(
-                    fieldEle.startOffset - dependPosClass.startOffset,
-                    dependClassName,
-                    fieldEle.javaClass
-                )
-                dependencyPosType =
-                    if (fieldEle.modifierList?.hasModifierProperty(PsiModifier.STATIC) == true) {
-                        DependencyPosType.FIELD_STATIC
-                    } else {
-                        DependencyPosType.FIELD
-                    }
-            } else if (methodSet.isNotEmpty()) {
-                val methodEle = methodSet.first()
-                psiPosCache = PsiMemberCacheImpl(
-                    methodEle.startOffset - dependPosClass.startOffset,
-                    dependPosClassName,
-                    methodEle.javaClass
-                )
-                dependencyPosType = if (methodEle.modifierList.hasModifierProperty(PsiModifier.STATIC)) {
-                    DependencyPosType.METHOD_STATIC
-                } else {
-                    DependencyPosType.METHOD
-                }
-            }
-            igDebug {
-                if (dependencyType == DependencyType.OTHER) {
-                    val dependName: String = when (dependEle) {
-                        is PsiClass -> {
-                            dependEle.qualifiedName ?: ""
-                        }
-
-                        is PsiJvmMember -> {
-                            dependEle.containingClass?.qualifiedName ?: ""
-                        }
-
-                        else -> {
-                            dependEle.containingFile?.name ?: ""
-                        }
-                    }
-                    val dependFileName = dependEle.containingFile?.name
-                    val dependPosFileName = dependPosEle.containingFile?.name
-                    if (clazzQualifiedName == dependName || clazzQualifiedName.startsWith(dependName)
-                        || dependName.startsWith(clazzQualifiedName)
-                        || dependFileName == dependPosFileName
-                    ) {
-                        return@igDebug
-                    }
-                    dependTypeSet.getOrPut(dependPosEle.elementType, ::HashMap)
-                        .getOrPut(dependPosEle.parent.elementType, ::HashMap)
-                        .getOrPut(dependPosEle.parent.parent.elementType, ::HashMap)
-                        .merge(
-                            dependEle.elementType,
-                            arrayListOf(
-                                Triple(
-                                    dependPosEle.text ?: "",
-                                    clazzQualifiedName,
-                                    dependName
-                                )
-                            )
-                        ) { a, b ->
-                            a.addAll(b)
-                            a
-                        }
-                }
-            }
-            addEdge(
-                clazzQualifiedName, dependClassName,
-                dependencyType, dependencyPosType, psiPosCache, psiCache
-            )
-            return@analyzeFileDependencies
+        ) { providerClass, providerType, userType, providerPsiCache, userPsiCache ->
+            val providerName = providerClass.qualifiedName ?: return@analyzeClassDependencies
+            addEdge(clazzQualifiedName, providerName, providerType, userType, providerPsiCache, userPsiCache)
         }
     }
 

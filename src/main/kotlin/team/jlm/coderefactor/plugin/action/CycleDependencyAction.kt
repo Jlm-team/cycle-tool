@@ -17,21 +17,21 @@ import team.jlm.coderefactor.plugin.ui.DependencyToolWindow
 import team.jlm.coderefactor.plugin.ui.DependencyToolWindowFactory
 import team.jlm.coderefactor.plugin.ui.DeprecatedMethodWindow
 import team.jlm.dependency.DependencyInfo
-import team.jlm.dependency.DependencyPosType
-import team.jlm.dependency.DependencyType
+import team.jlm.dependency.DependencyUserType
+import team.jlm.dependency.DependencyProviderType
 import team.jlm.psi.cache.PsiMemberCacheImpl
 import team.jlm.refactoring.*
 import team.jlm.utils.psi.getAllClassesInProject
 
 private val logger = KotlinLogging.logger {}
-val importDependencySet = HashSet<DependencyType>(
+val importDependencySet = HashSet<DependencyProviderType>(
     arrayListOf(
-        DependencyType.IMPORT_LIST,
-        DependencyType.IMPORT_STATIC_STATEMENT,
-        DependencyType.IMPORT_STATEMENT,
-        DependencyType.IMPORT_STATIC_FIELD,
-        DependencyType.STATIC_FIELD,
-        DependencyType.STATIC_METHOD,
+        DependencyProviderType.IMPORT_LIST,
+        DependencyProviderType.IMPORT_STATIC_STATEMENT,
+        DependencyProviderType.IMPORT_STATEMENT,
+        DependencyProviderType.IMPORT_STATIC_FIELD,
+        DependencyProviderType.STATIC_FIELD,
+        DependencyProviderType.STATIC_METHOD,
     )
 )
 
@@ -126,7 +126,7 @@ class CycleDependencyAction : AnAction() {
         project: Project,
     ): Refactoring? {
         val dpList = ig.dependencyMap[edge] ?: return null
-        return if (dpList.all { it.posType.static || it.type.static }) {
+        return if (dpList.all { it.userType.static || it.providerType.static }) {
             logger.debug { edge }
             return handleOnlyStaticMembersInOneClass(dpList, edge, project)
         } else null
@@ -142,10 +142,10 @@ class CycleDependencyAction : AnAction() {
         ig.dependencyMap[edge2]?.let { dpList.addAll(it) }
         val element = ArrayList<DependencyInfo>()
         for (el in dpList) {
-            if ((el.type == DependencyType.NONSTATIC_METHOD || el.type == DependencyType.STATIC_METHOD) &&
-                (el.posType == DependencyPosType.METHOD || el.posType == DependencyPosType.METHOD_STATIC)
+            if ((el.providerType == DependencyProviderType.NONSTATIC_METHOD || el.providerType == DependencyProviderType.STATIC_METHOD) &&
+                (el.userType == DependencyUserType.METHOD || el.userType == DependencyUserType.METHOD_STATIC)
             ) {
-                if (el.psi is PsiMemberCacheImpl) {
+                if (el.providerCache is PsiMemberCacheImpl) {
                     element.add(el)
                 }
             }
@@ -161,13 +161,13 @@ class CycleDependencyAction : AnAction() {
         val membersFrom = HashSet<PsiJvmMember>()
         val membersTo = HashSet<PsiJvmMember>()
         for (info in dpList) {
-            if (info.type.static) {
-                if (info.psi is PsiMemberCacheImpl) {
-                    membersFrom.add(info.psi.getPsi(project))
+            if (info.providerType.static) {
+                if (info.providerCache is PsiMemberCacheImpl) {
+                    membersFrom.add(info.providerCache.getPsi(project))
                 }
-            } else if (info.posType.static) {
-                if (info.posPsi is PsiMemberCacheImpl) {
-                    membersTo.add(info.posPsi.getPsi(project))
+            } else if (info.userType.static) {
+                if (info.userCache is PsiMemberCacheImpl) {
+                    membersTo.add(info.userCache.getPsi(project))
                 }
             }
         }

@@ -6,7 +6,7 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.tree.JavaElementType.*
 import com.intellij.psi.impl.source.tree.TreeElement
-import team.jlm.dependency.DependencyType
+import team.jlm.dependency.DependencyProviderType
 import team.jlm.utils.psi.getPsiJavaFile
 
 fun getDependencyList(fileString: String, project: Project): List<Dependency> {
@@ -18,11 +18,11 @@ fun getDependencyList(fileString: String, project: Project): List<Dependency> {
                 run {
                     if (dependElement !is PsiClass) return@run
 //                    val dependencyType = dependElementInThisFile.dependencyType
-                    val dependencyType = DependencyType.OTHER
+                    val dependencyProviderType = DependencyProviderType.OTHER
                     val dependencyRange = dependElementInThisFile.textRange
                     val dependencyStr: String =
                         fileString.subSequence(dependencyRange.startOffset, dependencyRange.endOffset).toString()
-                    result.add(Dependency(dependencyType, dependencyStr, dependElement.qualifiedName))
+                    result.add(Dependency(dependencyProviderType, dependencyStr, dependElement.qualifiedName))
                 }
             }, DependencyVisitorFactory.VisitorOptions.fromSettings(project)
         )
@@ -41,45 +41,45 @@ fun getDependencyList(fileString: String, project: Project): List<Dependency> {
     return result
 }
 
-val PsiElement.dependencyType: DependencyType
+val PsiElement.dependencyProviderType: DependencyProviderType
     get() {
         if (this !is TreeElement)
-            return DependencyType.OTHER
+            return DependencyProviderType.OTHER
 //        logger.debug{ ("$this, ${this.treeParent.elementType}, ${this.treeParent.treeParent.elementType}")
-        val dependencyType = when (this.elementType) {
+        val dependencyProviderType = when (this.elementType) {
             JAVA_CODE_REFERENCE ->
                 when (this.treeParent.elementType) {
-                    EXTENDS_LIST -> DependencyType.EXTENDS
-                    IMPLEMENTS_LIST -> DependencyType.IMPLEMENT
-                    IMPORT_STATEMENT -> DependencyType.IMPORT_STATEMENT
-                    IMPORT_LIST -> DependencyType.IMPORT_LIST
-                    IMPORT_STATIC_STATEMENT -> DependencyType.IMPORT_STATIC_STATEMENT
-                    IMPORT_STATIC_REFERENCE -> DependencyType.IMPORT_STATIC_FIELD
-                    ANNOTATION -> DependencyType.ANNOTATION
+                    EXTENDS_LIST -> DependencyProviderType.EXTENDS
+                    IMPLEMENTS_LIST -> DependencyProviderType.IMPLEMENT
+                    IMPORT_STATEMENT -> DependencyProviderType.IMPORT_STATEMENT
+                    IMPORT_LIST -> DependencyProviderType.IMPORT_LIST
+                    IMPORT_STATIC_STATEMENT -> DependencyProviderType.IMPORT_STATIC_STATEMENT
+                    IMPORT_STATIC_REFERENCE -> DependencyProviderType.IMPORT_STATIC_FIELD
+                    ANNOTATION -> DependencyProviderType.ANNOTATION
                     TYPE -> when (this.treeParent.treeParent.elementType) {
-                        FIELD -> DependencyType.CONTAIN
-                        PARAMETER -> DependencyType.PARAMETER
-                        LOCAL_VARIABLE -> DependencyType.USE
-                        CLASS_OBJECT_ACCESS_EXPRESSION -> DependencyType.CLASS_OBJECT_ACCESS
-                        else -> DependencyType.OTHER
+                        FIELD -> DependencyProviderType.CONTAIN
+                        PARAMETER -> DependencyProviderType.PARAMETER
+                        LOCAL_VARIABLE -> DependencyProviderType.USE
+                        CLASS_OBJECT_ACCESS_EXPRESSION -> DependencyProviderType.CLASS_OBJECT_ACCESS
+                        else -> DependencyProviderType.OTHER
                     }
 
-                    NEW_EXPRESSION -> DependencyType.CREATE
-                    else -> DependencyType.OTHER
+                    NEW_EXPRESSION -> DependencyProviderType.CREATE
+                    else -> DependencyProviderType.OTHER
                 }
 
             REFERENCE_EXPRESSION ->
                 when (this.treeParent.elementType) {
                     REFERENCE_EXPRESSION -> when (this.treeParent.treeParent.elementType) {
-                        METHOD_CALL_EXPRESSION -> DependencyType.STATIC_METHOD
-                        else -> DependencyType.STATIC_FIELD
+                        METHOD_CALL_EXPRESSION -> DependencyProviderType.STATIC_METHOD
+                        else -> DependencyProviderType.STATIC_FIELD
                     }
 
-                    else -> DependencyType.OTHER
+                    else -> DependencyProviderType.OTHER
                 }
 
-            else -> DependencyType.OTHER
+            else -> DependencyProviderType.OTHER
         }
-        return dependencyType
+        return dependencyProviderType
     }
 
