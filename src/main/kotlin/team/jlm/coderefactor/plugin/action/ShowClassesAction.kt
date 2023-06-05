@@ -4,8 +4,8 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFileManager
-import com.xyzboom.algorithm.graph.Graph
-import com.xyzboom.algorithm.graph.Tarjan
+import team.jlm.utils.graph.Graph
+import team.jlm.utils.graph.Tarjan
 import guru.nidi.graphviz.engine.Format
 import guru.nidi.graphviz.engine.Graphviz
 import team.jlm.coderefactor.code.IG

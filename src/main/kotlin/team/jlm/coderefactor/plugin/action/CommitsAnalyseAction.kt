@@ -5,8 +5,8 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.components.service
 import com.intellij.openapi.ui.popup.JBPopupFactory
-import com.xyzboom.algorithm.graph.Graph
-import com.xyzboom.algorithm.graph.saveAsDependencyGraph
+import team.jlm.utils.graph.Graph
+import team.jlm.utils.graph.saveAsDependencyGraph
 import team.jlm.coderefactor.plugin.service.CommitsAnalyseCacheService
 import team.jlm.utils.*
 import team.jlm.utils.change.analyseChangesCompletableFuture

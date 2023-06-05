@@ -1,4 +1,4 @@
-package com.xyzboom.algorithm.graph
+package team.jlm.utils.graph
 
 import kotlinx.serialization.Serializable
 import java.util.*

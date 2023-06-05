@@ -5,11 +5,10 @@ import com.intellij.psi.*
 import com.intellij.psi.impl.source.tree.JavaElementType
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.util.elementType
-import com.intellij.psi.util.parentOfType
 import com.intellij.psi.util.parentsOfType
 import com.intellij.refactoring.suggested.startOffset
-import com.xyzboom.algorithm.graph.GEdge
-import com.xyzboom.algorithm.graph.Graph
+import team.jlm.utils.graph.GEdge
+import team.jlm.utils.graph.Graph
 import guru.nidi.graphviz.attribute.Style
 import guru.nidi.graphviz.model.Factory
 import guru.nidi.graphviz.model.Factory.graph
@@ -21,8 +20,6 @@ import team.jlm.dependency.DependencyType
 import team.jlm.psi.cache.IPsiCache
 import team.jlm.psi.cache.PsiMemberCacheImpl
 import team.jlm.utils.psi.getOuterClass
-import java.util.Vector
-import java.util.concurrent.ConcurrentHashMap
 import guru.nidi.graphviz.model.Graph as VizGraph
 
 private val logger = KotlinLogging.logger {}

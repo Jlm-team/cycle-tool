@@ -8,8 +8,8 @@ import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.psi.PsiJvmMember
 import com.intellij.refactoring.Refactoring
 import com.intellij.ui.content.ContentFactory
-import com.xyzboom.algorithm.graph.GEdge
-import com.xyzboom.algorithm.graph.Tarjan
+import team.jlm.utils.graph.GEdge
+import team.jlm.utils.graph.Tarjan
 import mu.KotlinLogging
 import team.jlm.coderefactor.code.IG
 import team.jlm.coderefactor.plugin.ui.CallChainWindow

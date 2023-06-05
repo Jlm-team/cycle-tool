@@ -4,7 +4,7 @@ import com.intellij.icons.AllIcons
 import com.intellij.refactoring.Refactoring
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.table.JBTable
-import com.xyzboom.algorithm.graph.GEdge
+import team.jlm.utils.graph.GEdge
 import java.awt.Component
 import java.awt.Dimension
 import java.util.*

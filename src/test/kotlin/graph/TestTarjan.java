@@ -1,9 +1,9 @@
 package graph;
 
-import com.xyzboom.algorithm.graph.GNode;
-import com.xyzboom.algorithm.graph.Graph;
-import com.xyzboom.algorithm.graph.NodeNotInGraphException;
-import com.xyzboom.algorithm.graph.Tarjan;
+import team.jlm.utils.graph.GNode;
+import team.jlm.utils.graph.Graph;
+import team.jlm.utils.graph.NodeNotInGraphException;
+import team.jlm.utils.graph.Tarjan;
 import org.junit.Test;
 
 import java.util.ArrayList;

@@ -6,8 +6,8 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.packageDependencies.ForwardDependenciesBuilder
 import com.intellij.psi.*
 import com.intellij.util.containers.stream
-import com.xyzboom.algorithm.graph.GEdge
-import com.xyzboom.algorithm.graph.GNode
+import team.jlm.utils.graph.GEdge
+import team.jlm.utils.graph.GNode
 import team.jlm.dependency.DependencyType
 import team.jlm.coderefactor.code.IG
 

@@ -1,12 +1,11 @@
 package graph;
 
-import com.xyzboom.algorithm.graph.GNode;
-import com.xyzboom.algorithm.graph.Graph;
-import com.xyzboom.algorithm.graph.GraphUtilsKt;
-import com.xyzboom.algorithm.graph.NodeNotInGraphException;
+import team.jlm.utils.graph.GNode;
+import team.jlm.utils.graph.Graph;
+import team.jlm.utils.graph.GraphUtilsKt;
+import team.jlm.utils.graph.NodeNotInGraphException;
 import org.junit.Test;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class TestGraph {

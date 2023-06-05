@@ -10,7 +10,7 @@ import com.intellij.openapi.vcs.changes.Change
 import com.intellij.psi.PsiJavaFile
 import com.intellij.refactoring.suggested.endOffset
 import com.intellij.refactoring.suggested.startOffset
-import com.xyzboom.algorithm.graph.Graph
+import team.jlm.utils.graph.Graph
 import team.jlm.coderefactor.code.PsiGroup
 import team.jlm.utils.psi.createOrGetJavaPsiFile
 import team.jlm.utils.psi.getAllClassesInJavaFile
