@@ -1,4 +1,3 @@
-import org.gradle.internal.impldep.org.eclipse.jgit.lib.ObjectChecker.type
 import org.jetbrains.intellij.tasks.RunIdeTask
 
 plugins {
@@ -60,9 +59,13 @@ sourceSets {
 }
 
 tasks {
+    buildSearchableOptions {
+        enabled = false
+    }
     withType<RunIdeTask> {
         println("RunIdeTask")
         jvmArgs("-Xmx2g")
+        autoReloadPlugins.set(true)
     }
     // Set the JVM compatibility versions
     withType<JavaCompile> {

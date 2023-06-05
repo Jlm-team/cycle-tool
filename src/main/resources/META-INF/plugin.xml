@@ -45,11 +45,18 @@
                 text="循环依赖分析">
             <add-to-group group-id="CodeMenu" anchor="last"/>
         </action>
+        <action id="CycleDependencyOnOneClassAction"
+                class="team.jlm.coderefactor.plugin.action.CycleDependencyOnOneClassAction"
+                text="本类的循环依赖分析" description="CycleDependencyOnOneClassAction">
+            <add-to-group group-id="CodeMenu" anchor="last"/>
+        </action>
     </actions>
 
     <applicationListeners>
         <listener class="team.jlm.coderefactor.plugin.listener.ProjectOpenCloseListener"
                   topic="com.intellij.openapi.project.ProjectManagerListener"/>
+        <listener class="team.jlm.coderefactor.plugin.listener.FileChangeListener"
+                  topic="com.intellij.openapi.vfs.VirtualFileListener"/>
     </applicationListeners>
 
     <extensions defaultExtensionNs="com.intellij">
