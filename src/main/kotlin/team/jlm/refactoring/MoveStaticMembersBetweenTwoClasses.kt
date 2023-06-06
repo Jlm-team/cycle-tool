@@ -34,5 +34,7 @@ class MoveStaticMembersBetweenTwoClasses(
         MoveStaticMembersBetweenTwoClassesProcessor(
             project, refactoringScope, prepareSuccessfulCallback,
             members0, targetClassName0, members1, targetClassName1
-        )
+        ).apply {
+            setPreviewUsages(true)
+        }
     )

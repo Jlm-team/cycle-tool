@@ -20,7 +20,6 @@ import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.containers.toArray
 import mu.KotlinLogging
 import team.jlm.utils.psi.findPsiClass
-import java.util.*
 
 private val logger = KotlinLogging.logger {}
 

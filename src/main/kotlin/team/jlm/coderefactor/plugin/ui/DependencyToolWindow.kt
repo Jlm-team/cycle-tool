@@ -5,8 +5,8 @@ import com.intellij.openapi.actionSystem.ActionPlaces
 import com.intellij.openapi.actionSystem.Presentation
 import com.intellij.openapi.actionSystem.impl.ActionButtonWithText
 import com.intellij.refactoring.Refactoring
-import team.jlm.utils.graph.GEdge
 import team.jlm.coderefactor.plugin.action.CycleDependencyAction
+import team.jlm.utils.graph.GEdge
 import java.awt.BorderLayout
 import java.awt.Dimension
 import java.awt.FlowLayout

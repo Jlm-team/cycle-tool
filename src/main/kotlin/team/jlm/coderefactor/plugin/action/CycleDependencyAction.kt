@@ -12,7 +12,6 @@ import team.jlm.utils.graph.GEdge
 import team.jlm.utils.graph.Tarjan
 import mu.KotlinLogging
 import team.jlm.coderefactor.code.IG
-import team.jlm.coderefactor.plugin.listener.FileChangeListener
 import team.jlm.coderefactor.plugin.ui.CallChainWindow
 import team.jlm.coderefactor.plugin.ui.DependencyToolWindow
 import team.jlm.coderefactor.plugin.ui.DependencyToolWindowFactory
@@ -102,8 +101,6 @@ class CycleDependencyAction : AnAction() {
         toolWindow.contentManager.addContent(deprecatedTableContent)
         toolWindow.contentManager.addContent(callChainWindow)
         toolWindow.activate(null)
-        FileChangeListener.reAnalyseDependency()
-        // TODO 在此处禁用toolWindow
 //        val deprecatedMsg = StringBuilder()
 //        deprecatedCollection.forEach { (k,v) ->
 //            v.forEach {

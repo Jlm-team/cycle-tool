@@ -55,8 +55,6 @@
     <applicationListeners>
         <listener class="team.jlm.coderefactor.plugin.listener.ProjectOpenCloseListener"
                   topic="com.intellij.openapi.project.ProjectManagerListener"/>
-        <listener class="team.jlm.coderefactor.plugin.listener.FileChangeListener"
-                  topic="com.intellij.openapi.vfs.VirtualFileListener"/>
     </applicationListeners>
 
     <extensions defaultExtensionNs="com.intellij">
