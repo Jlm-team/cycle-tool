@@ -150,7 +150,7 @@ class CycleDependencyAction : AnAction() {
                 }
             }
         }
-        return handlerCallChain(project, element)
+        return detectCallChain(project, element)
     }
 
     private fun handleOnlyStaticMembersInOneClass(

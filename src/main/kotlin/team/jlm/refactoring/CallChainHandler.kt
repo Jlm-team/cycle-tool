@@ -49,7 +49,7 @@ data class CallChain(
     }
 }
 
-fun handlerCallChain(project: Project, el: ArrayList<DependencyInfo>): ArrayList<CallChain> {
+fun detectCallChain(project: Project, el: ArrayList<DependencyInfo>): ArrayList<CallChain> {
     val psiElement = el.mapNotNull {
         val calleePsi = it.providerCache.getPsi(project)
         val callerPsi = it.userCache.getPsi(project)
@@ -69,13 +69,13 @@ fun handlerCallChain(project: Project, el: ArrayList<DependencyInfo>): ArrayList
     }
     val callChain = ArrayList<CallChain>(16)
 
+
     psiElement.forEach {
         val callee = it.dependencyInfo.providerCache.getPsi(project) as PsiMethod
         val calleeParams = callee.parameterList
         val calleeReturnType = callee.returnType ?: return@forEach
 
         val paramsMap = HashMap<PsiType, Int>()
-
         calleeParams.parameters.forEach { param ->
             paramsMap[param.type]?.let { paramsMap[param.type] = paramsMap[param.type]!! + 1 }
                 ?: paramsMap.put(param.type, 1)
@@ -112,9 +112,17 @@ fun handlerCallChain(project: Project, el: ArrayList<DependencyInfo>): ArrayList
                             val scoop = LocalSearchScope(callee)
                             methodParams.parameters.forEach checkParamsValue@{ param ->
                                 val reference = ReferencesSearch.search(param, scoop).findAll()
-                                if (!reference.isEmpty()) {
-                                    paramsValueChecked = false
-                                    return@checkParamsValue
+                                reference.forEach { ref ->
+                                    val t =
+                                        PsiTreeUtil.getParentOfType(ref.element, PsiAssignmentExpression::class.java)
+                                            ?: PsiTreeUtil.getParentOfType(
+                                                ref.element,
+                                                PsiDeclarationStatement::class.java
+                                            )
+                                    if (t != null) {
+                                        paramsValueChecked = false
+                                        return@checkParamsValue
+                                    }
                                 }
                             }
                         }
@@ -145,6 +153,7 @@ fun handlerCallChain(project: Project, el: ArrayList<DependencyInfo>): ArrayList
                                         )
                                     )
                                 } else {
+
                                     /**
                                      * 有可能是
                                      * Type value;
@@ -152,9 +161,7 @@ fun handlerCallChain(project: Project, el: ArrayList<DependencyInfo>): ArrayList
                                      * Some operator ...
                                      * return value
                                      */
-                                    var variable: PsiVariable? = null
-
-                                    variable = if (possibleAssignment != null) {
+                                    val variable: PsiVariable = if (possibleAssignment != null) {
                                         possibleAssignment.lExpression.reference!!.resolve() as PsiVariable
                                     }
                                     /**
@@ -188,8 +195,7 @@ fun handlerCallChain(project: Project, el: ArrayList<DependencyInfo>): ArrayList
                                         )
                                     }
                                 }
-                            }
-                            else{
+                            } else {
                                 callChain.add(
                                     CallChain(
                                         it.callerName,
@@ -211,3 +217,5 @@ fun handlerCallChain(project: Project, el: ArrayList<DependencyInfo>): ArrayList
     return callChain
 }
 
+//fun handlerCallChain(project: Project, callChain: CallChain) {
+//}
