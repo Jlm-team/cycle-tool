@@ -114,6 +114,11 @@ class DependenciesBuilder {
                     }
                 } else {
                     dependencyProviderType = userEle.dependencyProviderType
+                    dependencyUserType = when (dependencyProviderType) {
+                        DependencyProviderType.EXTENDS -> DependencyUserType.EXTENDS
+                        DependencyProviderType.IMPLEMENT -> DependencyUserType.IMPLEMENT
+                        else -> dependencyUserType
+                    }
                     userPsiCache = IPsiCache.EMPTY
                 }
                 val fieldSet = userEle.parentsOfType<PsiField>().toSet()

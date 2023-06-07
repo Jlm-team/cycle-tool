@@ -80,6 +80,16 @@ enum class DependencyUserType(
      */
     EXTENDS,
 
+    /**
+     * Implement
+     *
+     * 实现接口
+     * ```java
+     * class ClassA implements IInterfaceA {}
+     * ```
+     */
+    IMPLEMENT,
+
     OTHER
 
 }
