@@ -45,3 +45,7 @@
 添加运行配置后即可直接运行。运行后弹出新的idea窗口，在新窗口中点击“Code”即可看到新加入的功能。
 
 ![](./docs/img/readme/running.png)
+
+## 示例
+
+[示例项目](https://github.com/Jlm-team/cycleToolSamples/)
