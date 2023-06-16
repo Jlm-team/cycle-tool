@@ -1,11 +1,10 @@
-package team.jlm.refactoring
+package team.jlm.refactoring.move.staticA2B
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiJvmMember
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.SearchScope
 import com.intellij.refactoring.RefactoringImpl
-import team.jlm.refactoring.move.staticA2B.MoveStaticMembersBetweenTwoClassesProcessor
 
 /**
  * Move static members between two classes

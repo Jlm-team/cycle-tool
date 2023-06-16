@@ -8,8 +8,6 @@ import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.psi.PsiJvmMember
 import com.intellij.refactoring.Refactoring
 import com.intellij.ui.content.ContentFactory
-import team.jlm.utils.graph.GEdge
-import team.jlm.utils.graph.Tarjan
 import mu.KotlinLogging
 import team.jlm.coderefactor.code.IG
 import team.jlm.coderefactor.plugin.ui.CallChainWindow
@@ -17,10 +15,16 @@ import team.jlm.coderefactor.plugin.ui.DependencyToolWindow
 import team.jlm.coderefactor.plugin.ui.DependencyToolWindowFactory
 import team.jlm.coderefactor.plugin.ui.DeprecatedMethodWindow
 import team.jlm.dependency.DependencyInfo
-import team.jlm.dependency.DependencyUserType
 import team.jlm.dependency.DependencyProviderType
+import team.jlm.dependency.DependencyUserType
 import team.jlm.psi.cache.PsiMemberCacheImpl
 import team.jlm.refactoring.*
+import team.jlm.refactoring.move.callchain.CallChain
+import team.jlm.refactoring.move.callchain.detectCallChain
+import team.jlm.refactoring.move.staticA2B.MoveStaticMembersBetweenTwoClasses
+import team.jlm.refactoring.remove.unusedimport.removeUnusedImport
+import team.jlm.utils.graph.GEdge
+import team.jlm.utils.graph.Tarjan
 import team.jlm.utils.psi.getAllClassesInProject
 
 private val logger = KotlinLogging.logger {}

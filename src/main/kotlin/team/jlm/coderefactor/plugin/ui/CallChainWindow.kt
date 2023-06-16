@@ -3,7 +3,7 @@ package team.jlm.coderefactor.plugin.ui
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.table.JBTable
-import team.jlm.refactoring.CallChain
+import team.jlm.refactoring.move.callchain.CallChain
 import java.awt.BorderLayout
 import java.awt.Dimension
 import java.awt.GridBagConstraints

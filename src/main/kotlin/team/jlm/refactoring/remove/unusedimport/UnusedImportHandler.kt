@@ -1,4 +1,4 @@
-package team.jlm.refactoring
+package team.jlm.refactoring.remove.unusedimport
 
 import com.intellij.codeInsight.actions.OptimizeImportsProcessor
 import com.intellij.notification.Notification
