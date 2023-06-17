@@ -28,7 +28,7 @@ abstract class BaseRefactoring<T>(protected val myProcessor: T) : Refactoring
     }
 
     override fun preprocessUsages(usages: Ref<Array<out UsageInfo>>): Boolean {
-        return myProcessor.preprocessUsages(usages)
+        return myProcessor.preprocessUsages()
     }
 
     override fun shouldPreviewUsages(usages: Array<UsageInfo>): Boolean {

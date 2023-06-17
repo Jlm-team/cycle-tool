@@ -21,15 +21,15 @@ class DependenciesBuilder {
         private val factory = JavaDependencyVisitorFactory()
 
         @JvmStatic
-        fun analyzeClassDependencies(
-            clazz: PsiClass,
-            dependencyFilter: (PsiClass) -> Boolean,
+        fun analyzePsiDependencies(
+            psiElement: PsiElement,
+            providerClassFilter: (PsiClass) -> Boolean,
             processor: (PsiClass, DependencyProviderType, DependencyUserType, IPsiCache<*>, IPsiCache<*>) -> Unit,
         ) {
-            analyzeClassDependencies(clazz,
+            analyzePsiDependencies(psiElement,
                 object : DependencyFilter {
                     override fun doFilter(providerClass: PsiClass): Boolean {
-                        return dependencyFilter(providerClass)
+                        return providerClassFilter(providerClass)
                     }
                 },
                 object : DependencyProcessor {
@@ -52,17 +52,17 @@ class DependenciesBuilder {
         }
 
         @JvmStatic
-        fun analyzeClassDependencies(
-            clazz: PsiClass,
-            dependencyFilter: DependencyFilter,
+        fun analyzePsiDependencies(
+            psiElement: PsiElement,
+            providerClassFilter: DependencyFilter,
             processor: DependencyProcessor,
         ) {
             val visitor = factory.getVisitor(inner@{ userEle: PsiElement, providerEle: PsiElement ->
 //            logger.debug { "${dependEle.javaClass}" }
                 val providerClass = providerEle.getOuterClass(false) ?: return@inner
                 val userClass = userEle.getOuterClass(false) ?: return@inner
-                if (userClass !== clazz) return@inner
-                if (!dependencyFilter.doFilter(providerClass)) {
+                if (userClass !== psiElement.getOuterClass(false)) return@inner
+                if (!providerClassFilter.doFilter(providerClass)) {
                     return@inner
                 }
                 val providerClassName = providerClass.qualifiedName ?: return@inner
@@ -153,8 +153,8 @@ class DependenciesBuilder {
                     providerClass, dependencyProviderType, dependencyUserType,
                     providerPsiCache, userPsiCache
                 )
-            }, DependencyVisitorFactory.VisitorOptions.fromSettings(clazz.project))
-            clazz.accept(visitor)
+            }, DependencyVisitorFactory.VisitorOptions.fromSettings(psiElement.project))
+            psiElement.accept(visitor)
         }
     }
 

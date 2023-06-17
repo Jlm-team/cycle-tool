@@ -18,6 +18,8 @@ import com.intellij.util.VisibilityUtil
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.containers.toArray
 import mu.KotlinLogging
+import team.jlm.dependency.DependenciesBuilder
+import team.jlm.psi.cache.IPsiCache
 import team.jlm.refactoring.BaseRefactoringProcessor
 import team.jlm.utils.psi.findPsiClass
 
@@ -108,18 +110,16 @@ class MoveStaticMembersBetweenTwoClassesProcessor @JvmOverloads constructor(
     override fun performRefactoring() {
         val usages = findUsages()
         val membersArray = arrayOf(members0 to targetClassName0, members1 to targetClassName1)
-        val movedMembers = HashMap<PsiMember, SmartPsiElementPointer<PsiMember>>()
         for ((members, className) in membersArray) {
             val targetClass = findPsiClass(project, className) ?: continue
-            val movedMembersOnce = performMove(
+            val movedMembers = performMove(
                 targetClass,
                 hashSetOf(*members),
                 ContainerUtil.map(usages, MoveMembersUsageInfo::class.java::cast),
                 DefaultMoveA2BMemberOptions(members, className)
             )
-            movedMembers.putAll(movedMembersOnce)
+            afterAllMovements(movedMembers)
         }
-        afterAllMovements(movedMembers)
     }
 
     private fun performMove(
@@ -128,6 +128,7 @@ class MoveStaticMembersBetweenTwoClassesProcessor @JvmOverloads constructor(
         usages: List<MoveMembersUsageInfo>,
         options: MoveMembersOptions,
     ): Map<PsiMember, SmartPsiElementPointer<PsiMember>> {
+        beforeAllMovements(membersToMove)
         // collect anchors to place moved members at
         val anchors: MutableMap<PsiMember, SmartPsiElementPointer<PsiElement>?> = HashMap()
         val anchorsInSourceClass: MutableMap<PsiMember, PsiMember> = HashMap()
@@ -197,6 +198,30 @@ class MoveStaticMembersBetweenTwoClassesProcessor @JvmOverloads constructor(
         val handler = MoveMemberHandler.EP_NAME.forLanguage(targetClass.language)
         handler?.decodeContextInfo(targetClass)
         return movedMembers
+    }
+
+    private fun beforeAllMovements(membersToMove: Set<PsiMember>) {
+        val result = HashMap<PsiElement, PsiElement>()
+        for (psiElement in membersToMove) {
+            DependenciesBuilder.analyzePsiDependencies(
+                psiElement, { it === psiElement.containingClass }
+            ) {
+                    providerClass, prodviderType,
+                    userType, provider, user,
+                ->
+                if (provider === IPsiCache.EMPTY) return@analyzePsiDependencies
+                val providerPsi = provider.getPsi(project)
+                if (providerPsi is PsiModifierListOwner) {
+                    val modifierList = providerPsi.modifierList ?: return@analyzePsiDependencies
+                    val oldPsi = modifierList.copy()
+                    VisibilityUtil.setVisibility(modifierList, defaultVisibility)
+                    result[oldPsi] = modifierList
+                }
+            }
+        }
+        for ((old, new) in result) {
+            transaction.getElementListener(old).elementMoved(new)
+        }
     }
 
     private fun afterAllMovements(movedMembers: Map<PsiMember, SmartPsiElementPointer<PsiMember>>) {

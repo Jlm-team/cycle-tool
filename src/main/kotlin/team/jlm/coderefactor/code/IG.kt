@@ -109,7 +109,7 @@ open class IG : Graph<String> {
                 }
             }
         }
-        DependenciesBuilder.analyzeClassDependencies(
+        DependenciesBuilder.analyzePsiDependencies(
             clazz,
             filter@{ providerClass ->
                 val providerClassName = providerClass.qualifiedName ?: return@filter false
@@ -123,7 +123,7 @@ open class IG : Graph<String> {
                 return@filter true
             }
         ) { providerClass, providerType, userType, providerPsiCache, userPsiCache ->
-            val providerName = providerClass.qualifiedName ?: return@analyzeClassDependencies
+            val providerName = providerClass.qualifiedName ?: return@analyzePsiDependencies
             addEdge(clazzQualifiedName, providerName, providerType, userType, providerPsiCache, userPsiCache)
         }
     }
@@ -131,7 +131,7 @@ open class IG : Graph<String> {
     private fun addOneClass(psiClass: PsiClass) {
         val clazzQualifiedName = psiClass.qualifiedName ?: return
         val providers = HashSet<PsiClass>()
-        DependenciesBuilder.analyzeClassDependencies(
+        DependenciesBuilder.analyzePsiDependencies(
             psiClass,
             filter@{ providerClass ->
                 val providerClassName = providerClass.qualifiedName ?: return@filter false
@@ -144,18 +144,18 @@ open class IG : Graph<String> {
                 return@filter true
             }
         ) { providerClass, providerType, userType, providerPsiCache, userPsiCache ->
-            val providerName = providerClass.qualifiedName ?: return@analyzeClassDependencies
+            val providerName = providerClass.qualifiedName ?: return@analyzePsiDependencies
             providers.add(providerClass)
             addEdge(clazzQualifiedName, providerName, providerType, userType, providerPsiCache, userPsiCache)
         }
         for (provider in providers) {
-            DependenciesBuilder.analyzeClassDependencies(
+            DependenciesBuilder.analyzePsiDependencies(
                 psiClass,
                 filter@{ providerClass ->
                     providerClass !== psiClass
                 }
             ) { providerClass, providerType, userType, providerPsiCache, userPsiCache ->
-                val providerName = providerClass.qualifiedName ?: return@analyzeClassDependencies
+                val providerName = providerClass.qualifiedName ?: return@analyzePsiDependencies
                 addEdge(providerName, clazzQualifiedName, providerType, userType, providerPsiCache, userPsiCache)
             }
         }
