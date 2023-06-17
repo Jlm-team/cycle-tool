@@ -1,4 +1,4 @@
-package team.jlm.coderefactor.plugin.ui
+package team.jlm.coderefactor.plugin.ui.toolwindow
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindow

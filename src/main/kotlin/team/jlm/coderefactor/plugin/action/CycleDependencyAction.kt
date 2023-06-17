@@ -15,10 +15,7 @@ import com.intellij.refactoring.Refactoring
 import com.intellij.ui.content.ContentFactory
 import mu.KotlinLogging
 import team.jlm.coderefactor.code.IG
-import team.jlm.coderefactor.plugin.ui.CallChainWindow
-import team.jlm.coderefactor.plugin.ui.DependencyToolWindow
-import team.jlm.coderefactor.plugin.ui.DependencyToolWindowFactory
-import team.jlm.coderefactor.plugin.ui.DeprecatedMethodWindow
+import team.jlm.coderefactor.plugin.ui.toolwindow.*
 import team.jlm.dependency.DependencyInfo
 import team.jlm.dependency.DependencyProviderType
 import team.jlm.dependency.DependencyUserType
@@ -66,7 +63,14 @@ class CycleDependencyAction : AnAction() {
                 Messages.getQuestionIcon()
             ) == Messages.YES
         ) {
-            removeUnusedImport(project)
+            val map = removeUnusedImport(project)
+            val unUsedImportContent = ContentFactory.SERVICE.getInstance()
+                .createContent(UnUsedImportWindow.getWindow(map), "未使用的Import", false)
+            Thread {
+                ApplicationManager.getApplication().invokeLater {
+                    toolWindow.contentManager.addContent(unUsedImportContent)
+                }
+            }.start()
         }
         val task = object : Task.Modal(project, "循环依赖分析中", true) {
             override fun run(indicator: ProgressIndicator) {
@@ -118,7 +122,7 @@ class CycleDependencyAction : AnAction() {
                     val callChainWindow = ContentFactory.SERVICE.getInstance().createContent(
                         CallChainWindow.getWindow(callChainSet), "可缩短的调用链", false
                     )
-                    Thread{
+                    Thread {
                         ApplicationManager.getApplication().invokeLater {
                             toolWindow.contentManager.addContent(staticTableContent)
                             toolWindow.contentManager.addContent(deprecatedTableContent)

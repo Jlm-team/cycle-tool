@@ -1,4 +1,4 @@
-package team.jlm.coderefactor.plugin.ui
+package team.jlm.coderefactor.plugin.ui.toolwindow
 
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBScrollPane
@@ -20,7 +20,7 @@ object CallChainWindow {
         layoutConstraints.weightx = 1.0
         layoutConstraints.gridx = 0
         layoutConstraints.gridy = 0
-        if (!content.isEmpty()) {
+        if (content.isNotEmpty()) {
             val data = content.map {
                 arrayOf(
                     it.callerContainingClass,

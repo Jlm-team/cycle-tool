@@ -61,7 +61,7 @@
         <toolWindow id="image" secondary="true" icon="AllIcons.General.Modified" anchor="right"
                     factoryClass="team.jlm.coderefactor.plugin.ImageWindowFactory"/>
         <toolWindow id="dependenciesToolWindow" secondary="true"  icon="AllIcons.Actions.ForceRefresh" anchor="bottom"
-                    factoryClass="team.jlm.coderefactor.plugin.ui.DependencyToolWindowFactory"/>
+                    factoryClass="team.jlm.coderefactor.plugin.ui.toolwindow.DependencyToolWindowFactory"/>
         <projectService serviceImplementation="team.jlm.coderefactor.plugin.service.CommitsAnalyseCacheService"/>
         <localInspection language="JAVA"
                          displayName="Cycle dependency between two files"
