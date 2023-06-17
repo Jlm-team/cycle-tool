@@ -20,7 +20,7 @@ import team.jlm.dependency.DependencyInfo
 import team.jlm.dependency.DependencyProviderType
 import team.jlm.dependency.DependencyUserType
 import team.jlm.psi.cache.PsiMemberCacheImpl
-import team.jlm.refactoring.*
+import team.jlm.refactoring.handleDeprecatedMethod
 import team.jlm.refactoring.move.callchain.CallChain
 import team.jlm.refactoring.move.callchain.detectCallChain
 import team.jlm.refactoring.move.staticA2B.MoveStaticMembersBetweenTwoClasses
@@ -94,6 +94,8 @@ class CycleDependencyAction : AnAction() {
                         }
                     }
                     val candidate = result.filter { it.size == 2 }
+                    val allCheckedOutWindow = ContentFactory.SERVICE.getInstance()
+                        .createContent(DependencyWindow.getWindow(candidate), "总览", false)
                     val refactors = candidate.mapNotNull {
                         val row = it
                         logger.debug { "${row[0]} ${row[1]}" }
@@ -115,7 +117,7 @@ class CycleDependencyAction : AnAction() {
                     }
 
                     val staticTableContent = ContentFactory.SERVICE.getInstance()
-                        .createContent(DependencyToolWindow.getWindow(refactors), "重构", false)
+                        .createContent(StaticMembersWindow.getWindow(refactors), "静态的依赖", false)
                     val deprecatedTableContent = ContentFactory.SERVICE.getInstance().createContent(
                         DeprecatedMethodWindow.getWindow(deprecatedCollection), "已弃用方法", false
                     )
@@ -124,6 +126,7 @@ class CycleDependencyAction : AnAction() {
                     )
                     Thread {
                         ApplicationManager.getApplication().invokeLater {
+                            toolWindow.contentManager.addContent(allCheckedOutWindow, 0)
                             toolWindow.contentManager.addContent(staticTableContent)
                             toolWindow.contentManager.addContent(deprecatedTableContent)
                             toolWindow.contentManager.addContent(callChainWindow)

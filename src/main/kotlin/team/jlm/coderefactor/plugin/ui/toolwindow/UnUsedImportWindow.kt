@@ -6,6 +6,7 @@ import java.awt.BorderLayout
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
 import java.util.concurrent.ConcurrentHashMap
+import javax.swing.JLabel
 import javax.swing.JPanel
 
 
@@ -18,20 +19,28 @@ object UnUsedImportWindow {
         layoutConstraints.gridy = 0
         val panel = JPanel(GridBagLayout())
 
-        val map = HashMap<String,ArrayList<Array<String?>>>(content.size)
+        if (content.isEmpty()) {
+            panel.add(JLabel("未检出"))
+        } else {
+            val map = HashMap<String, ArrayList<Array<String?>>>(content.size)
 
-        content.forEach { (k,v) ->
-            val (key,nextKey) = k.split("/")
-            map[key]?.add(arrayOf(nextKey,v.toString())) ?:map.put(key, arrayListOf(arrayOf(nextKey,v.toString())))
+            content.forEach { (k, v) ->
+                val (key, nextKey) = k.split("/")
+                map[key]?.add(arrayOf(nextKey, v.toString())) ?: map.put(
+                    key,
+                    arrayListOf(arrayOf(nextKey, v.toString()))
+                )
+            }
+
+            val column = arrayOf("文件名", "移除未使用Import数量")
+
+            map.forEach { (k, v) ->
+                val contentPanel = CollapsiblePanel(k, v.toTypedArray(), column, false, 0, null)
+                panel.add(contentPanel, layoutConstraints)
+                layoutConstraints.gridy++
+            }
         }
 
-        val column = arrayOf("文件名","移除未使用Import数量")
-
-        map.forEach { (k,v)->
-            val contentPanel = CollapsiblePanel(k,v.toTypedArray(),column,false,0,null)
-            panel.add(contentPanel, layoutConstraints)
-            layoutConstraints.gridy++
-        }
         val scrollPane = JPanel(BorderLayout())
         scrollPane.add(JBScrollPane(panel), BorderLayout.NORTH)
         return scrollPane

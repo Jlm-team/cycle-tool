@@ -13,7 +13,7 @@ import java.awt.FlowLayout
 import javax.swing.JButton
 import javax.swing.JPanel
 
-object DependencyToolWindow {
+object StaticMembersWindow {
 
     fun getWindow(): JPanel {
         return getWindow(ArrayList())
