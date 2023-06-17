@@ -1,6 +1,5 @@
 package team.jlm.coderefactor.plugin.action
 
-import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.ApplicationManager
@@ -16,15 +15,12 @@ import com.intellij.refactoring.Refactoring
 import com.intellij.ui.content.ContentFactory
 import mu.KotlinLogging
 import team.jlm.coderefactor.code.IG
-import team.jlm.coderefactor.plugin.ui.CallChainWindow
-import team.jlm.coderefactor.plugin.ui.DependencyToolWindow
-import team.jlm.coderefactor.plugin.ui.DependencyToolWindowFactory
-import team.jlm.coderefactor.plugin.ui.DeprecatedMethodWindow
+import team.jlm.coderefactor.plugin.ui.toolwindow.*
 import team.jlm.dependency.DependencyInfo
 import team.jlm.dependency.DependencyProviderType
 import team.jlm.dependency.DependencyUserType
 import team.jlm.psi.cache.PsiMemberCacheImpl
-import team.jlm.refactoring.handleDeprecatedMethod
+import team.jlm.refactoring.*
 import team.jlm.refactoring.move.callchain.CallChain
 import team.jlm.refactoring.move.callchain.detectCallChain
 import team.jlm.refactoring.move.staticA2B.MoveStaticMembersBetweenTwoClasses
@@ -49,12 +45,32 @@ class CycleDependencyAction : AnAction() {
 
     override fun actionPerformed(e: AnActionEvent) {
         val project = e.project ?: return
-        if (Messages.showOkCancelDialog(
-                project, "是否处理未使用的import，此过程耗时极长！",
-                "提示", "是", "否", AllIcons.Toolwindows.InfoEvents
-            ) == Messages.OK
+
+        var toolWindow = ToolWindowManager.getInstance(project).getToolWindow("dependenciesToolWindow")
+        if (toolWindow == null) {
+            toolWindow = ToolWindowManager.getInstance(project).registerToolWindow(
+                RegisterToolWindowTask(
+                    "dependenciesToolWindow",
+                    contentFactory = DependencyToolWindowFactory()
+                )
+            )
+        }
+        toolWindow.contentManager.removeAllContents(true)
+
+        if (Messages.showYesNoDialog(
+                "在项目较大时收集Import将会锁定UI一段时间，是否继续",
+                "提示",
+                Messages.getQuestionIcon()
+            ) == Messages.YES
         ) {
-            removeUnusedImport(project)
+            val map = removeUnusedImport(project)
+            val unUsedImportContent = ContentFactory.SERVICE.getInstance()
+                .createContent(UnUsedImportWindow.getWindow(map), "未使用的Import", false)
+            Thread {
+                ApplicationManager.getApplication().invokeLater {
+                    toolWindow.contentManager.addContent(unUsedImportContent)
+                }
+            }.start()
         }
         val task = object : Task.Modal(project, "循环依赖分析中", true) {
             override fun run(indicator: ProgressIndicator) {
@@ -65,7 +81,7 @@ class CycleDependencyAction : AnAction() {
                         val path = it.containingFile.originalFile.containingDirectory.toString()
                         it.containingClass != null ||
                                 path.contains("after", true) /*|| path.contains("docs", false)
-                        || path.contains("examples", true)*/
+                    || path.contains("examples", true)*/
                     }
                     val ig = IG(classes)
                     val tarjan = Tarjan(ig)
@@ -98,16 +114,6 @@ class CycleDependencyAction : AnAction() {
                         callChainSet.addAll(handleCallChain(ig, edge1, edge2, project))
                     }
 
-                    var toolWindow = ToolWindowManager.getInstance(project).getToolWindow("dependenciesToolWindow")
-                    if (toolWindow == null) {
-                        toolWindow = ToolWindowManager.getInstance(project).registerToolWindow(
-                            RegisterToolWindowTask(
-                                "dependenciesToolWindow",
-                                contentFactory = DependencyToolWindowFactory()
-                            )
-                        )
-                    }
-                    toolWindow.contentManager.removeAllContents(true)
                     val staticTableContent = ContentFactory.SERVICE.getInstance()
                         .createContent(DependencyToolWindow.getWindow(refactors), "重构", false)
                     val deprecatedTableContent = ContentFactory.SERVICE.getInstance().createContent(
@@ -116,29 +122,17 @@ class CycleDependencyAction : AnAction() {
                     val callChainWindow = ContentFactory.SERVICE.getInstance().createContent(
                         CallChainWindow.getWindow(callChainSet), "可缩短的调用链", false
                     )
-                    toolWindow.contentManager.addContent(staticTableContent)
-                    toolWindow.contentManager.addContent(deprecatedTableContent)
-                    toolWindow.contentManager.addContent(callChainWindow)
-                    toolWindow.activate(null)
-                    //        val deprecatedMsg = StringBuilder()
-                    //        deprecatedCollection.forEach { (k,v) ->
-                    //            v.forEach {
-                    //                deprecatedMsg.append(it.toString()).append("\n")
-                    //            }
-                    //        }
-                    //        val callChainMsg = StringBuilder()
-                    //
-                    //        callChainSet.forEach {
-                    //            callChainMsg.append(it.toString()).append("\n")
-                    //        }
-                    //
-                    //        logger.debug(deprecatedMsg.toString())
-                    //        logger.debug("\n")
-                    //        logger.debug(callChainMsg.toString())
-                    //
-                    //        logger.debug { }
+                    Thread {
+                        ApplicationManager.getApplication().invokeLater {
+                            toolWindow.contentManager.addContent(staticTableContent)
+                            toolWindow.contentManager.addContent(deprecatedTableContent)
+                            toolWindow.contentManager.addContent(callChainWindow)
+                            toolWindow.activate(null)
+                        }
+                    }.start()
                 }
             }
+
         }
         ProgressManager.getInstance().run(task)
     }

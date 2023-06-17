@@ -1,4 +1,4 @@
-package team.jlm.coderefactor.plugin.ui
+package team.jlm.coderefactor.plugin.ui.toolwindow
 
 import com.intellij.icons.AllIcons
 import com.intellij.refactoring.Refactoring
