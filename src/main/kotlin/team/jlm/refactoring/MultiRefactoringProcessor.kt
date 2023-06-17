@@ -22,12 +22,12 @@ class MultiRefactoringProcessor(
     private val processedElementsHeader: String = "MultiRefactoring",
     private val commandName: String,
 ) : BaseRefactoringProcessor(project, refactoringScope, prepareSuccessfulCallback) {
-    override fun createUsageViewDescriptor(usages: Array<out UsageInfo>): UsageViewDescriptor {
+    override fun createUsageViewDescriptor(): UsageViewDescriptor {
         return object : UsageViewDescriptor {
             override fun getElements(): Array<PsiElement> {
                 return ArrayList<PsiElement>().apply {
                     for (processor in processors) {
-                        addAll(processor.createUsageViewDescriptor(processor.findUsages()).elements)
+                        addAll(processor.createUsageViewDescriptor().elements)
                     }
                 }.toTypedArray()
             }
@@ -53,10 +53,14 @@ class MultiRefactoringProcessor(
         }.toTypedArray()
     }
 
-    override fun performRefactoring(usages: Array<out UsageInfo>) {
+    override fun performRefactoring() {
         processors.forEach {
-            it.performRefactoring(it.findUsages())
+            it.performRefactoring()
         }
+    }
+
+    override fun preprocessUsages(): Boolean {
+        return processors.all { it.preprocessUsages() }
     }
 
     override fun execute(usages: Array<out UsageInfo>) {

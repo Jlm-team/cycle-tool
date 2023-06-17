@@ -90,7 +90,7 @@ abstract class BaseRefactoringProcessor @JvmOverloads constructor(
     var myPrepareSuccessfulSwingThreadCallback: Runnable? = prepareSuccessfulCallback
     private var myUsageView: UsageView? = null
 
-    internal abstract fun createUsageViewDescriptor(usages: Array<out UsageInfo>): UsageViewDescriptor
+    internal abstract fun createUsageViewDescriptor(): UsageViewDescriptor
 
     /**
      * Is called inside atomic action.
@@ -110,7 +110,7 @@ abstract class BaseRefactoringProcessor @JvmOverloads constructor(
      * @param refUsages usages to be filtered
      * @return true if preprocessed successfully
      */
-    open fun preprocessUsages(refUsages: Ref<Array<out UsageInfo>>): Boolean {
+    open fun preprocessUsages(): Boolean {
         prepareSuccessful()
         return true
     }
@@ -156,7 +156,7 @@ abstract class BaseRefactoringProcessor @JvmOverloads constructor(
     /**
      * Is called in a command and inside atomic action.
      */
-    internal abstract fun performRefactoring(usages: Array<out UsageInfo>)
+    internal abstract fun performRefactoring()
 
     @ApiStatus.Experimental
     protected open fun canPerformRefactoringInBranch(): Boolean {
@@ -229,9 +229,9 @@ abstract class BaseRefactoringProcessor @JvmOverloads constructor(
             return
         }
         assert(!refUsages.isNull) { "Null usages from processor $this" }
-        if (!preprocessUsages(refUsages)) return
+        if (!preprocessUsages()) return
         val usages = refUsages.get()!!
-        val descriptor = createUsageViewDescriptor(usages)
+        val descriptor = createUsageViewDescriptor()
         var isPreview = isPreviewUsages(usages) || !computeUnloadedModulesFromUseScope(descriptor).isEmpty()
         if (!isPreview) {
             isPreview = !ensureElementsWritable(usages, descriptor) || UsageViewUtil.hasReadOnlyUsages(usages)
@@ -254,11 +254,11 @@ abstract class BaseRefactoringProcessor @JvmOverloads constructor(
                     { obj: UsageInfo -> obj.toString() }, ", "
                 )
             )
-            ensureElementsWritable(usages, createUsageViewDescriptor(usages))
+            ensureElementsWritable(usages, createUsageViewDescriptor())
             execute(usages)
             return
         }
-        val viewDescriptor = createUsageViewDescriptor(usages)
+        val viewDescriptor = createUsageViewDescriptor()
         val elements = viewDescriptor.elements
         val targets = PsiElement2UsageTargetAdapter.convert(elements, true)
         val factory =
@@ -511,14 +511,12 @@ abstract class BaseRefactoringProcessor @JvmOverloads constructor(
                 ) {
                     callPerformRefactoring(
                         writableUsageInfos
-                    ) { performRefactoring(writableUsageInfos) }
+                    ) { performRefactoring() }
                 }
             } else {
                 app.runWriteAction {
                     callPerformRefactoring(writableUsageInfos) {
-                        performRefactoring(
-                            writableUsageInfos
-                        )
+                        performRefactoring()
                     }
                 }
             }
