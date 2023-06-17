@@ -2,7 +2,12 @@ package team.jlm.coderefactor.plugin.action
 
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.progress.ProgressIndicator
+import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.wm.RegisterToolWindowTask
 import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.psi.PsiJvmMember
@@ -43,45 +48,6 @@ class CycleDependencyAction : AnAction() {
 
     override fun actionPerformed(e: AnActionEvent) {
         val project = e.project ?: return
-        removeUnusedImport(project)
-        val deprecatedCollection = handleDeprecatedMethod(project)
-        val classes = getAllClassesInProject(project)
-        classes.removeIf {
-            val path = it.containingFile.originalFile.containingDirectory.toString()
-            it.containingClass != null ||
-                    path.contains("after", true) /*|| path.contains("docs", false)
-                    || path.contains("examples", true)*/
-        }
-        val ig = IG(classes)
-        val tarjan = Tarjan(ig)
-        val result = tarjan.result
-        for (row in result) {
-            if (row.size != 2) {
-                for (col in row) {
-                    ig.delNode(col.data)
-                }
-            }
-        }
-        val candidate = result.filter { it.size == 2 }
-        val refactors = candidate.mapNotNull {
-            val row = it
-            logger.debug { "${row[0]} ${row[1]}" }
-            val edge0 = GEdge(row[0], row[1])
-            val edge1 = GEdge(row[1], row[0])
-            val refactor = handleEdge(ig, edge0, project) ?: handleEdge(ig, edge1, project)
-            refactor?.let { r ->
-                edge0 to r
-            }
-        }
-
-        val callChainSet = HashSet<CallChain>(32)
-
-        candidate.forEach {
-            val row = it
-            val edge1 = GEdge(row[0], row[1])
-            val edge2 = GEdge(row[1], row[0])
-            callChainSet.addAll(handleCallChain(ig, edge1, edge2, project))
-        }
 
         var toolWindow = ToolWindowManager.getInstance(project).getToolWindow("dependenciesToolWindow")
         if (toolWindow == null) {
@@ -93,35 +59,78 @@ class CycleDependencyAction : AnAction() {
             )
         }
         toolWindow.contentManager.removeAllContents(true)
-        val staticTableContent = ContentFactory.SERVICE.getInstance()
-            .createContent(DependencyToolWindow.getWindow(refactors), "重构", false)
-        val deprecatedTableContent = ContentFactory.SERVICE.getInstance().createContent(
-            DeprecatedMethodWindow.getWindow(deprecatedCollection), "已弃用方法", false
-        )
-        val callChainWindow = ContentFactory.SERVICE.getInstance().createContent(
-            CallChainWindow.getWindow(callChainSet), "可缩短的调用链", false
-        )
-        toolWindow.contentManager.addContent(staticTableContent)
-        toolWindow.contentManager.addContent(deprecatedTableContent)
-        toolWindow.contentManager.addContent(callChainWindow)
-        toolWindow.activate(null)
-//        val deprecatedMsg = StringBuilder()
-//        deprecatedCollection.forEach { (k,v) ->
-//            v.forEach {
-//                deprecatedMsg.append(it.toString()).append("\n")
-//            }
-//        }
-//        val callChainMsg = StringBuilder()
-//
-//        callChainSet.forEach {
-//            callChainMsg.append(it.toString()).append("\n")
-//        }
-//
-//        logger.debug(deprecatedMsg.toString())
-//        logger.debug("\n")
-//        logger.debug(callChainMsg.toString())
-//
-//        logger.debug { }
+
+        if (Messages.showYesNoDialog(
+                "在项目较大时收集Import将会锁定UI一段时间，是否继续",
+                "提示",
+                Messages.getQuestionIcon()
+            ) == Messages.YES
+        ) {
+            removeUnusedImport(project)
+        }
+        val task = object : Task.Modal(project, "循环依赖分析中", true) {
+            override fun run(indicator: ProgressIndicator) {
+                ApplicationManager.getApplication().runReadAction {
+                    val deprecatedCollection = handleDeprecatedMethod(project)
+                    val classes = getAllClassesInProject(project)
+                    classes.removeIf {
+                        val path = it.containingFile.originalFile.containingDirectory.toString()
+                        it.containingClass != null ||
+                                path.contains("after", true) /*|| path.contains("docs", false)
+                    || path.contains("examples", true)*/
+                    }
+                    val ig = IG(classes)
+                    val tarjan = Tarjan(ig)
+                    val result = tarjan.result
+                    for (row in result) {
+                        if (row.size != 2) {
+                            for (col in row) {
+                                ig.delNode(col.data)
+                            }
+                        }
+                    }
+                    val candidate = result.filter { it.size == 2 }
+                    val refactors = candidate.mapNotNull {
+                        val row = it
+                        logger.debug { "${row[0]} ${row[1]}" }
+                        val edge0 = GEdge(row[0], row[1])
+                        val edge1 = GEdge(row[1], row[0])
+                        val refactor = handleEdge(ig, edge0, project) ?: handleEdge(ig, edge1, project)
+                        refactor?.let { r ->
+                            edge0 to r
+                        }
+                    }
+
+                    val callChainSet = HashSet<CallChain>(32)
+
+                    candidate.forEach {
+                        val row = it
+                        val edge1 = GEdge(row[0], row[1])
+                        val edge2 = GEdge(row[1], row[0])
+                        callChainSet.addAll(handleCallChain(ig, edge1, edge2, project))
+                    }
+
+                    val staticTableContent = ContentFactory.SERVICE.getInstance()
+                        .createContent(DependencyToolWindow.getWindow(refactors), "重构", false)
+                    val deprecatedTableContent = ContentFactory.SERVICE.getInstance().createContent(
+                        DeprecatedMethodWindow.getWindow(deprecatedCollection), "已弃用方法", false
+                    )
+                    val callChainWindow = ContentFactory.SERVICE.getInstance().createContent(
+                        CallChainWindow.getWindow(callChainSet), "可缩短的调用链", false
+                    )
+                    Thread{
+                        ApplicationManager.getApplication().invokeLater {
+                            toolWindow.contentManager.addContent(staticTableContent)
+                            toolWindow.contentManager.addContent(deprecatedTableContent)
+                            toolWindow.contentManager.addContent(callChainWindow)
+                            toolWindow.activate(null)
+                        }
+                    }.start()
+                }
+            }
+
+        }
+        ProgressManager.getInstance().run(task)
     }
 
     private fun handleEdge(
