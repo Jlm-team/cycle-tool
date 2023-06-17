@@ -4,7 +4,9 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiJvmMember
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.SearchScope
-import com.intellij.refactoring.RefactoringImpl
+import team.jlm.refactoring.BaseRefactoring
+import team.jlm.refactoring.BaseRefactoringProcessor
+import team.jlm.refactoring.MultiRefactoringProcessor
 
 /**
  * Move static members between two classes
@@ -28,12 +30,15 @@ class MoveStaticMembersBetweenTwoClasses(
     targetClassName0: String,
     members1: Array<PsiJvmMember>,
     targetClassName1: String,
-) :
-    RefactoringImpl<MoveStaticMembersBetweenTwoClassesProcessor>(
-        MoveStaticMembersBetweenTwoClassesProcessor(
-            project, refactoringScope, prepareSuccessfulCallback,
-            members0, targetClassName0, members1, targetClassName1
-        ).apply {
-            setPreviewUsages(true)
-        }
-    )
+) : BaseRefactoring<MultiRefactoringProcessor>(
+    MultiRefactoringProcessor(project, ArrayList<BaseRefactoringProcessor>().apply {
+        add(
+            MoveStaticMembersBetweenTwoClassesProcessor(
+                project, refactoringScope, prepareSuccessfulCallback,
+                members0, targetClassName0, members1, targetClassName1
+            )
+        )
+    }, commandName = "Move members between two classes").apply {
+        setPreviewUsages(true)
+    }
+)

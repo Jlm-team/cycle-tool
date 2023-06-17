@@ -1,24 +1,28 @@
 package team.jlm.refactoring.move.staticA2B
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Ref
 import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.SearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.refactoring.BaseRefactoringProcessor
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.move.moveMembers.MoveMemberHandler
 import com.intellij.refactoring.move.moveMembers.MoveMembersOptions
 import com.intellij.refactoring.move.moveMembers.MoveMembersProcessor.MoveMembersUsageInfo
+import com.intellij.refactoring.util.RefactoringConflictsUtil
 import com.intellij.usageView.UsageInfo
 import com.intellij.usageView.UsageViewBundle
 import com.intellij.usageView.UsageViewDescriptor
 import com.intellij.usageView.UsageViewUtil
+import com.intellij.util.IncorrectOperationException
 import com.intellij.util.VisibilityUtil
 import com.intellij.util.containers.ContainerUtil
+import com.intellij.util.containers.MultiMap
 import com.intellij.util.containers.toArray
 import mu.KotlinLogging
+import team.jlm.refactoring.BaseRefactoringProcessor
 import team.jlm.utils.psi.findPsiClass
 
 private val logger = KotlinLogging.logger {}
@@ -114,12 +118,7 @@ class MoveStaticMembersBetweenTwoClassesProcessor @JvmOverloads constructor(
                 targetClass,
                 hashSetOf(*members),
                 ContainerUtil.map(usages, MoveMembersUsageInfo::class.java::cast),
-                object : MoveMembersOptions {
-                    override fun getSelectedMembers() = members
-                    override fun getTargetClassName(): String = className
-                    override fun getMemberVisibility(): String = PsiModifier.PUBLIC
-                    override fun makeEnumConstant(): Boolean = false
-                }
+                DefaultMoveA2BMemberOptions(members, className)
             )
             movedMembers.putAll(movedMembersOnce)
         }
@@ -236,7 +235,88 @@ class MoveStaticMembersBetweenTwoClassesProcessor @JvmOverloads constructor(
         VisibilityUtil.fixVisibility(UsageViewUtil.toElements(infos), newMember, PsiModifier.PUBLIC)
     }
 
+    override fun preprocessUsages(refUsages: Ref<Array<out UsageInfo>>): Boolean {
+        val conflicts = MultiMap<PsiElement?, String>()
+        val usages = refUsages.get()
+        val modifierListCopies: MutableMap<PsiMember, PsiModifierList?> = java.util.HashMap()
+        val membersArray = arrayOf(members0 to targetClassName0, members1 to targetClassName1)
+        for ((members, targetClassName) in membersArray) {
+            for (member in members) {
+                var modifierListCopy = member.modifierList
+                if (modifierListCopy != null) {
+                    modifierListCopy = modifierListCopy.copy() as PsiModifierList
+                }
+                if (modifierListCopy != null) {
+                    try {
+                        VisibilityUtil.setVisibility(modifierListCopy, defaultVisibility)
+                    } catch (e: IncorrectOperationException) {
+                        logger.error(e) { }
+                    }
+                }
+                modifierListCopies[member] = modifierListCopy
+            }
+            val targetPsiClass = findPsiClass(project, targetClassName)!!
+            analyzeConflictsOnUsages(
+                usages,
+                hashSetOf(*members),
+                targetPsiClass,
+                modifierListCopies,
+                DefaultMoveA2BMemberOptions(members, targetClassName),
+                conflicts
+            )
+            analyzeConflictsOnMembers(hashSetOf(*members), targetPsiClass, modifierListCopies, conflicts)
+            RefactoringConflictsUtil.analyzeModuleConflicts(
+                myProject,
+                hashSetOf(*members),
+                usages,
+                targetPsiClass,
+                conflicts
+            )
+        }
+        return showConflicts(conflicts, usages)
+    }
+
+    private fun analyzeConflictsOnUsages(
+        usages: Array<out UsageInfo>,
+        membersToMove: Set<PsiMember>,
+        targetClass: PsiClass,
+        modifierListCopies: Map<PsiMember, PsiModifierList?>,
+        options: MoveMembersOptions,
+        conflicts: MultiMap<PsiElement?, String>,
+    ) {
+        for (usage in usages) {
+            if (usage !is MoveMembersUsageInfo) continue
+            val usageInfo = usage
+            val member = usageInfo.member
+            val handler = MoveMemberHandler.EP_NAME.forLanguage(member.language)
+            handler?.checkConflictsOnUsage(
+                usageInfo,
+                modifierListCopies[member], targetClass, membersToMove, options, conflicts
+            )
+        }
+    }
+
+    private fun analyzeConflictsOnMembers(
+        membersToMove: Set<PsiMember>,
+        targetClass: PsiClass,
+        modifierListCopies: Map<PsiMember, PsiModifierList?>,
+        conflicts: MultiMap<PsiElement?, String>,
+    ) {
+        for (member in membersToMove) {
+            val handler = MoveMemberHandler.EP_NAME.forLanguage(member.language)
+            handler?.checkConflictsOnMember(
+                member, defaultVisibility,
+                modifierListCopies[member], targetClass, membersToMove, conflicts
+            )
+        }
+    }
+
     override fun getCommandName(): String {
-        return RefactoringBundle.message("move.members.title");
+        return RefactoringBundle.message("move.members.title")
+    }
+
+    companion object {
+        @JvmStatic
+        val defaultVisibility = PsiModifier.PUBLIC
     }
 }
