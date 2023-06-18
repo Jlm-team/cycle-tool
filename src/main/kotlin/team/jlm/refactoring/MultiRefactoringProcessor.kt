@@ -45,17 +45,25 @@ class MultiRefactoringProcessor(
         }
     }
 
+    private val usagesIndexList = ArrayList<Int>(processors.size + 1)
+
     override fun findUsages(): Array<out UsageInfo> {
+        var count = 0
+        usagesIndexList.clear()
+        usagesIndexList.add(0)
         return ArrayList<UsageInfo>().apply {
             for (processor in processors) {
-                addAll(processor.findUsages())
+                val processorUsages = processor.findUsages()
+                addAll(processorUsages)
+                count += processorUsages.size
+                usagesIndexList.add(count)
             }
         }.toTypedArray()
     }
 
-    override fun performRefactoring() {
-        processors.forEach {
-            it.performRefactoring()
+    override fun performRefactoring(usages: Array<out UsageInfo>) {
+        processors.forEachIndexed { index, processor ->
+            processor.performRefactoring(usages.copyOfRange(usagesIndexList[index], usagesIndexList[index + 1]))
         }
     }
 

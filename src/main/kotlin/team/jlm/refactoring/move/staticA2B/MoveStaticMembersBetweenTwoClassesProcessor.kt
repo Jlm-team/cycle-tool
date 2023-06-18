@@ -107,8 +107,7 @@ class MoveStaticMembersBetweenTwoClassesProcessor @JvmOverloads constructor(
         return false
     }
 
-    override fun performRefactoring() {
-        val usages = findUsages()
+    override fun performRefactoring(usages: Array<out UsageInfo>) {
         val membersArray = arrayOf(members0 to targetClassName0, members1 to targetClassName1)
         for ((members, className) in membersArray) {
             val targetClass = findPsiClass(project, className) ?: continue

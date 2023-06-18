@@ -156,7 +156,7 @@ abstract class BaseRefactoringProcessor @JvmOverloads constructor(
     /**
      * Is called in a command and inside atomic action.
      */
-    internal abstract fun performRefactoring()
+    internal abstract fun performRefactoring(usages: Array<out UsageInfo>)
 
     @ApiStatus.Experimental
     protected open fun canPerformRefactoringInBranch(): Boolean {
@@ -509,14 +509,14 @@ abstract class BaseRefactoringProcessor @JvmOverloads constructor(
                 app.runWriteActionWithNonCancellableProgressInDispatchThread(
                     commandName, myProject, null
                 ) {
-                    callPerformRefactoring(
-                        writableUsageInfos
-                    ) { performRefactoring() }
+                    callPerformRefactoring(writableUsageInfos) {
+                        performRefactoring(writableUsageInfos)
+                    }
                 }
             } else {
                 app.runWriteAction {
                     callPerformRefactoring(writableUsageInfos) {
-                        performRefactoring()
+                        performRefactoring(writableUsageInfos)
                     }
                 }
             }
@@ -683,7 +683,7 @@ abstract class BaseRefactoringProcessor @JvmOverloads constructor(
         }
     }
 
-    protected open fun showConflicts(conflicts: MultiMap<PsiElement?, String>, usages: Array<out UsageInfo>?): Boolean {
+    protected open fun showConflicts(conflicts: MultiMap<PsiElement, String>, usages: Array<out UsageInfo>?): Boolean {
         if (!conflicts.isEmpty && ApplicationManager.getApplication().isUnitTestMode) {
             if (!ConflictsInTestsException.isTestIgnore) throw ConflictsInTestsException(conflicts.values())
             return true
@@ -707,7 +707,7 @@ abstract class BaseRefactoringProcessor @JvmOverloads constructor(
     }
 
     protected open fun prepareConflictsDialog(
-        conflicts: MultiMap<PsiElement?, String>,
+        conflicts: MultiMap<PsiElement, String>,
         usages: Array<out UsageInfo>?,
     ): ConflictsDialog {
         val conflictsDialog = createConflictsDialog(conflicts, usages)
@@ -728,7 +728,7 @@ abstract class BaseRefactoringProcessor @JvmOverloads constructor(
     }
 
     protected open fun createConflictsDialog(
-        conflicts: MultiMap<PsiElement?, String>,
+        conflicts: MultiMap<PsiElement, String>,
         usages: Array<out UsageInfo>?,
     ): ConflictsDialog {
         return ConflictsDialog(
