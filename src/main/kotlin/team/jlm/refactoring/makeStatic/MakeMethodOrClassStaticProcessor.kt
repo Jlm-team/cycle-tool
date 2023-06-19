@@ -26,7 +26,7 @@ private val logger = KotlinLogging.logger {}
 @Suppress("UnstableApiUsage")
 abstract class MakeMethodOrClassStaticProcessor<T : PsiTypeParameterListOwner>(
     project: Project,
-    protected val member: T,
+    protected var member: T,
 ) : BaseRefactoringProcessor(project) {
 
     override fun createUsageViewDescriptor(): UsageViewDescriptor {
@@ -49,15 +49,15 @@ abstract class MakeMethodOrClassStaticProcessor<T : PsiTypeParameterListOwner>(
         return data
     }
 
-    override fun findUsages(): Array<UsageInfo> {
+    protected fun findUsages(member: T, containingClass: PsiClass): Array<UsageInfo> {
         val result = ArrayList<UsageInfo>()
         ContainerUtil.addAll(
-            result, *(findClassRefsInMember(member, true) as Array<out UsageInfo>)
+            result, *(findClassRefsInMember(member, true, containingClass) as Array<out UsageInfo>)
         )
-        findExternalUsages(result)
+        findExternalUsages(member, result)
         if (member is PsiMethod) {
             val overridingMethods =
-                OverridingMethodsSearch.search((member as PsiMethod), member.getUseScope(), false).toArray(
+                OverridingMethodsSearch.search((member as PsiMethod), member.useScope, false).toArray(
                     PsiMethod.EMPTY_ARRAY
                 )
             for (overridingMethod in overridingMethods) {
@@ -69,10 +69,14 @@ abstract class MakeMethodOrClassStaticProcessor<T : PsiTypeParameterListOwner>(
         return result.toArray(UsageInfo.EMPTY_ARRAY)
     }
 
-    protected abstract fun findExternalUsages(result: ArrayList<UsageInfo>)
+    override fun findUsages(): Array<UsageInfo> {
+        return findUsages(member, member.containingClass!!)
+    }
 
-    protected fun findExternalReferences(method: PsiMethod?, result: ArrayList<UsageInfo>) {
-        for (ref in ReferencesSearch.search(method!!)) {
+    protected abstract fun findExternalUsages(member: T, result: ArrayList<UsageInfo>)
+
+    protected fun findExternalReferences(method: PsiMethod, result: ArrayList<UsageInfo>) {
+        for (ref in ReferencesSearch.search(method)) {
             val element = ref.element
             var qualifier: PsiElement? = null
             if (element is PsiReferenceExpression) {
@@ -87,7 +91,7 @@ abstract class MakeMethodOrClassStaticProcessor<T : PsiTypeParameterListOwner>(
     }
 
     protected open fun processExternalReference(
-        element: PsiElement?,
+        element: PsiElement,
         method: PsiMethod?,
         result: ArrayList<out UsageInfo>,
     ) {
@@ -106,17 +110,20 @@ abstract class MakeMethodOrClassStaticProcessor<T : PsiTypeParameterListOwner>(
     }
 
     override fun performRefactoring(usages: Array<out UsageInfo>) {
-        val manager = member.manager
+        @Suppress("UNCHECKED_CAST")
+        val copyMember = member.copy() as T
+        val manager = copyMember.manager
         val factory = JavaPsiFacade.getElementFactory(manager.project)
         try {
-            for (usage in usages) {
+            for (usage in findUsages(copyMember, member.containingClass!!)) {
                 when (usage) {
-                    is SelfUsageInfo -> changeSelfUsage(usage)
-                    is InternalUsageInfo -> changeInternalUsage(usage, factory)
-                    else -> changeExternalUsage(usage, factory)
+                    is SelfUsageInfo -> changeSelfUsage(copyMember, usage)
+                    is InternalUsageInfo -> changeInternalUsage(copyMember, usage, factory)
+                    else -> changeExternalUsage(copyMember, usage, factory)
                 }
             }
-            changeSelf(factory, usages)
+            changeSelf(copyMember, member.containingClass!!, factory, usages)
+            transaction.getElementListener(member).elementMoved(member.replace(copyMember))
         } catch (ex: IncorrectOperationException) {
             logger.error(ex) {}
         }
@@ -136,13 +143,18 @@ abstract class MakeMethodOrClassStaticProcessor<T : PsiTypeParameterListOwner>(
         return false
     }
 
-    protected abstract fun changeSelf(factory: PsiElementFactory, usages: Array<out UsageInfo>)
+    protected abstract fun changeSelf(
+        member: T,
+        containingClass: PsiClass,
+        factory: PsiElementFactory,
+        usages: Array<out UsageInfo>,
+    )
 
-    protected abstract fun changeSelfUsage(usageInfo: SelfUsageInfo)
+    protected abstract fun changeSelfUsage(member: T, usageInfo: SelfUsageInfo)
 
-    protected abstract fun changeInternalUsage(usage: InternalUsageInfo, factory: PsiElementFactory)
+    protected abstract fun changeInternalUsage(member: T, usage: InternalUsageInfo, factory: PsiElementFactory)
 
-    protected abstract fun changeExternalUsage(usage: UsageInfo, factory: PsiElementFactory)
+    protected abstract fun changeExternalUsage(member: T, usage: UsageInfo, factory: PsiElementFactory)
 
     companion object {
         private fun filterOverriding(

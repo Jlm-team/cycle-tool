@@ -11,6 +11,7 @@ import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.wm.RegisterToolWindowTask
 import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.psi.PsiJvmMember
+import com.intellij.psi.PsiMethod
 import com.intellij.refactoring.Refactoring
 import com.intellij.ui.content.ContentFactory
 import mu.KotlinLogging
@@ -20,26 +21,20 @@ import team.jlm.dependency.DependencyInfo
 import team.jlm.dependency.DependencyProviderType
 import team.jlm.dependency.DependencyUserType
 import team.jlm.psi.cache.PsiMemberCacheImpl
+import team.jlm.refactoring.BaseRefactoringProcessor
+import team.jlm.refactoring.RefactoringImpl
 import team.jlm.refactoring.handleDeprecatedMethod
+import team.jlm.refactoring.makeStatic.MakeMethodStaticProcessor
 import team.jlm.refactoring.move.callchain.CallChain
 import team.jlm.refactoring.move.callchain.detectCallChain
-import team.jlm.refactoring.move.staticA2B.MoveStaticMembersBetweenTwoClasses
+import team.jlm.refactoring.move.staticA2B.MoveStaticMembersBetweenTwoClassesProcessor
+import team.jlm.refactoring.multi.MultiRefactoringProcessor
 import team.jlm.refactoring.remove.unusedimport.removeUnusedImport
 import team.jlm.utils.graph.GEdge
 import team.jlm.utils.graph.Tarjan
 import team.jlm.utils.psi.getAllClassesInProject
 
 private val logger = KotlinLogging.logger {}
-val importDependencySet = HashSet<DependencyProviderType>(
-    arrayListOf(
-        DependencyProviderType.IMPORT_LIST,
-        DependencyProviderType.IMPORT_STATIC_STATEMENT,
-        DependencyProviderType.IMPORT_STATEMENT,
-        DependencyProviderType.IMPORT_STATIC_FIELD,
-        DependencyProviderType.STATIC_FIELD,
-        DependencyProviderType.STATIC_METHOD,
-    )
-)
 
 class CycleDependencyAction : AnAction() {
 
@@ -146,7 +141,7 @@ class CycleDependencyAction : AnAction() {
         project: Project,
     ): Refactoring? {
         val dpList = ig.dependencyMap[edge] ?: return null
-        return if (dpList.all { it.userType.static || it.providerType.static }) {
+        return if (dpList.all { it.userType.isMethod || it.providerType.isMethod }) {
             logger.debug { edge }
             return handleOnlyStaticMembersInOneClass(dpList, edge, project)
         } else null
@@ -180,6 +175,7 @@ class CycleDependencyAction : AnAction() {
     ): Refactoring? {
         val membersFrom = HashSet<PsiJvmMember>()
         val membersTo = HashSet<PsiJvmMember>()
+        val needMakeStatic = HashSet<PsiMethod>()
         for (info in dpList) {
             if (info.providerType.static) {
                 if (info.providerCache is PsiMemberCacheImpl) {
@@ -189,15 +185,36 @@ class CycleDependencyAction : AnAction() {
                 if (info.userCache is PsiMemberCacheImpl) {
                     membersTo.add(info.userCache.getPsi(project))
                 }
+            } else if (info.userType.isMethod) {
+                val method = info.userCache.getPsi(project) as PsiMethod
+                needMakeStatic.add(method)
+                membersTo.add(method)
+            } else {
+                val method = info.providerCache.getPsi(project) as PsiMethod
+                needMakeStatic.add(method)
+                membersFrom.add(method)
             }
         }
         if (membersFrom.isEmpty() && membersTo.isEmpty()) return null
-        return MoveStaticMembersBetweenTwoClasses(
-            project,
-            members0 = membersFrom.toArray(arrayOf()),
-            targetClassName0 = edge.nodeFrom.data,
-            members1 = membersTo.toArray(arrayOf()),
-            targetClassName1 = edge.nodeTo.data,
+        val refactoringProcessors = ArrayList<BaseRefactoringProcessor>()
+        for (psiMethod in needMakeStatic) {
+            refactoringProcessors.add(
+                MakeMethodStaticProcessor(project, psiMethod)
+            )
+        }
+        refactoringProcessors.add(
+            MoveStaticMembersBetweenTwoClassesProcessor(
+                project,
+                members0 = membersFrom.toArray(arrayOf()),
+                targetClassName0 = edge.nodeFrom.data,
+                members1 = membersTo.toArray(arrayOf()),
+                targetClassName1 = edge.nodeTo.data,
+            )
+        )
+        return RefactoringImpl(
+            MultiRefactoringProcessor(
+                project, refactoringProcessors, commandName = "Move A to B"
+            ).apply { setPreviewUsages(true) }
         )
     }
 }

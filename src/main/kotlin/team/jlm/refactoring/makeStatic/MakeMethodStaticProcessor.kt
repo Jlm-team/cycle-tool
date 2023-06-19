@@ -25,14 +25,20 @@ class MakeMethodStaticProcessor(project: Project, member: PsiMethod) :
         suggestionParameterName = names[0]
     }
 
-    override fun findExternalUsages(result: ArrayList<UsageInfo>) {
-        findExternalReferences(member, result)
+    override fun refreshElements(elements: Array<out PsiElement>) {
+        member = elements[0] as PsiMethod
     }
 
-    override fun changeSelf(factory: PsiElementFactory, usages: Array<out UsageInfo>) {
+    override fun findExternalUsages(member: PsiMethod, result: ArrayList<UsageInfo>) {
+        findExternalReferences(member.copy() as PsiMethod, result)
+    }
+
+    override fun changeSelf(
+        member: PsiMethod, containingClass: PsiClass,
+        factory: PsiElementFactory, usages: Array<out UsageInfo>,
+    ) {
         val javaDocHelper = MethodJavaDocHelper(member)
         val paramList: PsiParameterList = member.parameterList
-        val containingClass: PsiClass = member.containingClass!!
         val parameterType: PsiType = factory.createType(containingClass, PsiSubstitutor.EMPTY)
         val classParameterName: String = suggestionParameterName
         val parameter = factory.createParameter(classParameterName, parameterType)
@@ -41,20 +47,6 @@ class MakeMethodStaticProcessor(project: Project, member: PsiMethod) :
         }
         paramList.addAfter(parameter, null)
         javaDocHelper.addParameterAfter(classParameterName, null)
-//        }
-
-        /*if (settings.isMakeFieldParameters) {
-            val parameters: List<FieldParameter> = settings.parameterOrderList
-            for (fieldParameter in parameters) {
-                val fieldParameterType = fieldParameter.field.type
-                val parameter = factory!!.createParameter(fieldParameter.name, fieldParameterType)
-                if (makeFieldParameterFinal(fieldParameter.field, usages)) {
-                    PsiUtil.setModifierProperty(parameter, PsiModifier.FINAL, true)
-                }
-                addParameterAfter = paramList.addAfter(parameter, addParameterAfter)
-                anchor = javaDocHelper.addParameterAfter(fieldParameter.name, anchor)
-            }
-        }*/
         makeStatic(member)
     }
 
@@ -74,11 +66,11 @@ class MakeMethodStaticProcessor(project: Project, member: PsiMethod) :
         receiverParameter?.delete()
     }
 
-    override fun changeSelfUsage(usageInfo: SelfUsageInfo) {
+    override fun changeSelfUsage(member: PsiMethod, usageInfo: SelfUsageInfo) {
         val element = usageInfo.element
         var parent = element!!.parent
         if (element is PsiMethodReferenceExpression) {
-            parent = if (needLambdaConversion(element)) {
+            parent = if (needLambdaConversion(member, element)) {
                 val methodCallExpression = getMethodCallExpression(element) ?: return
                 methodCallExpression
             } else {
@@ -100,16 +92,13 @@ class MakeMethodStaticProcessor(project: Project, member: PsiMethod) :
         args.addAfter(arg, null)
     }
 
-    override fun changeInternalUsage(usage: InternalUsageInfo, factory: PsiElementFactory) {
+    override fun changeInternalUsage(member: PsiMethod, usage: InternalUsageInfo, factory: PsiElementFactory) {
         when (val element = usage.element) {
             is PsiReferenceExpression -> {
-                var newRef: PsiReferenceExpression?
-                newRef = factory.createExpressionFromText(
+                var newRef = factory.createExpressionFromText(
                     suggestionParameterName + "." + element.getText(), null
                 ) as PsiReferenceExpression
-                val codeStyleManager = CodeStyleManager.getInstance(
-                    myProject!!
-                )
+                val codeStyleManager = CodeStyleManager.getInstance(myProject!!)
                 newRef = codeStyleManager.reformat(newRef) as PsiReferenceExpression
                 element.replace(newRef)
             }
@@ -130,10 +119,10 @@ class MakeMethodStaticProcessor(project: Project, member: PsiMethod) :
         }
     }
 
-    override fun changeExternalUsage(usage: UsageInfo, factory: PsiElementFactory) {
-        val element = usage!!.element as? PsiReferenceExpression ?: return
+    override fun changeExternalUsage(member: PsiMethod, usage: UsageInfo, factory: PsiElementFactory) {
+        val element = usage.element as? PsiReferenceExpression ?: return
         var methodRef = element
-        if (methodRef is PsiMethodReferenceExpression && needLambdaConversion(methodRef)) {
+        if (methodRef is PsiMethodReferenceExpression && needLambdaConversion(member, methodRef)) {
             val expression = getMethodCallExpression(methodRef) ?: return
             methodRef = expression.methodExpression
         }
@@ -180,7 +169,7 @@ class MakeMethodStaticProcessor(project: Project, member: PsiMethod) :
         return if (expression !is PsiMethodCallExpression) null else expression
     }
 
-    private fun needLambdaConversion(methodRef: PsiMethodReferenceExpression): Boolean {
+    private fun needLambdaConversion(member: PsiMethod, methodRef: PsiMethodReferenceExpression): Boolean {
         return if (PsiMethodReferenceUtil.isResolvedBySecondSearch(methodRef)) {
             member.parameters.isNotEmpty()
         } else true

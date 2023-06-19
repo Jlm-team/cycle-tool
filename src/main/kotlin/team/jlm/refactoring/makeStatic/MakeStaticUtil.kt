@@ -4,8 +4,10 @@ import com.intellij.psi.*
 import com.intellij.psi.util.InheritanceUtil
 import com.intellij.psi.util.PsiTreeUtil
 
-fun findClassRefsInMember(member: PsiTypeParameterListOwner, includeSelf: Boolean): Array<InternalUsageInfo> {
-    val containingClass = member.containingClass!!
+fun findClassRefsInMember(
+    member: PsiTypeParameterListOwner, includeSelf: Boolean,
+    containingClass: PsiClass
+): Array<InternalUsageInfo> {
     val classRefs = ArrayList<InternalUsageInfo>()
     addClassRefs(member, classRefs, containingClass, member, includeSelf)
     return classRefs.toTypedArray()

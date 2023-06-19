@@ -1,4 +1,4 @@
-package team.jlm.refactoring
+package team.jlm.refactoring.multi
 
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.project.Project
@@ -13,6 +13,10 @@ import com.intellij.refactoring.suggested.SuggestedRefactoringProvider
 import com.intellij.usageView.UsageInfo
 import com.intellij.usageView.UsageViewBundle
 import com.intellij.usageView.UsageViewDescriptor
+import mu.KotlinLogging
+import team.jlm.refactoring.BaseRefactoringProcessor
+
+private val logger = KotlinLogging.logger {}
 
 class MultiRefactoringProcessor(
     project: Project,
@@ -22,7 +26,19 @@ class MultiRefactoringProcessor(
     private val processedElementsHeader: String = "MultiRefactoring",
     private val commandName: String,
 ) : BaseRefactoringProcessor(project, refactoringScope, prepareSuccessfulCallback) {
+
+    lateinit var myTransactionWrapper: RefactoringTransactionWrapper
+
+    override fun refreshElements(elements: Array<out PsiElement>) {
+        logger.trace { "refreshElements" }
+        if (usagesIndexList.size != processors.size) return
+        for ((i, processor) in processors.withIndex()) {
+            processor.refreshElements(elements.copyOfRange(usagesIndexList[i], usagesIndexList[i + 1]))
+        }
+    }
+
     override fun createUsageViewDescriptor(): UsageViewDescriptor {
+        logger.trace { "createUsageViewDescriptor" }
         return object : UsageViewDescriptor {
             override fun getElements(): Array<PsiElement> {
                 return ArrayList<PsiElement>().apply {
@@ -48,6 +64,7 @@ class MultiRefactoringProcessor(
     private val usagesIndexList = ArrayList<Int>(processors.size + 1)
 
     override fun findUsages(): Array<out UsageInfo> {
+        logger.trace { "findUsages" }
         var count = 0
         usagesIndexList.clear()
         usagesIndexList.add(0)
@@ -62,17 +79,42 @@ class MultiRefactoringProcessor(
     }
 
     override fun performRefactoring(usages: Array<out UsageInfo>) {
-        processors.forEachIndexed { index, processor ->
+        logger.trace { "performRefactoring" }
+        return
+        for ((index, processor) in processors.withIndex()) {
+            val elements = processor.createUsageViewDescriptor().elements
+            for (i in elements.indices) {
+                elements[i] = myTransactionWrapper.findNew(elements[i])
+            }
+            processor.refreshElements(elements)
             processor.performRefactoring(usages.copyOfRange(usagesIndexList[index], usagesIndexList[index + 1]))
         }
     }
 
     override fun preprocessUsages(): Boolean {
+        logger.trace { "preprocessUsages" }
         return processors.all { it.preprocessUsages() }
     }
 
     override fun execute(usages: Array<out UsageInfo>) {
-
+        logger.trace { "execute" }
+        val listenerManager = RefactoringListenerManager.getInstance(myProject) as RefactoringListenerManagerImpl
+        transaction = listenerManager.startTransaction()
+        myTransactionWrapper = RefactoringTransactionWrapper(transaction)
+        for (processor in processors) {
+            processor.transaction = myTransactionWrapper
+            processor.transactionSetter = {}
+        }
+        for (processor in processors) {
+            val elements = processor.createUsageViewDescriptor().elements
+            for (i in elements.indices) {
+                elements[i] = myTransactionWrapper.findNew(elements[i])
+            }
+            processor.refreshElements(elements)
+            processor.run()
+        }
+        myTransactionWrapper.finalCommit()
+        return
         CommandProcessor.getInstance().executeCommand(myProject, {
             val usageInfos: MutableCollection<UsageInfo> =
                 LinkedHashSet(listOf(*usages))
@@ -80,11 +122,12 @@ class MultiRefactoringProcessor(
             // WARN 此处增加了事务的粒度，可能带来某些异常，但是此功能是必需的
             val listenerManager = RefactoringListenerManager.getInstance(myProject) as RefactoringListenerManagerImpl
             transaction = listenerManager.startTransaction()
+            myTransactionWrapper = RefactoringTransactionWrapper(transaction)
             for (processor in processors) {
-                processor.transaction = transaction
+                processor.transaction = myTransactionWrapper
             }
             doRefactoring(usageInfos)
-            transaction.commit()
+            myTransactionWrapper.commit()
             if (isGlobalUndoAction()) CommandProcessor.getInstance()
                 .markCurrentCommandAsGlobal(myProject)
             SuggestedRefactoringProvider.getInstance(myProject!!).reset()
@@ -92,6 +135,7 @@ class MultiRefactoringProcessor(
     }
 
     override fun getCommandName(): String {
+        logger.trace { "getCommandName" }
         return commandName
     }
 }

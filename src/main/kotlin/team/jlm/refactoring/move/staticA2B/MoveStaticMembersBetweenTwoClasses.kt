@@ -6,7 +6,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.SearchScope
 import team.jlm.refactoring.BaseRefactoring
 import team.jlm.refactoring.BaseRefactoringProcessor
-import team.jlm.refactoring.MultiRefactoringProcessor
+import team.jlm.refactoring.multi.MultiRefactoringProcessor
 
 /**
  * Move static members between two classes

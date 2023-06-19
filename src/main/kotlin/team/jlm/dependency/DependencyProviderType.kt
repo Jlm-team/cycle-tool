@@ -79,5 +79,8 @@ enum class DependencyProviderType(val static: Boolean = false) {
      * java类和java注解的关系
      */
     ANNOTATION,
-    OTHER,
+    OTHER;
+
+    val isMethod: Boolean
+        get() = this == STATIC_METHOD || this == NONSTATIC_METHOD
 }

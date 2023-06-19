@@ -102,7 +102,7 @@ abstract class BaseRefactoringProcessor @JvmOverloads constructor(
      *
      * @param elements - refreshed elements that are returned by UsageViewDescriptor.getElements()
      */
-    protected open fun refreshElements(elements: Array<out PsiElement>) {}
+    internal open fun refreshElements(elements: Array<out PsiElement>) {}
 
     /**
      * Is called inside atomic action.
@@ -150,8 +150,16 @@ abstract class BaseRefactoringProcessor @JvmOverloads constructor(
         myPrepareSuccessfulSwingThreadCallback = prepareSuccessfulSwingThreadCallback
     }
 
-    lateinit var transaction: RefactoringTransaction
-        internal set
+    var transactionSetter: (RefactoringTransaction) -> Unit =
+        {
+            myTransaction = it
+        }
+
+    var transaction: RefactoringTransaction
+        internal set(value) {
+            transactionSetter(value)
+        }
+        get() = myTransaction
 
     /**
      * Is called in a command and inside atomic action.
@@ -318,10 +326,9 @@ abstract class BaseRefactoringProcessor @JvmOverloads constructor(
             PsiDocumentManager.getInstance(myProject!!).commitAllDocuments()
             // WARN 此处增加了事务的粒度，可能带来某些异常，但是此功能是必需的
             val listenerManager = RefactoringListenerManager.getInstance(myProject) as RefactoringListenerManagerImpl
-            myTransaction = listenerManager.startTransaction()
-            transaction = myTransaction
+            transaction = listenerManager.startTransaction()
             doRefactoring(usageInfos)
-            myTransaction.commit()
+            transaction.commit()
             if (isGlobalUndoAction()) CommandProcessor.getInstance()
                 .markCurrentCommandAsGlobal(myProject)
             SuggestedRefactoringProvider.getInstance(myProject!!).reset()

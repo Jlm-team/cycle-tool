@@ -90,6 +90,8 @@ enum class DependencyUserType(
      */
     IMPLEMENT,
 
-    OTHER
+    OTHER;
 
+    val isMethod: Boolean
+        get() = this == METHOD || this == METHOD_STATIC
 }

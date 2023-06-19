@@ -47,6 +47,17 @@ class MoveStaticMembersBetweenTwoClassesProcessor @JvmOverloads constructor(
     private val members1: Array<PsiJvmMember>,
     private val targetClassName1: String,
 ) : BaseRefactoringProcessor(project, refactoringScope, prepareSuccessfulCallback) {
+
+    override fun refreshElements(elements: Array<out PsiElement>) {
+        for (i in elements.indices) {
+            if (i < members0.size) {
+                members0[i] = elements[i] as PsiJvmMember
+            } else {
+                members1[i - members0.size] = elements[i] as PsiJvmMember
+            }
+        }
+    }
+
     override fun createUsageViewDescriptor(): UsageViewDescriptor {
         return object : UsageViewDescriptor {
             override fun getElements() =

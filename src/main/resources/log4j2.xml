@@ -7,7 +7,7 @@
         </Console>
     </appenders>
     <loggers>
-        <logger name="team.jlm" level="debug" additivity="false">
+        <logger name="team.jlm" level="trace" additivity="false">
             <appender-ref ref="Console"/>
         </logger>
         <root level="error">
