@@ -1,15 +1,12 @@
 package team.jlm.refactoring.multi
 
-import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.SearchScope
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.listeners.RefactoringListenerManager
 import com.intellij.refactoring.listeners.impl.RefactoringListenerManagerImpl
-import com.intellij.refactoring.suggested.SuggestedRefactoringProvider
 import com.intellij.usageView.UsageInfo
 import com.intellij.usageView.UsageViewBundle
 import com.intellij.usageView.UsageViewDescriptor
@@ -80,15 +77,6 @@ class MultiRefactoringProcessor(
 
     override fun performRefactoring(usages: Array<out UsageInfo>) {
         logger.trace { "performRefactoring" }
-        return
-        for ((index, processor) in processors.withIndex()) {
-            val elements = processor.createUsageViewDescriptor().elements
-            for (i in elements.indices) {
-                elements[i] = myTransactionWrapper.findNew(elements[i])
-            }
-            processor.refreshElements(elements)
-            processor.performRefactoring(usages.copyOfRange(usagesIndexList[index], usagesIndexList[index + 1]))
-        }
     }
 
     override fun preprocessUsages(): Boolean {
@@ -114,24 +102,6 @@ class MultiRefactoringProcessor(
             processor.run()
         }
         myTransactionWrapper.finalCommit()
-        return
-        CommandProcessor.getInstance().executeCommand(myProject, {
-            val usageInfos: MutableCollection<UsageInfo> =
-                LinkedHashSet(listOf(*usages))
-            PsiDocumentManager.getInstance(myProject!!).commitAllDocuments()
-            // WARN 此处增加了事务的粒度，可能带来某些异常，但是此功能是必需的
-            val listenerManager = RefactoringListenerManager.getInstance(myProject) as RefactoringListenerManagerImpl
-            transaction = listenerManager.startTransaction()
-            myTransactionWrapper = RefactoringTransactionWrapper(transaction)
-            for (processor in processors) {
-                processor.transaction = myTransactionWrapper
-            }
-            doRefactoring(usageInfos)
-            myTransactionWrapper.commit()
-            if (isGlobalUndoAction()) CommandProcessor.getInstance()
-                .markCurrentCommandAsGlobal(myProject)
-            SuggestedRefactoringProvider.getInstance(myProject!!).reset()
-        }, getCommandName(), null, getUndoConfirmationPolicy())
     }
 
     override fun getCommandName(): String {
