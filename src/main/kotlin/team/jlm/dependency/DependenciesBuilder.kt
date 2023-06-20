@@ -24,7 +24,7 @@ class DependenciesBuilder {
         fun analyzePsiDependencies(
             psiElement: PsiElement,
             providerClassFilter: (PsiClass) -> Boolean,
-            processor: (PsiClass, DependencyProviderType, DependencyUserType, IPsiCache<*>, IPsiCache<*>) -> Unit,
+            processor: (PsiClass, PsiClass, DependencyProviderType, DependencyUserType, IPsiCache<*>, IPsiCache<*>) -> Unit,
         ) {
             analyzePsiDependencies(psiElement,
                 object : DependencyFilter {
@@ -34,6 +34,7 @@ class DependenciesBuilder {
                 },
                 object : DependencyProcessor {
                     override fun process(
+                        userClass: PsiClass,
                         providerClass: PsiClass,
                         providerType: DependencyProviderType,
                         userType: DependencyUserType,
@@ -41,6 +42,7 @@ class DependenciesBuilder {
                         userPsiCache: IPsiCache<*>,
                     ) {
                         processor(
+                            userClass,
                             providerClass,
                             providerType,
                             userType,
@@ -150,8 +152,8 @@ class DependenciesBuilder {
                     }
                 }
                 processor.process(
-                    providerClass, dependencyProviderType, dependencyUserType,
-                    providerPsiCache, userPsiCache
+                    userClass, providerClass, dependencyProviderType,
+                    dependencyUserType, providerPsiCache, userPsiCache
                 )
             }, DependencyVisitorFactory.VisitorOptions.fromSettings(psiElement.project))
             psiElement.accept(visitor)
@@ -166,6 +168,7 @@ class DependenciesBuilder {
     @FunctionalInterface
     interface DependencyProcessor {
         fun process(
+            userClass: PsiClass,
             providerClass: PsiClass,
             providerType: DependencyProviderType,
             userType: DependencyUserType,

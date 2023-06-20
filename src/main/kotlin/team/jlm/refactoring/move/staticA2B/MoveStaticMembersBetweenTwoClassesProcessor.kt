@@ -216,8 +216,8 @@ class MoveStaticMembersBetweenTwoClassesProcessor @JvmOverloads constructor(
             DependenciesBuilder.analyzePsiDependencies(
                 psiElement, { it === psiElement.containingClass }
             ) {
-                    providerClass, prodviderType,
-                    userType, provider, user,
+                    _, _, _,
+                    _, provider, _,
                 ->
                 if (provider === IPsiCache.EMPTY) return@analyzePsiDependencies
                 val providerPsi = provider.getPsi(project)

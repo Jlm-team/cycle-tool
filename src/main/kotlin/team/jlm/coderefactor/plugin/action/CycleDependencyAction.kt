@@ -20,6 +20,7 @@ import team.jlm.coderefactor.plugin.ui.toolwindow.*
 import team.jlm.dependency.DependencyInfo
 import team.jlm.dependency.DependencyProviderType
 import team.jlm.dependency.DependencyUserType
+import team.jlm.dependency.analyseMemberGranularityDependency
 import team.jlm.psi.cache.PsiMemberCacheImpl
 import team.jlm.refactoring.BaseRefactoringProcessor
 import team.jlm.refactoring.RefactoringImpl
@@ -91,6 +92,11 @@ class CycleDependencyAction : AnAction() {
                     val candidate = result.filter { it.size == 2 }
                     val allCheckedOutWindow = ContentFactory.SERVICE.getInstance()
                         .createContent(DependencyWindow.getWindow(candidate), "总览", false)
+                    val graphs = candidate.mapNotNull {
+                        val row = it
+                        analyseMemberGranularityDependency(project, row[0].data, row[1].data)
+                    }
+                    logger.trace { graphs }
                     val refactors = candidate.mapNotNull {
                         val row = it
                         logger.debug { "${row[0]} ${row[1]}" }

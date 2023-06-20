@@ -122,7 +122,7 @@ open class IG : Graph<String> {
                 }
                 return@filter true
             }
-        ) { providerClass, providerType, userType, providerPsiCache, userPsiCache ->
+        ) { _, providerClass, providerType, userType, providerPsiCache, userPsiCache ->
             val providerName = providerClass.qualifiedName ?: return@analyzePsiDependencies
             addEdge(clazzQualifiedName, providerName, providerType, userType, providerPsiCache, userPsiCache)
         }
@@ -143,7 +143,7 @@ open class IG : Graph<String> {
                 }
                 return@filter true
             }
-        ) { providerClass, providerType, userType, providerPsiCache, userPsiCache ->
+        ) { _, providerClass, providerType, userType, providerPsiCache, userPsiCache ->
             val providerName = providerClass.qualifiedName ?: return@analyzePsiDependencies
             providers.add(providerClass)
             addEdge(clazzQualifiedName, providerName, providerType, userType, providerPsiCache, userPsiCache)
@@ -154,7 +154,7 @@ open class IG : Graph<String> {
                 filter@{ providerClass ->
                     providerClass !== psiClass
                 }
-            ) { providerClass, providerType, userType, providerPsiCache, userPsiCache ->
+            ) { _, providerClass, providerType, userType, providerPsiCache, userPsiCache ->
                 val providerName = providerClass.qualifiedName ?: return@analyzePsiDependencies
                 addEdge(providerName, clazzQualifiedName, providerType, userType, providerPsiCache, userPsiCache)
             }

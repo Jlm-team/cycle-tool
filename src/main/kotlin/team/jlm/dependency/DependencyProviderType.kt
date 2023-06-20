@@ -83,4 +83,10 @@ enum class DependencyProviderType(val static: Boolean = false) {
 
     val isMethod: Boolean
         get() = this == STATIC_METHOD || this == NONSTATIC_METHOD
+
+    val isField: Boolean
+        get() = this == STATIC_FIELD || this == NONSTATIC_FIELD
+
+    val isMember: Boolean
+        get() = isMethod || isField
 }

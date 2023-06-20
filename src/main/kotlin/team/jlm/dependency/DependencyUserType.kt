@@ -94,4 +94,10 @@ enum class DependencyUserType(
 
     val isMethod: Boolean
         get() = this == METHOD || this == METHOD_STATIC
+
+    val isField: Boolean
+        get() = this == FIELD || this == FIELD_STATIC
+
+    val isMember: Boolean
+        get() = isMethod || isField
 }
