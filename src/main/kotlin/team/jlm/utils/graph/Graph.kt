@@ -203,15 +203,16 @@ open class Graph<T> {
      * 从指定的节点进行广度优先遍历，仅遍历节点所引出的连通分量
      * @param start 遍历起始的节点
      * @param visitor 遍历器
+     * @param out 沿节点的出边遍历，若为false则沿入边遍历
      */
     @kotlin.jvm.Throws(NodeNotInGraphException::class)
-    inline fun bfsVisit(start: GNode<T>, visitor: (GNode<T>) -> Unit) {
+    inline fun bfsVisit(start: GNode<T>, visitor: (GNode<T>) -> Unit, out: Boolean = true) {
         checkNode(start)
         val m = HashSet<GNode<T>>()
         val q: Queue<GNode<T>> = LinkedList()
         q.add(start)
         m.add(start)
-        bfsVisit(q, visitor, m)
+        bfsVisit(q, visitor, m, out)
     }
 
     /**
@@ -220,15 +221,25 @@ open class Graph<T> {
      * @param visitor 遍历器
      * @param m 已经遍历的节点集合
      */
-    inline fun bfsVisit(q: Queue<GNode<T>>, visitor: (GNode<T>) -> Unit, m: HashSet<GNode<T>>) {
+    inline fun bfsVisit(q: Queue<GNode<T>>, visitor: (GNode<T>) -> Unit, m: HashSet<GNode<T>>, out: Boolean = true) {
         while (!q.isEmpty()) {
             val now = q.poll()
             visitor(now)
-            val edgeOut = adjList[now]?.edgeOut ?: return
-            for (edge in edgeOut) {
-                if (!m.contains(edge.nodeTo)) {
-                    q.add(edge.nodeTo)
-                    m.add(edge.nodeTo)
+            if (out) {
+                val edgeOut = adjList[now]?.edgeOut ?: return
+                for (edge in edgeOut) {
+                    if (!m.contains(edge.nodeTo)) {
+                        q.add(edge.nodeTo)
+                        m.add(edge.nodeTo)
+                    }
+                }
+            } else {
+                val edgeIn = adjList[now]?.edgeIn ?: return
+                for (edge in edgeIn) {
+                    if (!m.contains(edge.nodeFrom)) {
+                        q.add(edge.nodeFrom)
+                        m.add(edge.nodeFrom)
+                    }
                 }
             }
         }
@@ -252,7 +263,7 @@ open class Graph<T> {
                     break
                 }
             }
-            bfsVisit(q, visitor, m)
+            bfsVisit(q, visitor, m, true)
         }
     }
 
