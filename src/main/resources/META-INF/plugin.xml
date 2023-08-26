@@ -50,6 +50,11 @@
                 text="本类的循环依赖分析 (todo....)" description="CycleDependencyOnOneClassAction">
             <add-to-group group-id="CodeMenu" anchor="last"/>
         </action>
+        <action id="ReplaceByReflectingAction"
+                class="team.jlm.coderefactor.plugin.action.ReplaceByReflectingAction"
+                text="ReplaceByReflect" description="CycleDependencyOnOneClassAction">
+            <add-to-group group-id="RefactoringMenu" anchor="last"/>
+        </action>
         <action id="MakeMethodStaticAction"
                 class="team.jlm.coderefactor.plugin.action.MakeMethodStaticAction"
                 text="Test Only Make Method Static" description="MakeMethodStaticAction">

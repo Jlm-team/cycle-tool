@@ -10,7 +10,6 @@ import team.jlm.dependency.DependenciesBuilder
 import team.jlm.dependency.DependencyInfo
 import team.jlm.dependency.DependencyProviderType
 import team.jlm.dependency.DependencyUserType
-import team.jlm.psi.cache.IPsiCache
 import team.jlm.utils.graph.GEdge
 import team.jlm.utils.graph.Graph
 import guru.nidi.graphviz.model.Graph as VizGraph
@@ -49,10 +48,7 @@ open class IG : Graph<String> {
 
     fun addEdge(
         from: String, to: String,
-        providerType: DependencyProviderType = DependencyProviderType.OTHER,
-        userType: DependencyUserType,
-        providerCache: IPsiCache<*> = IPsiCache.EMPTY,
-        userCache: IPsiCache<*> = IPsiCache.EMPTY,
+        dependencyInfo: DependencyInfo,
     ) {
 //        vizNodes[from.data]?.let {
 //            vizGraph = vizGraph.with(it.link(vizNodes[to.data]))
@@ -60,7 +56,7 @@ open class IG : Graph<String> {
 //        vizGraph = vizGraph.with(node(from).link(node(to)))
         val edge = super.addEdge(from, to, 1)
         dependencyMap.getOrPut(edge) { ArrayList() }
-            .add(DependencyInfo(userType, providerType, userCache, providerCache))
+            .add(dependencyInfo)
     }
 
     override fun delNode(data: String) {
@@ -104,7 +100,7 @@ open class IG : Graph<String> {
 
                 clazz.qualifiedName?.let {
                     parent.qualifiedName?.let { it1 ->
-                        addEdge(it, it1, DependencyProviderType.EXTENDS, DependencyUserType.EXTENDS)
+                        addEdge(it, it1, DependencyInfo(DependencyUserType.EXTENDS, DependencyProviderType.EXTENDS))
                     }
                 }
             }
@@ -122,9 +118,9 @@ open class IG : Graph<String> {
                 }
                 return@filter true
             }
-        ) { _, providerClass, providerType, userType, providerPsiCache, userPsiCache ->
+        ) { _, providerClass, info ->
             val providerName = providerClass.qualifiedName ?: return@analyzePsiDependencies
-            addEdge(clazzQualifiedName, providerName, providerType, userType, providerPsiCache, userPsiCache)
+            addEdge(clazzQualifiedName, providerName, info)
         }
     }
 
@@ -143,10 +139,10 @@ open class IG : Graph<String> {
                 }
                 return@filter true
             }
-        ) { _, providerClass, providerType, userType, providerPsiCache, userPsiCache ->
+        ) { _, providerClass, info ->
             val providerName = providerClass.qualifiedName ?: return@analyzePsiDependencies
             providers.add(providerClass)
-            addEdge(clazzQualifiedName, providerName, providerType, userType, providerPsiCache, userPsiCache)
+            addEdge(clazzQualifiedName, providerName, info)
         }
         for (provider in providers) {
             DependenciesBuilder.analyzePsiDependencies(
@@ -154,9 +150,9 @@ open class IG : Graph<String> {
                 filter@{ providerClass ->
                     providerClass !== psiClass
                 }
-            ) { _, providerClass, providerType, userType, providerPsiCache, userPsiCache ->
+            ) { _, providerClass, info ->
                 val providerName = providerClass.qualifiedName ?: return@analyzePsiDependencies
-                addEdge(providerName, clazzQualifiedName, providerType, userType, providerPsiCache, userPsiCache)
+                addEdge(providerName, clazzQualifiedName, info)
             }
         }
     }

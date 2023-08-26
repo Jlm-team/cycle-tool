@@ -12,6 +12,7 @@ import com.intellij.openapi.wm.RegisterToolWindowTask
 import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.psi.PsiJvmMember
 import com.intellij.psi.PsiMethod
+import com.intellij.psi.util.parentOfType
 import com.intellij.refactoring.Refactoring
 import com.intellij.ui.content.ContentFactory
 import mu.KotlinLogging
@@ -31,6 +32,7 @@ import team.jlm.refactoring.move.callchain.detectCallChain
 import team.jlm.refactoring.move.staticA2B.MoveStaticMembersBetweenTwoClassesProcessor
 import team.jlm.refactoring.multi.MultiRefactoringProcessor
 import team.jlm.refactoring.remove.unusedimport.removeUnusedImport
+import team.jlm.refactoring.replace.ReplaceByReflectProcessor
 import team.jlm.utils.graph.GEdge
 import team.jlm.utils.graph.Tarjan
 import team.jlm.utils.psi.getAllClassesInProject
@@ -40,6 +42,7 @@ private val logger = KotlinLogging.logger {}
 class CycleDependencyAction : AnAction() {
 
     override fun actionPerformed(e: AnActionEvent) {
+        logger.trace { "CycleDependencyAction Start" }
         val project = e.project ?: return
 
         var toolWindow = ToolWindowManager.getInstance(project).getToolWindow("dependenciesToolWindow")
@@ -97,16 +100,30 @@ class CycleDependencyAction : AnAction() {
                         analyseMemberGranularityDependency(project, row[0].data, row[1].data)
                     }
                     logger.trace { graphs }
-                    val refactors = candidate.mapNotNull {
+                    val moveA2BRefactors = candidate.mapNotNull {
                         val row = it
                         logger.debug { "${row[0]} ${row[1]}" }
                         val edge0 = GEdge(row[0], row[1])
                         val edge1 = GEdge(row[1], row[0])
-                        val refactor = handleEdge(ig, edge0, project) ?: handleEdge(ig, edge1, project)
+                        val refactor = handleMoveA2BEdge(ig.dependencyMap[edge0], edge0, project)
+                            ?: handleMoveA2BEdge(ig.dependencyMap[edge1], edge1, project)
                         refactor?.let { r ->
                             edge0 to r
                         }
                     }
+
+                    val leverageBuiltinsRefactors = candidate.mapNotNull {
+                        val row = it
+                        logger.debug { "${row[0]} ${row[1]}" }
+                        val edge0 = GEdge(row[0], row[1])
+                        val edge1 = GEdge(row[1], row[0])
+                        val refactor = handleLeverageBuiltinsEdge(ig.dependencyMap[edge0], edge0, project)
+                            ?: handleLeverageBuiltinsEdge(ig.dependencyMap[edge1], edge1, project)
+                        refactor?.let { r ->
+                            edge0 to r
+                        }
+                    }
+                    logger.trace { leverageBuiltinsRefactors }
 
                     val callChainSet = HashSet<CallChain>(32)
 
@@ -118,7 +135,10 @@ class CycleDependencyAction : AnAction() {
                     }
 
                     val staticTableContent = ContentFactory.SERVICE.getInstance()
-                        .createContent(StaticMembersWindow.getWindow(refactors), "静态的依赖", false)
+                        .createContent(StaticMembersWindow.getWindow(moveA2BRefactors), "静态的依赖", false)
+                    val leverageBuiltinsContent = ContentFactory.SERVICE.getInstance()
+                        .createContent(StaticMembersWindow.getWindow(leverageBuiltinsRefactors), "可替换为Built-in的依赖", false)
+
                     val deprecatedTableContent = ContentFactory.SERVICE.getInstance().createContent(
                         DeprecatedMethodWindow.getWindow(deprecatedCollection), "已弃用方法", false
                     )
@@ -130,6 +150,7 @@ class CycleDependencyAction : AnAction() {
                             toolWindow.contentManager.addContent(allCheckedOutWindow, 0)
                             toolWindow.contentManager.addContent(staticTableContent)
                             toolWindow.contentManager.addContent(deprecatedTableContent)
+                            toolWindow.contentManager.addContent(leverageBuiltinsContent)
                             toolWindow.contentManager.addContent(callChainWindow)
                             toolWindow.activate(null)
                         }
@@ -139,14 +160,15 @@ class CycleDependencyAction : AnAction() {
 
         }
         ProgressManager.getInstance().run(task)
+        logger.trace { "CycleDependencyAction End" }
     }
 
-    private fun handleEdge(
-        ig: IG,
+    private fun handleMoveA2BEdge(
+        dpList: MutableList<DependencyInfo>?,
         edge: GEdge<String>,
         project: Project,
     ): Refactoring? {
-        val dpList = ig.dependencyMap[edge] ?: return null
+        dpList ?: return null
         return if (dpList.all { it.userType.isMethod || it.providerType.isMethod }) {
             logger.debug { edge }
             return handleOnlyStaticMembersInOneClass(dpList, edge, project)
@@ -222,5 +244,27 @@ class CycleDependencyAction : AnAction() {
                 project, refactoringProcessors, commandName = "Move A to B"
             ).apply { setPreviewUsages(true) }
         )
+    }
+
+    private fun handleLeverageBuiltinsEdge(
+        dpList: MutableList<DependencyInfo>?,
+        edge: GEdge<String>,
+        project: Project,
+    ): Refactoring? {
+        dpList ?: return null
+        if (dpList.all { it.providerType == DependencyProviderType.CREATE }) {
+            return RefactoringImpl(
+                MultiRefactoringProcessor(
+                    project, dpList.map {
+                        ReplaceByReflectProcessor(
+                            project,
+                            psiNewExpression = it.posCache.getPsi(project)!!.parentOfType()!!
+                        )
+                    },
+                    commandName = "LeverageBuiltins"
+                )
+            )
+        }
+        return null
     }
 }

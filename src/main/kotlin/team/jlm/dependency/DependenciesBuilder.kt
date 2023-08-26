@@ -9,9 +9,11 @@ import com.intellij.psi.util.parentsOfType
 import com.intellij.refactoring.suggested.startOffset
 import mu.KotlinLogging
 import team.jlm.coderefactor.code.dependencyProviderType
-import team.jlm.psi.cache.IPsiCache
+import team.jlm.psi.cache.INullablePsiCache
 import team.jlm.psi.cache.PsiMemberCacheImpl
+import team.jlm.psi.cache.WeakPsiCache
 import team.jlm.utils.psi.getOuterClass
+import team.jlm.utils.psi.getTargetType
 
 private val logger = KotlinLogging.logger {}
 
@@ -19,39 +21,6 @@ class DependenciesBuilder {
     companion object {
         @JvmStatic
         private val factory = JavaDependencyVisitorFactory()
-
-        @JvmStatic
-        fun analyzePsiDependencies(
-            psiElement: PsiElement,
-            providerClassFilter: (PsiClass) -> Boolean,
-            processor: (PsiClass, PsiClass, DependencyProviderType, DependencyUserType, IPsiCache<*>, IPsiCache<*>) -> Unit,
-        ) {
-            analyzePsiDependencies(psiElement,
-                object : DependencyFilter {
-                    override fun doFilter(providerClass: PsiClass): Boolean {
-                        return providerClassFilter(providerClass)
-                    }
-                },
-                object : DependencyProcessor {
-                    override fun process(
-                        userClass: PsiClass,
-                        providerClass: PsiClass,
-                        providerType: DependencyProviderType,
-                        userType: DependencyUserType,
-                        providerPsiCache: IPsiCache<*>,
-                        userPsiCache: IPsiCache<*>,
-                    ) {
-                        processor(
-                            userClass,
-                            providerClass,
-                            providerType,
-                            userType,
-                            providerPsiCache,
-                            userPsiCache
-                        )
-                    }
-                })
-        }
 
         @JvmStatic
         fun analyzePsiDependencies(
@@ -71,8 +40,13 @@ class DependenciesBuilder {
                 val userClassName = userClass.qualifiedName ?: return@inner
                 var dependencyProviderType = DependencyProviderType.OTHER
                 var dependencyUserType = DependencyUserType.OTHER
-                var userPsiCache = IPsiCache.EMPTY
-                var providerPsiCache = IPsiCache.EMPTY
+                var userPsiCache = INullablePsiCache.EMPTY
+                var providerPsiCache = INullablePsiCache.EMPTY
+                if (userEle is PsiExpression) {
+                    logger.trace {
+                        "${userEle.text}, ${userEle.getTargetType(userEle.manager.project)}"
+                    }
+                }
                 if (providerEle !is PsiClass) {
                     if (userEle.elementType == JavaElementType.METHOD_REF_EXPRESSION) {
                         dependencyProviderType = when (providerEle) {
@@ -121,7 +95,7 @@ class DependenciesBuilder {
                         DependencyProviderType.IMPLEMENT -> DependencyUserType.IMPLEMENT
                         else -> dependencyUserType
                     }
-                    userPsiCache = IPsiCache.EMPTY
+                    userPsiCache = INullablePsiCache.EMPTY
                 }
                 val fieldSet = userEle.parentsOfType<PsiField>().toSet()
                 val methodSet = userEle.parentsOfType<PsiMethod>().toSet()
@@ -152,8 +126,10 @@ class DependenciesBuilder {
                     }
                 }
                 processor.process(
-                    userClass, providerClass, dependencyProviderType,
-                    dependencyUserType, providerPsiCache, userPsiCache
+                    userClass, providerClass, DependencyInfo(
+                        dependencyUserType, dependencyProviderType,
+                        userPsiCache, providerPsiCache, WeakPsiCache(userEle)
+                    )
                 )
             }, DependencyVisitorFactory.VisitorOptions.fromSettings(psiElement.project))
             psiElement.accept(visitor)
@@ -161,19 +137,16 @@ class DependenciesBuilder {
     }
 
     @FunctionalInterface
-    interface DependencyFilter {
+    fun interface DependencyFilter {
         fun doFilter(providerClass: PsiClass): Boolean
     }
 
     @FunctionalInterface
-    interface DependencyProcessor {
+    fun interface DependencyProcessor {
         fun process(
             userClass: PsiClass,
             providerClass: PsiClass,
-            providerType: DependencyProviderType,
-            userType: DependencyUserType,
-            providerPsiCache: IPsiCache<*>,
-            userPsiCache: IPsiCache<*>,
+            dependencyInfo: DependencyInfo,
         )
     }
 }

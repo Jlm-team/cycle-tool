@@ -1,6 +1,6 @@
 package team.jlm.dependency
 
-import team.jlm.psi.cache.IPsiCache
+import team.jlm.psi.cache.INullablePsiCache
 
 /**
  * Dependency info
@@ -9,13 +9,15 @@ import team.jlm.psi.cache.IPsiCache
  * @property providerType 依赖语句的依赖类型
  * @property userCache 依赖所处位置的成员的缓存
  * @property providerCache 依赖的缓存
+ * @property userCache 依赖所处位置的缓存
  * @constructor Create empty Dependency info
  */
 class DependencyInfo(
     val userType: DependencyUserType,
     val providerType: DependencyProviderType,
-    val userCache: IPsiCache<*> = IPsiCache.EMPTY,
-    val providerCache: IPsiCache<*> = IPsiCache.EMPTY,
+    val userCache: INullablePsiCache<*> = INullablePsiCache.EMPTY,
+    val providerCache: INullablePsiCache<*> = INullablePsiCache.EMPTY,
+    val posCache: INullablePsiCache<*> = INullablePsiCache.EMPTY
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
