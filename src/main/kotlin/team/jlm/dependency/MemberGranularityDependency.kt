@@ -5,7 +5,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiField
 import com.intellij.psi.PsiMember
-import team.jlm.psi.cache.IPsiCache
+import team.jlm.psi.cache.INullablePsiCache
 import team.jlm.utils.graph.Graph
 import team.jlm.utils.psi.findPsiClass
 
@@ -18,28 +18,27 @@ fun analyseMemberGranularityDependency(
     var flag = false
     val filter: (PsiClass) -> Boolean = { it === psiClass1 || it === psiClass0 }
     val visitor = v@{
-            userClass: PsiClass, providerClass: PsiClass, providerType: DependencyProviderType,
-            userType: DependencyUserType, providerCache: IPsiCache<*>, userCache: IPsiCache<*>,
+            userClass: PsiClass, providerClass: PsiClass, info:DependencyInfo
         ->
         if (flag) return@v
-        if ((providerType.isMethod || providerType == DependencyProviderType.STATIC_FIELD)
-            || (userType.isMethod || userType == DependencyUserType.FIELD_STATIC)
+        if ((info.providerType.isMethod || info.providerType == DependencyProviderType.STATIC_FIELD)
+            || (info.userType.isMethod || info.userType == DependencyUserType.FIELD_STATIC)
         ) {
             @Suppress("UnstableApiUsage", "DuplicatedCode")
-            val userMember = if (userCache === IPsiCache.EMPTY) {
+            val userMember = if (info.userCache === INullablePsiCache.EMPTY) {
                 ClassGranularityPsiMember(userClass)
             } else {
-                val member = userCache.getPsi(project) as PsiMember
+                val member = info.userCache.getPsi(project) as PsiMember
                 if (!member.hasModifier(JvmModifier.STATIC) && member is PsiField) {
                     ClassGranularityPsiMember(userClass)
                 } else member
             }
 
             @Suppress("UnstableApiUsage")
-            val providerMember = if (providerCache === IPsiCache.EMPTY) {
+            val providerMember = if (info.providerCache === INullablePsiCache.EMPTY) {
                 ClassGranularityPsiMember(providerClass)
             } else {
-                val member = providerCache.getPsi(project) as PsiMember
+                val member = info.providerCache.getPsi(project) as PsiMember
                 if (!member.hasModifier(JvmModifier.STATIC) && member is PsiField) {
                     ClassGranularityPsiMember(providerClass)
                 } else member

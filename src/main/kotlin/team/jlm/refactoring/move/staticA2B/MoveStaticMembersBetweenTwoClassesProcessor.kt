@@ -19,7 +19,7 @@ import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.containers.toArray
 import mu.KotlinLogging
 import team.jlm.dependency.DependenciesBuilder
-import team.jlm.psi.cache.IPsiCache
+import team.jlm.psi.cache.INullablePsiCache
 import team.jlm.refactoring.BaseRefactoringProcessor
 import team.jlm.utils.psi.findPsiClass
 
@@ -216,11 +216,10 @@ class MoveStaticMembersBetweenTwoClassesProcessor @JvmOverloads constructor(
             DependenciesBuilder.analyzePsiDependencies(
                 psiElement, { it === psiElement.containingClass }
             ) {
-                    _, _, _,
-                    _, provider, _,
+                    _, _, info
                 ->
-                if (provider === IPsiCache.EMPTY) return@analyzePsiDependencies
-                val providerPsi = provider.getPsi(project)
+                if (info.providerCache === INullablePsiCache.EMPTY) return@analyzePsiDependencies
+                val providerPsi = info.providerCache.getPsi(project)
                 if (providerPsi is PsiModifierListOwner) {
                     val modifierList = providerPsi.modifierList ?: return@analyzePsiDependencies
                     val oldPsi = modifierList.copy()

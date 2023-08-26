@@ -1,6 +1,8 @@
 package team.jlm.utils.psi
 
 import com.intellij.lang.java.JavaLanguage
+import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectFileIndex
 import com.intellij.openapi.vfs.VirtualFile
@@ -9,8 +11,13 @@ import com.intellij.psi.impl.PsiFileFactoryImpl
 import com.intellij.psi.impl.source.resolve.FileContextUtil
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.util.parentOfType
 import com.intellij.testFramework.LightVirtualFile
+import mu.KotlinLogging
 import java.util.stream.Collectors
+
+
+private val logger = KotlinLogging.logger { }
 
 fun getAllJavaFilesInProject(project: Project): List<PsiJavaFile> {
     val files = ArrayList<PsiJavaFile>()
@@ -108,3 +115,55 @@ fun PsiElement.getOuterClass(strict: Boolean = false): PsiClass? {
     if (result.getOuterClass(true) != null) return null
     return result
 }
+
+/**
+ * 获取PsiExpression的目标类型
+ * ```java
+ * Parent parent = new Child();
+ * ```
+ * 上述代码中，new表达式的目标类型是`Parent`
+ */
+fun PsiExpression.getTargetType(project: Project): PsiType? {
+    val context = this.context ?: return null
+    return when (context) {
+        is PsiReturnStatement -> {
+            val psiMethod = context.parentOfType<PsiMethod>() ?: return null
+            psiMethod.returnType
+        }
+
+        is PsiField -> context.type
+        is PsiVariable -> context.type
+        is PsiExpression, is PsiExpressionList -> type
+        is PsiExpressionStatement, is PsiIfStatement, is PsiWhileStatement,
+        is PsiSwitchStatement, is PsiCaseLabelElementList, is PsiCaseLabelElement,
+        is PsiSynchronizedStatement,
+        -> PsiType.getJavaLangObject(manager, GlobalSearchScope.projectScope(project))
+
+        is PsiThrowStatement -> PsiType.getTypeByName(
+            java.lang.Throwable::class.java.name,
+            project,
+            GlobalSearchScope.projectScope(project)
+        )
+
+        is PsiForeachStatement -> PsiType.getTypeByName(
+            java.lang.Iterable::class.java.name,
+            project,
+            GlobalSearchScope.projectScope(project)
+        )
+
+        is PsiNameValuePair, is PsiAnnotationMethod -> null
+
+        else -> {
+            logger.trace { context }
+            null
+        }
+    }
+}
+
+val AnActionEvent.psiElementAtMousePointer: PsiElement?
+    get() {
+        val caret = getData(CommonDataKeys.CARET) ?: return null
+        val offset = caret.offset
+        val psiFile = getData(CommonDataKeys.PSI_FILE) ?: return null
+        return psiFile.findElementAt(offset)
+    }
