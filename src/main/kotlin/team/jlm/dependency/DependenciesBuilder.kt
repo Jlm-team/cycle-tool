@@ -9,9 +9,9 @@ import com.intellij.psi.util.parentsOfType
 import com.intellij.refactoring.suggested.startOffset
 import mu.KotlinLogging
 import team.jlm.coderefactor.code.dependencyProviderType
+import team.jlm.psi.cache.CommonPsiCache
 import team.jlm.psi.cache.INullablePsiCache
 import team.jlm.psi.cache.PsiMemberCacheImpl
-import team.jlm.psi.cache.WeakPsiCache
 import team.jlm.utils.psi.getOuterClass
 import team.jlm.utils.psi.getTargetType
 
@@ -128,7 +128,7 @@ class DependenciesBuilder {
                 processor.process(
                     userClass, providerClass, DependencyInfo(
                         dependencyUserType, dependencyProviderType,
-                        userPsiCache, providerPsiCache, WeakPsiCache(userEle)
+                        userPsiCache, providerPsiCache, CommonPsiCache(userEle)
                     )
                 )
             }, DependencyVisitorFactory.VisitorOptions.fromSettings(psiElement.project))

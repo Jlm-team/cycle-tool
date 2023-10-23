@@ -90,6 +90,8 @@ class CycleDependencyAction : AnAction() {
                             for (col in row) {
                                 ig.delNode(col.data)
                             }
+                        } else {
+                            logger.trace { "find cycle dependency: ${row[0]} -- ${row[1]}" }
                         }
                     }
                     val candidate = result.filter { it.size == 2 }
@@ -137,7 +139,11 @@ class CycleDependencyAction : AnAction() {
                     val staticTableContent = ContentFactory.SERVICE.getInstance()
                         .createContent(StaticMembersWindow.getWindow(moveA2BRefactors), "静态的依赖", false)
                     val leverageBuiltinsContent = ContentFactory.SERVICE.getInstance()
-                        .createContent(StaticMembersWindow.getWindow(leverageBuiltinsRefactors), "可替换为Built-in的依赖", false)
+                        .createContent(
+                            StaticMembersWindow.getWindow(leverageBuiltinsRefactors),
+                            "可替换为Built-in的依赖",
+                            false
+                        )
 
                     val deprecatedTableContent = ContentFactory.SERVICE.getInstance().createContent(
                         DeprecatedMethodWindow.getWindow(deprecatedCollection), "已弃用方法", false
@@ -256,6 +262,7 @@ class CycleDependencyAction : AnAction() {
             return RefactoringImpl(
                 MultiRefactoringProcessor(
                     project, dpList.map {
+                        logger.trace { it.posCache.getPsi(project) }
                         ReplaceByReflectProcessor(
                             project,
                             psiNewExpression = it.posCache.getPsi(project)!!.parentOfType()!!
