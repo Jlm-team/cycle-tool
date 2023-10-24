@@ -45,7 +45,7 @@ class ReplaceByReflectProcessor(
 
     override fun performRefactoring(usages: Array<out UsageInfo>) {
         val className = psiNewExpression.classReference!!.qualifiedName
-        val listener = transaction.getElementListener(psiNewExpression)
+        val listener = refactoringTransaction.getElementListener(psiNewExpression)
         val manager = psiNewExpression.manager
         val factory = JavaPsiFacade.getElementFactory(manager.project)
         val needType = psiNewExpression.getTargetType(myProject!!)
@@ -61,7 +61,7 @@ class ReplaceByReflectProcessor(
         )
         psiNewExpression.replace(target)
         listener.elementMoved(target)
-        transaction.commit()
+        refactoringTransaction.commit()
     }
 
     override fun getCommandName(): String {

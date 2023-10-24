@@ -29,7 +29,6 @@ import com.intellij.openapi.ui.DialogBuilder
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.Factory
-import com.intellij.openapi.util.NlsContexts
 import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.ThrowableComputable
 import com.intellij.openapi.util.registry.Registry
@@ -79,7 +78,7 @@ abstract class BaseRefactoringProcessor @JvmOverloads constructor(
     project: Project,
     refactoringScope: SearchScope = GlobalSearchScope.projectScope(project),
     prepareSuccessfulCallback: Runnable? = null,
-) {
+) : IRefactoringProcessor {
     private var PREVIEW_IN_TESTS = true
 
     protected var myProject: Project? = project
@@ -87,22 +86,15 @@ abstract class BaseRefactoringProcessor @JvmOverloads constructor(
 
     private lateinit var myTransaction: RefactoringTransaction
     private var myIsPreviewUsages = false
-    var myPrepareSuccessfulSwingThreadCallback: Runnable? = prepareSuccessfulCallback
+    override var myPrepareSuccessfulSwingThreadCallback: Runnable? = prepareSuccessfulCallback
     private var myUsageView: UsageView? = null
-
-    internal abstract fun createUsageViewDescriptor(): UsageViewDescriptor
-
-    /**
-     * Is called inside atomic action.
-     */
-    abstract fun findUsages(): Array<out UsageInfo>
 
     /**
      * is called when usage search is re-run.
      *
      * @param elements - refreshed elements that are returned by UsageViewDescriptor.getElements()
      */
-    internal open fun refreshElements(elements: Array<out PsiElement>) {}
+    override fun refreshElements(elements: Array<out PsiElement>) {}
 
     /**
      * Is called inside atomic action.
@@ -110,7 +102,7 @@ abstract class BaseRefactoringProcessor @JvmOverloads constructor(
      * @param refUsages usages to be filtered
      * @return true if preprocessed successfully
      */
-    open fun preprocessUsages(): Boolean {
+    override fun preprocessUsages(): Boolean {
         prepareSuccessful()
         return true
     }
@@ -118,11 +110,11 @@ abstract class BaseRefactoringProcessor @JvmOverloads constructor(
     /**
      * Is called inside atomic action.
      */
-    open fun isPreviewUsages(usages: Array<out UsageInfo>): Boolean {
+    override fun isPreviewUsages(usages: Array<out UsageInfo>): Boolean {
         return myIsPreviewUsages
     }
 
-    open fun isPreviewUsages(): Boolean {
+    override fun isPreviewUsages(): Boolean {
         return myIsPreviewUsages
     }
 
@@ -142,21 +134,21 @@ abstract class BaseRefactoringProcessor @JvmOverloads constructor(
     }
 
 
-    open fun setPreviewUsages(isPreviewUsages: Boolean) {
+    override fun setPreviewUsages(isPreviewUsages: Boolean) {
         myIsPreviewUsages = isPreviewUsages
     }
 
-    open fun setPrepareSuccessfulSwingThreadCallback(prepareSuccessfulSwingThreadCallback: Runnable?) {
+    override fun setPrepareSuccessfulSwingThreadCallback(prepareSuccessfulSwingThreadCallback: Runnable?) {
         myPrepareSuccessfulSwingThreadCallback = prepareSuccessfulSwingThreadCallback
     }
 
-    var transactionSetter: (RefactoringTransaction) -> Unit =
+    override var transactionSetter: (RefactoringTransaction) -> Unit =
         {
             myTransaction = it
         }
 
-    var transaction: RefactoringTransaction
-        internal set(value) {
+    override var refactoringTransaction: RefactoringTransaction
+        set(value) {
             transactionSetter(value)
         }
         get() = myTransaction
@@ -175,8 +167,6 @@ abstract class BaseRefactoringProcessor @JvmOverloads constructor(
     protected open fun performRefactoringInBranch(usages: Array<UsageInfo>, branch: ModelBranch?) {
         throw UnsupportedOperationException()
     }
-
-    protected abstract fun getCommandName(): @NlsContexts.Command String
 
     protected open fun doRun() {
         if (!PsiDocumentManager.getInstance(myProject!!).commitAllDocumentsUnderProgress()) {
@@ -319,16 +309,16 @@ abstract class BaseRefactoringProcessor @JvmOverloads constructor(
         execute(usages)
     }
 
-    open fun execute(usages: Array<out UsageInfo>) {
+    override fun execute(usages: Array<out UsageInfo>) {
         CommandProcessor.getInstance().executeCommand(myProject, {
             val usageInfos: MutableCollection<UsageInfo> =
                 LinkedHashSet(listOf(*usages))
             PsiDocumentManager.getInstance(myProject!!).commitAllDocuments()
             // WARN 此处增加了事务的粒度，可能带来某些异常，但是此功能是必需的
             val listenerManager = RefactoringListenerManager.getInstance(myProject) as RefactoringListenerManagerImpl
-            transaction = listenerManager.startTransaction()
+            refactoringTransaction = listenerManager.startTransaction()
             doRefactoring(usageInfos)
-            transaction.commit()
+            refactoringTransaction.commit()
             if (isGlobalUndoAction()) CommandProcessor.getInstance()
                 .markCurrentCommandAsGlobal(myProject)
             SuggestedRefactoringProvider.getInstance(myProject!!).reset()
@@ -639,7 +629,7 @@ abstract class BaseRefactoringProcessor @JvmOverloads constructor(
         }
     }
 
-    fun run() {
+    override fun run() {
         val baseRunnable =
             Runnable { SlowOperations.allowSlowOperations<RuntimeException> { doRun() } }
         val runnable = if (shouldDisableAccessChecks()) Runnable {

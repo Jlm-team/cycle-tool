@@ -123,7 +123,7 @@ abstract class MakeMethodOrClassStaticProcessor<T : PsiTypeParameterListOwner>(
                 }
             }
             changeSelf(copyMember, member.containingClass!!, factory, usages)
-            transaction.getElementListener(member).elementMoved(member.replace(copyMember))
+            refactoringTransaction.getElementListener(member).elementMoved(member.replace(copyMember))
         } catch (ex: IncorrectOperationException) {
             logger.error(ex) {}
         }

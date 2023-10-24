@@ -23,13 +23,14 @@ import team.jlm.dependency.DependencyProviderType
 import team.jlm.dependency.DependencyUserType
 import team.jlm.dependency.analyseMemberGranularityDependency
 import team.jlm.psi.cache.PsiMemberCacheImpl
-import team.jlm.refactoring.BaseRefactoringProcessor
+import team.jlm.refactoring.IRefactoringProcessor
 import team.jlm.refactoring.RefactoringImpl
 import team.jlm.refactoring.handleDeprecatedMethod
-import team.jlm.refactoring.makeStatic.MakeMethodStaticProcessor
+import team.jlm.refactoring.makeStatic.createMakeMethodStaticProcess
 import team.jlm.refactoring.move.callchain.CallChain
 import team.jlm.refactoring.move.callchain.detectCallChain
-import team.jlm.refactoring.move.staticA2B.MoveStaticMembersBetweenTwoClassesProcessor
+import team.jlm.refactoring.move.staticA2B.DefaultMoveA2BMemberOptions
+import team.jlm.refactoring.move.staticA2B.MoveStaticMembersProcessor
 import team.jlm.refactoring.multi.MultiRefactoringProcessor
 import team.jlm.refactoring.remove.unusedimport.removeUnusedImport
 import team.jlm.refactoring.replace.ReplaceByReflectProcessor
@@ -133,7 +134,7 @@ class CycleDependencyAction : AnAction() {
                         val row = it
                         val edge1 = GEdge(row[0], row[1])
                         val edge2 = GEdge(row[1], row[0])
-                        callChainSet.addAll(handleCallChain(ig, edge1, edge2, project))
+                        callChainSet.addAll(handleCallChainOld(ig, edge1, edge2, project))
                     }
 
                     val staticTableContent = ContentFactory.SERVICE.getInstance()
@@ -177,11 +178,20 @@ class CycleDependencyAction : AnAction() {
         dpList ?: return null
         return if (dpList.all { it.userType.isMethod || it.providerType.isMethod }) {
             logger.debug { edge }
-            return handleOnlyStaticMembersInOneClass(dpList, edge, project)
+            return handleMoveA2B(dpList, edge, project)
         } else null
     }
 
     private fun handleCallChain(
+        dpList: MutableList<DependencyInfo>,
+        edge: GEdge<String>,
+        project: Project,
+    ) {
+//        Proxy.
+    }
+
+    @Deprecated("plan to remove in future")
+    private fun handleCallChainOld(
         ig: IG,
         edge1: GEdge<String>,
         edge2: GEdge<String>,
@@ -202,7 +212,7 @@ class CycleDependencyAction : AnAction() {
         return detectCallChain(project, element)
     }
 
-    private fun handleOnlyStaticMembersInOneClass(
+    private fun handleMoveA2B(
         dpList: MutableList<DependencyInfo>,
         edge: GEdge<String>,
         project: Project,
@@ -230,21 +240,39 @@ class CycleDependencyAction : AnAction() {
             }
         }
         if (membersFrom.isEmpty() && membersTo.isEmpty()) return null
-        val refactoringProcessors = ArrayList<BaseRefactoringProcessor>()
+        val refactoringProcessors = ArrayList<IRefactoringProcessor>()
         for (psiMethod in needMakeStatic) {
             refactoringProcessors.add(
-                MakeMethodStaticProcessor(project, psiMethod)
+                createMakeMethodStaticProcess(project, psiMethod)
             )
         }
-        refactoringProcessors.add(
-            MoveStaticMembersBetweenTwoClassesProcessor(
+        /*MoveStaticMembersBetweenTwoClassesProcessor(
                 project,
                 members0 = membersFrom.toArray(arrayOf()),
                 targetClassName0 = edge.nodeFrom.data,
                 members1 = membersTo.toArray(arrayOf()),
                 targetClassName1 = edge.nodeTo.data,
+            )*/
+        if (membersFrom.isNotEmpty()) {
+            refactoringProcessors.add(
+                MoveStaticMembersProcessor(
+                    project, DefaultMoveA2BMemberOptions(
+                        membersFrom.toArray(arrayOf()),
+                        edge.nodeFrom.data
+                    )
+                )
             )
-        )
+        }
+        if (membersTo.isNotEmpty()) {
+            refactoringProcessors.add(
+                MoveStaticMembersProcessor(
+                    project, DefaultMoveA2BMemberOptions(
+                        membersTo.toArray(arrayOf()),
+                        edge.nodeTo.data
+                    )
+                )
+            )
+        }
         return RefactoringImpl(
             MultiRefactoringProcessor(
                 project, refactoringProcessors, commandName = "Move A to B"

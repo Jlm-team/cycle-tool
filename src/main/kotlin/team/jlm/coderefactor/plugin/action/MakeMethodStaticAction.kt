@@ -6,18 +6,16 @@ import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.psi.PsiMethod
 import org.jetbrains.annotations.TestOnly
 import team.jlm.refactoring.BaseRefactoring
-import team.jlm.refactoring.makeStatic.MakeMethodStaticProcessor
-import team.jlm.refactoring.multi.MultiRefactoringProcessor
+import team.jlm.refactoring.IRefactoringProcessor
+import team.jlm.refactoring.makeStatic.createMakeMethodStaticProcess
 
 @TestOnly
 class MakeMethodStaticAction : AnAction() {
     override fun actionPerformed(e: AnActionEvent) {
-        val rf = object : BaseRefactoring<MultiRefactoringProcessor>(
-            MultiRefactoringProcessor(
+        val rf = object : BaseRefactoring<IRefactoringProcessor>(
+            createMakeMethodStaticProcess(
                 e.project!!,
-                arrayListOf(MakeMethodStaticProcessor(e.project!!, e.getData(CommonDataKeys.PSI_ELEMENT) as PsiMethod)
-                    .apply { setPreviewUsages(true) }),
-                commandName = "make static"
+                e.getData(CommonDataKeys.PSI_ELEMENT) as PsiMethod
             )
         ) {}
         rf.run()

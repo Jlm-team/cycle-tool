@@ -5,7 +5,7 @@ import com.intellij.refactoring.Refactoring
 import com.intellij.usageView.UsageInfo
 
 abstract class BaseRefactoring<T>(protected val myProcessor: T) : Refactoring
-        where T : BaseRefactoringProcessor {
+        where T : IRefactoringProcessor {
 
     override fun setPreviewUsages(value: Boolean) {
         myProcessor.setPreviewUsages(value)

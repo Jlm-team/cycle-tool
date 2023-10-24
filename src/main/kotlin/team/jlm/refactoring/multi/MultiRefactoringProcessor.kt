@@ -12,12 +12,13 @@ import com.intellij.usageView.UsageViewBundle
 import com.intellij.usageView.UsageViewDescriptor
 import mu.KotlinLogging
 import team.jlm.refactoring.BaseRefactoringProcessor
+import team.jlm.refactoring.IRefactoringProcessor
 
 private val logger = KotlinLogging.logger {}
 
 class MultiRefactoringProcessor(
     project: Project,
-    private val processors: List<BaseRefactoringProcessor>,
+    private val processors: List<IRefactoringProcessor>,
     refactoringScope: SearchScope = GlobalSearchScope.projectScope(project),
     prepareSuccessfulCallback: Runnable? = null,
     private val processedElementsHeader: String = "MultiRefactoring",
@@ -87,10 +88,10 @@ class MultiRefactoringProcessor(
     override fun execute(usages: Array<out UsageInfo>) {
         logger.trace { "execute" }
         val listenerManager = RefactoringListenerManager.getInstance(myProject) as RefactoringListenerManagerImpl
-        transaction = listenerManager.startTransaction()
-        myTransactionWrapper = RefactoringTransactionWrapper(transaction)
+        refactoringTransaction = listenerManager.startTransaction()
+        myTransactionWrapper = RefactoringTransactionWrapper(refactoringTransaction)
         for (processor in processors) {
-            processor.transaction = myTransactionWrapper
+            processor.refactoringTransaction = myTransactionWrapper
             processor.transactionSetter = {}
         }
         for (processor in processors) {
