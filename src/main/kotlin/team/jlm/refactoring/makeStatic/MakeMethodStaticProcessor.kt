@@ -14,7 +14,6 @@ import team.jlm.refactoring.RefactoringProcessorInterceptor
 import team.jlm.refactoring.RefactoringProcessorInterceptor.Companion.createUsageViewDescriptorMethod0
 import team.jlm.refactoring.RefactoringProcessorInterceptor.Companion.preprocessUsagesMethod0
 import team.jlm.refactoring.RefactoringProcessorInterceptor.Companion.setRefactoringTransactionMethod
-import team.jlm.refactoring.RefactoringProcessorInterceptor.Companion.setTransactionSetterMethod
 
 fun createMakeMethodStaticProcess(
     project: Project,
@@ -34,7 +33,7 @@ fun createMakeMethodStaticProcess(
     enhancer.setInterfaces(arrayOf(IRefactoringProcessor::class.java))
     enhancer.setCallbackFilter {
         if (it == preprocessUsagesMethod0 || it == createUsageViewDescriptorMethod0
-            || it == setRefactoringTransactionMethod || it == setTransactionSetterMethod
+            || it == setRefactoringTransactionMethod
         ) {
             return@setCallbackFilter 0
         } else

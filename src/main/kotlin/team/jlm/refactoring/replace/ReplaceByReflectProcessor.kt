@@ -1,16 +1,18 @@
 package team.jlm.refactoring.replace
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Ref
 import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNewExpression
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.SearchScope
+import com.intellij.refactoring.BaseRefactoringProcessor
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.usageView.UsageInfo
 import com.intellij.usageView.UsageViewBundle
 import com.intellij.usageView.UsageViewDescriptor
-import team.jlm.refactoring.BaseRefactoringProcessor
+import team.jlm.refactoring.IRefactoringProcessor
 import team.jlm.utils.bundle.messageBundle
 import team.jlm.utils.psi.getTargetType
 
@@ -19,8 +21,9 @@ class ReplaceByReflectProcessor(
     refactoringScope: SearchScope = GlobalSearchScope.projectScope(project),
     prepareSuccessfulCallback: Runnable? = null,
     private val psiNewExpression: PsiNewExpression,
-) : BaseRefactoringProcessor(project, refactoringScope, prepareSuccessfulCallback) {
-    override fun createUsageViewDescriptor(): UsageViewDescriptor {
+) : BaseRefactoringProcessor(project, refactoringScope, prepareSuccessfulCallback),
+    IRefactoringProcessor {
+    override fun createUsageViewDescriptor(usages: Array<out UsageInfo>): UsageViewDescriptor {
         return object : UsageViewDescriptor {
             override fun getElements(): Array<PsiElement> {
                 return arrayOf(psiNewExpression)
@@ -37,6 +40,12 @@ class ReplaceByReflectProcessor(
                 )
             }
         }
+    }
+
+    override var myPrepareSuccessfulSwingThreadCallback: Runnable? = prepareSuccessfulCallback
+
+    override fun createUsageViewDescriptor(): UsageViewDescriptor {
+        return createUsageViewDescriptor(emptyArray())
     }
 
     override fun findUsages(): Array<out UsageInfo> {
@@ -66,5 +75,25 @@ class ReplaceByReflectProcessor(
 
     override fun getCommandName(): String {
         return messageBundle.getString("replace.byReflect.title")
+    }
+
+    override fun execute(usages: Array<out UsageInfo>) {
+        super.execute(usages)
+    }
+
+    override fun isPreviewUsages(): Boolean {
+        return super.isPreviewUsages()
+    }
+
+    override fun preprocessUsages(refUsage: Ref<Array<out UsageInfo>>): Boolean {
+        return super<BaseRefactoringProcessor>.preprocessUsages(refUsage)
+    }
+
+    override fun isPreviewUsages(usages: Array<out UsageInfo>): Boolean {
+        return super.isPreviewUsages(usages)
+    }
+
+    override fun refreshElements(elements: Array<out PsiElement>) {
+        super.refreshElements(elements)
     }
 }

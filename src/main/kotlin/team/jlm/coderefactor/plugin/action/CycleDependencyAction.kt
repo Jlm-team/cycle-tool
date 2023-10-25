@@ -276,7 +276,7 @@ class CycleDependencyAction : AnAction() {
         return RefactoringImpl(
             MultiRefactoringProcessor(
                 project, refactoringProcessors, commandName = "Move A to B"
-            ).apply { setPreviewUsages(true) }
+            ).apply { isPreviewUsages = true }
         )
     }
 

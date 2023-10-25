@@ -1,4 +1,4 @@
 package team.jlm.refactoring
 
-class RefactoringImpl<T : BaseRefactoringProcessor>(myProcessor: T) :
+class RefactoringImpl<T : IRefactoringProcessor>(myProcessor: T) :
     BaseRefactoring<T>(myProcessor)

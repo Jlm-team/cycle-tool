@@ -3,8 +3,6 @@ package team.jlm.refactoring.move.staticA2B
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiElement
-import com.intellij.refactoring.BaseRefactoringProcessor
-import com.intellij.refactoring.listeners.impl.RefactoringTransaction
 import com.intellij.refactoring.move.MoveCallback
 import com.intellij.refactoring.move.moveMembers.MoveMembersOptions
 import com.intellij.refactoring.move.moveMembers.MoveMembersProcessor
@@ -22,23 +20,6 @@ class MoveStaticMembersProcessor(
     override fun createUsageViewDescriptor(): UsageViewDescriptor {
         return super.createUsageViewDescriptor(emptyArray())
     }
-
-    override var transactionSetter: (RefactoringTransaction) -> Unit =
-        {
-            val field = BaseRefactoringProcessor::class.java.getDeclaredField("myTransaction")
-            field.isAccessible = true
-            field.set(this, it)
-        }
-
-    override var refactoringTransaction: RefactoringTransaction
-        get() {
-            val f = BaseRefactoringProcessor::class.java.getDeclaredField("myTransaction")
-            f.isAccessible = true
-            return f.get(this) as RefactoringTransaction
-        }
-        set(value) {
-            transactionSetter(value)
-        }
 
     override fun execute(usages: Array<out UsageInfo>) {
         super.execute(usages)

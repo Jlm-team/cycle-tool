@@ -37,13 +37,10 @@ class RefactoringProcessorInterceptor(
         val setRefactoringTransactionMethod: Method = IRefactoringProcessor::class.java
             .getDeclaredMethod("setRefactoringTransaction", RefactoringTransaction::class.java)
 
-        private val myTransactionFiled: Field = BaseRefactoringProcessor::class.java
+        val myTransactionFiled: Field = BaseRefactoringProcessor::class.java
             .getDeclaredField("myTransaction").apply {
                 isAccessible = true
             }
-
-        val setTransactionSetterMethod: Method = IRefactoringProcessor::class.java
-            .getDeclaredMethod("setTransactionSetter", kotlin.jvm.functions.Function1::class.java)
     }
 
     override fun intercept(obj: Any, method: Method, args: Array<out Any>, proxy: MethodProxy): Any? {
@@ -74,8 +71,6 @@ class RefactoringProcessorInterceptor(
                 myTransactionFiled.set(obj, args[0])
                 return null
             }
-            // 本来是用于拦截myTransactionFiled的，但是上方已经实现，因此此处不做实现即可
-            setTransactionSetterMethod -> return null
         }
         return null
     }

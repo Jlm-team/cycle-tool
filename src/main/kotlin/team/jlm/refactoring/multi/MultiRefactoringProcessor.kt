@@ -1,9 +1,11 @@
 package team.jlm.refactoring.multi
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.SearchScope
+import com.intellij.refactoring.BaseRefactoringProcessor
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.listeners.RefactoringListenerManager
 import com.intellij.refactoring.listeners.impl.RefactoringListenerManagerImpl
@@ -11,7 +13,6 @@ import com.intellij.usageView.UsageInfo
 import com.intellij.usageView.UsageViewBundle
 import com.intellij.usageView.UsageViewDescriptor
 import mu.KotlinLogging
-import team.jlm.refactoring.BaseRefactoringProcessor
 import team.jlm.refactoring.IRefactoringProcessor
 
 private val logger = KotlinLogging.logger {}
@@ -23,7 +24,15 @@ class MultiRefactoringProcessor(
     prepareSuccessfulCallback: Runnable? = null,
     private val processedElementsHeader: String = "MultiRefactoring",
     private val commandName: String,
-) : BaseRefactoringProcessor(project, refactoringScope, prepareSuccessfulCallback) {
+) : BaseRefactoringProcessor(project, refactoringScope, prepareSuccessfulCallback),
+    IRefactoringProcessor {
+    override fun isPreviewUsages(): Boolean {
+        return super.isPreviewUsages()
+    }
+
+    override fun isPreviewUsages(usages: Array<out UsageInfo>): Boolean {
+        return super.isPreviewUsages(usages)
+    }
 
     lateinit var myTransactionWrapper: RefactoringTransactionWrapper
 
@@ -34,6 +43,8 @@ class MultiRefactoringProcessor(
             processor.refreshElements(elements.copyOfRange(usagesIndexList[i], usagesIndexList[i + 1]))
         }
     }
+
+    override var myPrepareSuccessfulSwingThreadCallback: Runnable? = prepareSuccessfulCallback
 
     override fun createUsageViewDescriptor(): UsageViewDescriptor {
         logger.trace { "createUsageViewDescriptor" }
@@ -60,6 +71,9 @@ class MultiRefactoringProcessor(
     }
 
     private val usagesIndexList = ArrayList<Int>(processors.size + 1)
+    override fun createUsageViewDescriptor(usages: Array<out UsageInfo>): UsageViewDescriptor {
+        return processors[0].createUsageViewDescriptor()
+    }
 
     override fun findUsages(): Array<out UsageInfo> {
         logger.trace { "findUsages" }
@@ -92,7 +106,6 @@ class MultiRefactoringProcessor(
         myTransactionWrapper = RefactoringTransactionWrapper(refactoringTransaction)
         for (processor in processors) {
             processor.refactoringTransaction = myTransactionWrapper
-            processor.transactionSetter = {}
         }
         for (processor in processors) {
             val elements = processor.createUsageViewDescriptor().elements
@@ -108,5 +121,9 @@ class MultiRefactoringProcessor(
     override fun getCommandName(): String {
         logger.trace { "getCommandName" }
         return commandName
+    }
+
+    override fun preprocessUsages(refUsage: Ref<Array<out UsageInfo>>): Boolean {
+        return super<BaseRefactoringProcessor>.preprocessUsages(refUsage)
     }
 }

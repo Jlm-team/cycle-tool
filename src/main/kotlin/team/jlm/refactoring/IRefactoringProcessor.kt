@@ -30,7 +30,7 @@ interface IRefactoringProcessor {
     /**
      * Is called inside atomic action.
      *
-     * @param refUsages usages to be filtered
+     * @param refUsage usages to be filtered
      * @return true if preprocessed successfully
      */
     fun preprocessUsages(refUsage: Ref<Array<out UsageInfo>>): Boolean {
@@ -52,6 +52,12 @@ interface IRefactoringProcessor {
 
     fun execute(usages: Array<out UsageInfo>)
     fun refreshElements(elements: Array<out PsiElement>)
+    /**
+     * 对于不继承`com.intellij.refactoring.BaseRefactoringProcessor`的实现类，必须重写此属性
+     */
     var refactoringTransaction: RefactoringTransaction
-    var transactionSetter: (RefactoringTransaction) -> Unit
+        get() = RefactoringProcessorInterceptor.myTransactionFiled.get(this) as RefactoringTransaction
+        set(value) {
+            RefactoringProcessorInterceptor.myTransactionFiled.set(this, value)
+        }
 }
