@@ -12,7 +12,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.SearchScope
 import javax.swing.Icon
 
-class ClassGranularityPsiMember(
+class NoMethodGranularityPsiMember(
     private val me: PsiClass,
 ) : PsiMember {
     override fun <T : Any?> getUserData(key: Key<T>): T? {
@@ -272,7 +272,7 @@ class ClassGranularityPsiMember(
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as ClassGranularityPsiMember
+        other as NoMethodGranularityPsiMember
 
         if (me != other.me) return false
 

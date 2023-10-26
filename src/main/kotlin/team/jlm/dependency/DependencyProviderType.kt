@@ -82,11 +82,31 @@ enum class DependencyProviderType(val static: Boolean = false) {
     OTHER;
 
     val isMethod: Boolean
-        get() = this == STATIC_METHOD || this == NONSTATIC_METHOD
+        get() = this === STATIC_METHOD || this === NONSTATIC_METHOD
 
     val isField: Boolean
-        get() = this == STATIC_FIELD || this == NONSTATIC_FIELD
+        get() = this === STATIC_FIELD || this === NONSTATIC_FIELD
 
     val isMember: Boolean
         get() = isMethod || isField
+
+    val granularity: EGranularity
+        get() = when (this) {
+            IMPORT_STATEMENT, IMPORT_LIST, IMPORT_STATIC_STATEMENT, IMPORT_STATIC_FIELD,
+            -> EGranularity.IMPORT
+
+            STATIC_FIELD, NONSTATIC_FIELD,
+            -> EGranularity.METHOD_OR_FIELD
+
+            CONTAIN -> EGranularity.CLASS
+            PARAMETER -> EGranularity.IN_METHOD_OR_FILED
+            STATIC_METHOD, NONSTATIC_METHOD -> EGranularity.METHOD_OR_FIELD
+            IMPLEMENT, EXTENDS, CREATE, CLASS_OBJECT_ACCESS,
+            -> EGranularity.CLASS
+
+            CAST -> EGranularity.CLASS
+            USE -> EGranularity.IN_METHOD_OR_FILED
+            ANNOTATION -> EGranularity.CLASS
+            OTHER -> EGranularity.OTHER
+        }
 }

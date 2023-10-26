@@ -11,9 +11,11 @@ import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.wm.RegisterToolWindowTask
 import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.psi.PsiJvmMember
+import com.intellij.psi.PsiMember
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.util.parentOfType
 import com.intellij.refactoring.Refactoring
+import com.intellij.refactoring.inline.InlineMethodHandler
 import com.intellij.ui.content.ContentFactory
 import mu.KotlinLogging
 import team.jlm.coderefactor.code.IG
@@ -25,16 +27,20 @@ import team.jlm.dependency.analyseMemberGranularityDependency
 import team.jlm.psi.cache.PsiMemberCacheImpl
 import team.jlm.refactoring.IRefactoringProcessor
 import team.jlm.refactoring.RefactoringImpl
+import team.jlm.refactoring.callchain.CallChain
+import team.jlm.refactoring.callchain.createInlineMethodProcessor
+import team.jlm.refactoring.callchain.detectCallChain
 import team.jlm.refactoring.handleDeprecatedMethod
 import team.jlm.refactoring.makeStatic.createMakeMethodStaticProcess
-import team.jlm.refactoring.move.callchain.CallChain
-import team.jlm.refactoring.move.callchain.detectCallChain
 import team.jlm.refactoring.move.staticA2B.DefaultMoveA2BMemberOptions
 import team.jlm.refactoring.move.staticA2B.MoveStaticMembersProcessor
 import team.jlm.refactoring.multi.MultiRefactoringProcessor
 import team.jlm.refactoring.remove.unusedimport.removeUnusedImport
 import team.jlm.refactoring.replace.ReplaceByReflectProcessor
+import team.jlm.utils.bundle.messageBundle
 import team.jlm.utils.graph.GEdge
+import team.jlm.utils.graph.GNode
+import team.jlm.utils.graph.Graph
 import team.jlm.utils.graph.Tarjan
 import team.jlm.utils.psi.getAllClassesInProject
 
@@ -127,6 +133,17 @@ class CycleDependencyAction : AnAction() {
                         }
                     }
                     logger.trace { leverageBuiltinsRefactors }
+                    val callChainRefactors = candidate.mapNotNull { row ->
+                        val edge0 = GEdge(row[0], row[1])
+                        val edge1 = GEdge(row[1], row[0])
+                        val memberGraph = analyseMemberGranularityDependency(project, row[0].data, row[1].data)
+                            ?: return@mapNotNull null
+                        val refactor = handleCallChainEdge(ig.dependencyMap[edge0], edge0, project, memberGraph)
+                            ?: handleCallChainEdge(ig.dependencyMap[edge1], edge1, project, memberGraph)
+                        refactor?.let { r ->
+                            edge0 to r
+                        }
+                    }
 
                     val callChainSet = HashSet<CallChain>(32)
 
@@ -145,6 +162,12 @@ class CycleDependencyAction : AnAction() {
                             "可替换为Built-in的依赖",
                             false
                         )
+                    val shorternCallChainContent = ContentFactory.SERVICE.getInstance()
+                        .createContent(
+                            StaticMembersWindow.getWindow(callChainRefactors),
+                            "可以缩短的调用链",
+                            false
+                        )
 
                     val deprecatedTableContent = ContentFactory.SERVICE.getInstance().createContent(
                         DeprecatedMethodWindow.getWindow(deprecatedCollection), "已弃用方法", false
@@ -159,6 +182,7 @@ class CycleDependencyAction : AnAction() {
                             toolWindow.contentManager.addContent(deprecatedTableContent)
                             toolWindow.contentManager.addContent(leverageBuiltinsContent)
                             toolWindow.contentManager.addContent(callChainWindow)
+                            toolWindow.contentManager.addContent(shorternCallChainContent)
                             toolWindow.activate(null)
                         }
                     }.start()
@@ -182,12 +206,66 @@ class CycleDependencyAction : AnAction() {
         } else null
     }
 
-    private fun handleCallChain(
-        dpList: MutableList<DependencyInfo>,
+    private fun handleCallChainEdge(
+        dpList: MutableList<DependencyInfo>?,
         edge: GEdge<String>,
         project: Project,
-    ) {
-//        Proxy.
+        memberGraph: Graph<PsiMember>,
+    ): Refactoring? {
+        dpList ?: return null
+        if (dpList.all {
+                if (!it.providerType.isMethod && it.providerType !== DependencyProviderType.CONTAIN) return@all false
+                if (it.providerType === DependencyProviderType.CONTAIN) {
+                    return@all true
+                }
+                val providerPsi = it.providerCache.getPsi(project) as? PsiMethod
+                    ?: return@all true
+                val visited = HashSet<PsiMember>(32)
+                val deque = ArrayDeque<PsiMember>(32)
+                deque.add(providerPsi)
+                while (deque.isNotEmpty()) {
+                    val now = deque.removeFirst()
+                    // 此处处理隐含的递归调用，例如funcA -> funcB -> funcA
+                    if (visited.contains(now)) {
+                        return@all false
+                    }
+                    val edgePair = memberGraph.adjList[GNode(providerPsi)] ?: continue
+                    for (next in edgePair.edgeOut) {
+                        val nextPsi = next.nodeTo.data
+                        if (nextPsi is PsiMethod) {
+                            // 递归函数不能内联，因此不能缩短调用链
+                            if (InlineMethodHandler.checkRecursive(nextPsi)) {
+                                return@all false
+                            }
+                        }
+                    }
+                    visited.add(now)
+                }
+                true
+            }) {
+            val inlineProcessors = dpList.mapNotNull {
+                val psiMethod = it.providerCache.getPsi(project) as? PsiMethod
+                    ?: return@mapNotNull null
+                val posCache = it.posCache.getPsi(project) ?: return@mapNotNull null
+                createInlineMethodProcessor(
+                    project,
+                    psiMethod,
+                    posCache.reference,
+                )
+            }
+            return if (inlineProcessors.isEmpty()) {
+                null
+            } else {
+                RefactoringImpl<IRefactoringProcessor>(
+                    MultiRefactoringProcessor(
+                        project,
+                        inlineProcessors,
+                        commandName = messageBundle.getString("callChain.shortenCallChain")
+                    )
+                )
+            }
+        }
+        return null
     }
 
     @Deprecated("plan to remove in future")
@@ -246,13 +324,6 @@ class CycleDependencyAction : AnAction() {
                 createMakeMethodStaticProcess(project, psiMethod)
             )
         }
-        /*MoveStaticMembersBetweenTwoClassesProcessor(
-                project,
-                members0 = membersFrom.toArray(arrayOf()),
-                targetClassName0 = edge.nodeFrom.data,
-                members1 = membersTo.toArray(arrayOf()),
-                targetClassName1 = edge.nodeTo.data,
-            )*/
         if (membersFrom.isNotEmpty()) {
             refactoringProcessors.add(
                 MoveStaticMembersProcessor(

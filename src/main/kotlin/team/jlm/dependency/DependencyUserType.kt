@@ -100,4 +100,18 @@ enum class DependencyUserType(
 
     val isMember: Boolean
         get() = isMethod || isField
+
+    val granularity: EGranularity
+        get() = when (this) {
+            IMPORT, IMPORT_STATIC,
+            -> EGranularity.IMPORT
+
+            FIELD, FIELD_STATIC, METHOD, METHOD_STATIC,
+            -> EGranularity.METHOD_OR_FIELD
+
+            EXTENDS, IMPLEMENT,
+            -> EGranularity.CLASS
+
+            OTHER -> EGranularity.OTHER
+        }
 }

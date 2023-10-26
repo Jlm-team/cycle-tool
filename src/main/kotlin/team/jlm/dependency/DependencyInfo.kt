@@ -34,7 +34,7 @@ class DependencyInfo(
     }
 
     override fun toString(): String {
-        return "Dependency(pos: $userType, type: $providerType)"
+        return "Dependency(user: $userType, provider: $providerType)"
     }
 
     companion object {

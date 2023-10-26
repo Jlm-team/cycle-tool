@@ -7,13 +7,36 @@ import com.intellij.psi.codeStyle.JavaCodeStyleManager
 import com.intellij.psi.codeStyle.VariableKind
 import com.intellij.refactoring.makeStatic.MakeMethodStaticProcessor
 import com.intellij.refactoring.makeStatic.Settings
-import net.sf.cglib.proxy.Enhancer
-import net.sf.cglib.proxy.NoOp
+import net.bytebuddy.ByteBuddy
+import net.bytebuddy.description.modifier.Visibility
+import net.bytebuddy.dynamic.loading.ClassLoadingStrategy
+import net.bytebuddy.implementation.FieldAccessor
+import net.bytebuddy.implementation.MethodDelegation
+import net.bytebuddy.matcher.ElementMatchers
 import team.jlm.refactoring.IRefactoringProcessor
-import team.jlm.refactoring.RefactoringProcessorInterceptor
-import team.jlm.refactoring.RefactoringProcessorInterceptor.Companion.createUsageViewDescriptorMethod0
-import team.jlm.refactoring.RefactoringProcessorInterceptor.Companion.preprocessUsagesMethod0
-import team.jlm.refactoring.RefactoringProcessorInterceptor.Companion.setRefactoringTransactionMethod
+import team.jlm.refactoring.interceptor.ExecuteInterceptor
+import team.jlm.refactoring.interceptor.RefactoringProcessorInterceptor
+import team.jlm.refactoring.interceptor.RefactoringProcessorInterceptor.Companion.getMethodFilter
+import team.jlm.refactoring.multi.ICallFromMulti
+import team.jlm.utils.instrument
+import team.jlm.utils.redefinedBaseRefactoringProcessorClass
+
+private val makeMethodStaticProcessorClass by lazy {
+    instrument
+    redefinedBaseRefactoringProcessorClass
+    ByteBuddy().subclass(MakeMethodStaticProcessor::class.java)
+        .defineField("callFromMulti", Boolean::class.java, Visibility.PRIVATE)
+        .implement(ICallFromMulti::class.java)
+        .intercept(FieldAccessor.ofBeanProperty())
+        .implement(IRefactoringProcessor::class.java)
+        .method(getMethodFilter())
+        .intercept(MethodDelegation.to(RefactoringProcessorInterceptor::class.java))
+        .method(ElementMatchers.named("execute"))
+        .intercept(MethodDelegation.to(ExecuteInterceptor::class.java))
+        .make()
+        .load(ICallFromMulti::class.java.classLoader, ClassLoadingStrategy.Default.CHILD_FIRST)
+        .loaded
+}
 
 fun createMakeMethodStaticProcess(
     project: Project,
@@ -28,27 +51,9 @@ fun createMakeMethodStaticProcess(
         null
     ),
 ): IRefactoringProcessor {
-    val enhancer = Enhancer()
-    enhancer.setSuperclass(MakeMethodStaticProcessor::class.java)
-    enhancer.setInterfaces(arrayOf(IRefactoringProcessor::class.java))
-    enhancer.setCallbackFilter {
-        if (it == preprocessUsagesMethod0 || it == createUsageViewDescriptorMethod0
-            || it == setRefactoringTransactionMethod
-        ) {
-            return@setCallbackFilter 0
-        } else
-            return@setCallbackFilter 1
-    }
-    enhancer.setCallbacks(
-        arrayOf(
-            RefactoringProcessorInterceptor(project),
-            NoOp.INSTANCE
-        )
-    )
-    enhancer.classLoader = IRefactoringProcessor::class.java.classLoader
-    enhancer.createClass()
-    return enhancer.create(
-        arrayOf(Project::class.java, PsiMethod::class.java, Settings::class.java),
-        arrayOf(project, member, settings)
-    ) as IRefactoringProcessor
+    return makeMethodStaticProcessorClass.getConstructor(
+        Project::class.java,
+        PsiMethod::class.java,
+        Settings::class.java
+    ).newInstance(project, member, settings) as IRefactoringProcessor
 }

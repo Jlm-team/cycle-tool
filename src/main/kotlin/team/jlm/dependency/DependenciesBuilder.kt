@@ -11,6 +11,7 @@ import mu.KotlinLogging
 import team.jlm.coderefactor.code.dependencyProviderType
 import team.jlm.psi.cache.CommonPsiCache
 import team.jlm.psi.cache.INullablePsiCache
+import team.jlm.psi.cache.PsiClassCache
 import team.jlm.psi.cache.PsiMemberCacheImpl
 import team.jlm.utils.psi.getOuterClass
 import team.jlm.utils.psi.getTargetType
@@ -87,42 +88,55 @@ class DependenciesBuilder {
                                 else -> DependencyProviderType.OTHER
                             }
                         }
+                    } else if (providerEle.elementType == JavaElementType.PARAMETER) {
+                        dependencyProviderType = DependencyProviderType.PARAMETER
+                        providerPsiCache = CommonPsiCache(providerEle)
                     }
                 } else {
+                    providerPsiCache = PsiClassCache(providerEle)
                     dependencyProviderType = userEle.dependencyProviderType
                     dependencyUserType = when (dependencyProviderType) {
-                        DependencyProviderType.EXTENDS -> DependencyUserType.EXTENDS
-                        DependencyProviderType.IMPLEMENT -> DependencyUserType.IMPLEMENT
+                        DependencyProviderType.EXTENDS -> {
+                            userPsiCache = PsiClassCache(userClass)
+                            DependencyUserType.EXTENDS
+                        }
+
+                        DependencyProviderType.IMPLEMENT -> {
+                            userPsiCache = PsiClassCache(userClass)
+                            DependencyUserType.IMPLEMENT
+                        }
+
                         else -> dependencyUserType
                     }
-                    userPsiCache = INullablePsiCache.EMPTY
                 }
-                val fieldSet = userEle.parentsOfType<PsiField>().toSet()
-                val methodSet = userEle.parentsOfType<PsiMethod>().toSet()
-                if (fieldSet.isNotEmpty()) {
-                    val fieldEle = fieldSet.first()
-                    userPsiCache = PsiMemberCacheImpl(
-                        fieldEle.startOffset - userClass.startOffset,
-                        providerClassName,
-                        fieldEle.javaClass
-                    )
-                    dependencyUserType =
-                        if (fieldEle.modifierList?.hasModifierProperty(PsiModifier.STATIC) == true) {
-                            DependencyUserType.FIELD_STATIC
+                if (userPsiCache === INullablePsiCache.EMPTY) {
+                    val fieldSet = userEle.parentsOfType<PsiField>().toSet()
+                    val methodSet = userEle.parentsOfType<PsiMethod>().toSet()
+                    if (fieldSet.isNotEmpty()) {
+                        val fieldEle = fieldSet.first()
+                        userPsiCache = PsiMemberCacheImpl(
+                            fieldEle.startOffset - userClass.startOffset,
+                            userClassName,
+                            fieldEle.javaClass
+                        )
+                        dependencyUserType =
+                            if (fieldEle.modifierList?.hasModifierProperty(PsiModifier.STATIC) == true) {
+                                DependencyUserType.FIELD_STATIC
+                            } else {
+                                DependencyUserType.FIELD
+                            }
+                    } else if (methodSet.isNotEmpty()) {
+                        val methodEle = methodSet.first()
+                        userPsiCache = PsiMemberCacheImpl(
+                            methodEle.startOffset - userClass.startOffset,
+                            userClassName,
+                            methodEle.javaClass
+                        )
+                        dependencyUserType = if (methodEle.modifierList.hasModifierProperty(PsiModifier.STATIC)) {
+                            DependencyUserType.METHOD_STATIC
                         } else {
-                            DependencyUserType.FIELD
+                            DependencyUserType.METHOD
                         }
-                } else if (methodSet.isNotEmpty()) {
-                    val methodEle = methodSet.first()
-                    userPsiCache = PsiMemberCacheImpl(
-                        methodEle.startOffset - userClass.startOffset,
-                        userClassName,
-                        methodEle.javaClass
-                    )
-                    dependencyUserType = if (methodEle.modifierList.hasModifierProperty(PsiModifier.STATIC)) {
-                        DependencyUserType.METHOD_STATIC
-                    } else {
-                        DependencyUserType.METHOD
                     }
                 }
                 processor.process(

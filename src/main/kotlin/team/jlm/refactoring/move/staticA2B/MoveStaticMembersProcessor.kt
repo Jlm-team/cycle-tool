@@ -48,4 +48,6 @@ class MoveStaticMembersProcessor(
     override fun refreshElements(elements: Array<out PsiElement>) {
         super.refreshElements(elements)
     }
+
+    override var callFromMulti: Boolean = false
 }

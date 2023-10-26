@@ -1,7 +1,10 @@
 package team.jlm.refactoring.multi
 
+import com.intellij.openapi.command.CommandProcessor
+import com.intellij.openapi.command.UndoConfirmationPolicy
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Ref
+import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.SearchScope
@@ -14,6 +17,12 @@ import com.intellij.usageView.UsageViewBundle
 import com.intellij.usageView.UsageViewDescriptor
 import mu.KotlinLogging
 import team.jlm.refactoring.IRefactoringProcessor
+import team.jlm.refactoring.interceptor.RefactoringProcessorInterceptor
+import team.jlm.refactoring.interceptor.RefactoringProcessorInterceptor.Companion.findUsagesMethod
+import team.jlm.refactoring.interceptor.RefactoringProcessorInterceptor.Companion.getCommandNameMethod
+import team.jlm.refactoring.interceptor.RefactoringProcessorInterceptor.Companion.getUndoConfirmationPolicyMethod
+import team.jlm.refactoring.interceptor.RefactoringProcessorInterceptor.Companion.myProjectField
+import team.jlm.refactoring.interceptor.RefactoringProcessorInterceptor.Companion.refreshElementsMethod
 
 private val logger = KotlinLogging.logger {}
 
@@ -26,6 +35,7 @@ class MultiRefactoringProcessor(
     private val commandName: String,
 ) : BaseRefactoringProcessor(project, refactoringScope, prepareSuccessfulCallback),
     IRefactoringProcessor {
+    override var callFromMulti: Boolean = false
     override fun isPreviewUsages(): Boolean {
         return super.isPreviewUsages()
     }
@@ -82,7 +92,7 @@ class MultiRefactoringProcessor(
         usagesIndexList.add(0)
         return ArrayList<UsageInfo>().apply {
             for (processor in processors) {
-                val processorUsages = processor.findUsages()
+                val processorUsages = findUsagesMethod.invoke(processor) as Array<UsageInfo>
                 addAll(processorUsages)
                 count += processorUsages.size
                 usagesIndexList.add(count)
@@ -102,20 +112,38 @@ class MultiRefactoringProcessor(
     override fun execute(usages: Array<out UsageInfo>) {
         logger.trace { "execute" }
         val listenerManager = RefactoringListenerManager.getInstance(myProject) as RefactoringListenerManagerImpl
-        refactoringTransaction = listenerManager.startTransaction()
-        myTransactionWrapper = RefactoringTransactionWrapper(refactoringTransaction)
-        for (processor in processors) {
-            processor.refactoringTransaction = myTransactionWrapper
+        if (!callFromMulti) {
+            PsiDocumentManager.getInstance(RefactoringProcessorInterceptor.myProjectField.get(this) as Project)
+                .commitAllDocuments()
+            val refactoringTransaction = listenerManager.startTransaction()
+            myTransactionWrapper = RefactoringTransactionWrapper(refactoringTransaction)
+            for (processor in processors) {
+                RefactoringProcessorInterceptor.myTransactionField.set(processor, myTransactionWrapper)
+                processor.callFromMulti = true
+            }
+            CommandProcessor.getInstance().executeCommand(
+                myProjectField.get(this) as Project, {
+                    executeProcessors()
+                }, getCommandNameMethod.invoke(this) as String,
+                null, getUndoConfirmationPolicyMethod.invoke(this) as UndoConfirmationPolicy
+            )
+            myTransactionWrapper.finalCommit()
+        } else {
+            executeProcessors()
         }
+    }
+
+    private fun executeProcessors() {
         for (processor in processors) {
             val elements = processor.createUsageViewDescriptor().elements
-            for (i in elements.indices) {
-                elements[i] = myTransactionWrapper.findNew(elements[i])
+            if (!callFromMulti) {
+                for (i in elements.indices) {
+                    elements[i] = myTransactionWrapper.findNew(elements[i])
+                }
             }
-            processor.refreshElements(elements)
+            refreshElementsMethod.invoke(processor, elements)
             processor.run()
         }
-        myTransactionWrapper.finalCommit()
     }
 
     override fun getCommandName(): String {

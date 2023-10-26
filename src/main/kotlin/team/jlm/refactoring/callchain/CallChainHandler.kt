@@ -1,4 +1,4 @@
-package team.jlm.refactoring.move.callchain
+package team.jlm.refactoring.callchain
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.*

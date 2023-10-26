@@ -7,8 +7,10 @@ import com.intellij.psi.PsiElement
 import com.intellij.refactoring.listeners.impl.RefactoringTransaction
 import com.intellij.usageView.UsageInfo
 import com.intellij.usageView.UsageViewDescriptor
+import team.jlm.refactoring.interceptor.RefactoringProcessorInterceptor
+import team.jlm.refactoring.multi.ICallFromMulti
 
-interface IRefactoringProcessor {
+interface IRefactoringProcessor : ICallFromMulti {
     var myPrepareSuccessfulSwingThreadCallback: Runnable?
     fun createUsageViewDescriptor(): UsageViewDescriptor
 
@@ -52,12 +54,10 @@ interface IRefactoringProcessor {
 
     fun execute(usages: Array<out UsageInfo>)
     fun refreshElements(elements: Array<out PsiElement>)
+
     /**
      * 对于不继承`com.intellij.refactoring.BaseRefactoringProcessor`的实现类，必须重写此属性
      */
-    var refactoringTransaction: RefactoringTransaction
-        get() = RefactoringProcessorInterceptor.myTransactionFiled.get(this) as RefactoringTransaction
-        set(value) {
-            RefactoringProcessorInterceptor.myTransactionFiled.set(this, value)
-        }
+    val refactoringTransaction: RefactoringTransaction
+        get() = RefactoringProcessorInterceptor.myTransactionField.get(this) as RefactoringTransaction
 }

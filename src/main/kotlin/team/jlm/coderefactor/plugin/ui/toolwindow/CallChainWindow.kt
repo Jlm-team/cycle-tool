@@ -1,7 +1,7 @@
 package team.jlm.coderefactor.plugin.ui.toolwindow
 
 import team.jlm.coderefactor.plugin.ui.DefaultScrollPaneTable
-import team.jlm.refactoring.move.callchain.CallChain
+import team.jlm.refactoring.callchain.CallChain
 import javax.swing.JPanel
 
 object CallChainWindow {
